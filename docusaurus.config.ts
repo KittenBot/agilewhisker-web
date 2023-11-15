@@ -1,6 +1,7 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import renderSkill from './src/remark/render-skill'; 
 
 const config: Config = {
   title: 'My Site',
@@ -35,6 +36,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
+          remarkPlugins: [renderSkill],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
