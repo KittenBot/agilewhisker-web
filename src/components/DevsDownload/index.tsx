@@ -57,7 +57,7 @@ export class DevsHost implements Host {
 
 const DevsDownloadCard = ({config}) => {
 
-  const { bus, brainAvatar, devsService, deviceAvatar, connectJDBus } = useJacdacStore()
+  const { connected, brainAvatar, devsService, deviceAvatar, connectJDBus } = useJacdacStore()
   const [ downloadErr, setDownloadErr ] = useState('')
   const [ downloadProgress, setDownloadProgress ] = useState(0)
 
@@ -94,6 +94,7 @@ const DevsDownloadCard = ({config}) => {
         }, 1000)
         
       } catch (error) {
+        setDownloadProgress(0)
         setDownloadErr(error.toString())
       }
       
@@ -104,28 +105,31 @@ const DevsDownloadCard = ({config}) => {
 
   return (
     <Card hoverable style={{ width: '50vw', margin: 10 }} bodyStyle={{padding: 0, overflow: 'hidden'}}>
-      { downloadErr && (
-        <Alert message={downloadErr} type="error" closable afterClose={() => setDownloadErr('')} />
-      )}
-      { downloadProgress > 0 && (
-        <Progress percent={downloadProgress} size="small" />
-      )}
-      { bus ? <Flex justify="space-between">
+      { connected ? <div style={{flex: 1, flexDirection: 'column'}}><Flex justify="space-between">
         { brainAvatar ? <img src={brainAvatar} style={{width: 96, height: 96}} /> : null }
-        <Flex vertical align="flex-end" justify="space-between" style={{ padding: 32 }}>
-          <Typography.Title level={4} style={{ margin: 0 }}>
-            {deviceAvatar.map((img, i) => <img key={i} src={img} style={{width: 32, height: 32, margin: 4}} />)}
-          </Typography.Title>
+        <Flex vertical align="flex-end" justify="space-between" style={{ padding: 12, width: '100%' }}>
+          <div style={{ width: '100%'}}>
+            {deviceAvatar.map((img, i) => <img key={i} src={img} style={{width: 32, height: 32, margin: 2}} />)}
+          </div>
           <Button
             type="primary"
             onClick={handleDownload}
           >Download</Button>
 
         </Flex>
-      </Flex> : <Flex justify="center" align="middle" style={{height: 50}}>
+        </Flex>
+        { downloadErr && (
+          <Alert message={downloadErr} type="error" closable afterClose={() => setDownloadErr('')} />
+        )}
+        { downloadProgress > 0 && (
+          <Progress percent={downloadProgress} size="small" />
+        )}
+      </div>
+       : <Flex justify="center" align="middle" style={{height: 50}}>
         No Jacdac bus connected
         <Button style={{margin: 8}} type="primary" onClick={handleConnect}>Connect</Button>
-      </Flex>}
+      </Flex>
+      }
     </Card>
   );
 };

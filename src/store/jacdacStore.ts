@@ -16,6 +16,7 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const useJacdacStore = create<{
   bus: JDBus;
+  connected: boolean;
   brain: DeviceSpec;
   brainAvatar: string
   deviceAvatar: string[];
@@ -26,6 +27,7 @@ export const useJacdacStore = create<{
 
 }>((set, get) => ({
   bus: null,
+  connected: false,
   brain: null,
   devsService: null,
   brainAvatar: null,
@@ -63,22 +65,30 @@ export const useJacdacStore = create<{
   },
 
   connectJDBus: async () => {
-    const transports = [createWebSerialTransport()];
-    const bus: JDBus = new JDBus(transports, {
-      client: false,
-      disableRoleManager: true,
-    });
-    bus.on(DEVICE_CHANGE, async () => {
-      await sleep(100)
-      get().refresh()
-    })
+    let bus: JDBus = get().bus
+    if (!bus) {
+      const transports = [createWebSerialTransport()];
+      bus = new JDBus(transports, {
+        client: false,
+        disableRoleManager: true,
+      });
+      bus.on(DEVICE_CHANGE, async () => {
+        await sleep(100)
+        get().refresh()
+      })
 
-    bus.on(CONNECTION_STATE, (transport: Transport) => {
-      console.log("transport", transport.connectionState);
-    });
+      bus.on(CONNECTION_STATE, (transport: Transport) => {
+        console.log("transport", transport.connectionState);
+        if (transport.connectionState === "connected") {
+          set(state => ({ connected: true }));
+        } else if (transport.connectionState === 'disconnected'){
+          set(state => ({ connected: false }));
+        }
+      });
+      (window as any).bus = bus
+    }
 
     await bus.connect();
-    (window as any).bus = bus
     
     set(state => ({ bus }));
     
