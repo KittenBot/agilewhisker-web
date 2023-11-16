@@ -12,6 +12,8 @@ import {
   DEVICE_ANNOUNCE, DEVICE_CHANGE, CONNECTION_STATE, SRV_DEVICE_SCRIPT_MANAGER
 } from 'jacdac-ts'
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
 export const useJacdacStore = create<{
   bus: JDBus;
   brain: DeviceSpec;
@@ -20,7 +22,7 @@ export const useJacdacStore = create<{
   devsService: JDService;
 
   connectJDBus: () => Promise<void>;
-  refresh: () => void;
+  refresh: () => Promise<void>;
 
 }>((set, get) => ({
   bus: null,
@@ -29,7 +31,7 @@ export const useJacdacStore = create<{
   brainAvatar: null,
   deviceAvatar: [],
 
-  refresh: () => {
+  refresh: async () => {
     const bus = get().bus
     const devices: JDDevice[] = bus.devices({
       ignoreInfrastructure: true,
@@ -46,6 +48,11 @@ export const useJacdacStore = create<{
         const img = deviceCatalogImage(spec, "list")
         set(state => ({ brain: spec, devsService, brainAvatar: img }));
       } else {
+        let productIdentifier = device.productIdentifier
+        while(!productIdentifier){
+          await sleep(100)
+          productIdentifier = device.productIdentifier
+        }
         const spec = bus.deviceCatalog.specificationFromProductIdentifier(device.productIdentifier)
         console.log("spec", device.productIdentifier, spec)
         const img = deviceCatalogImage(spec, "list")
@@ -61,10 +68,9 @@ export const useJacdacStore = create<{
       client: false,
       disableRoleManager: true,
     });
-    bus.on(DEVICE_CHANGE, () => {
-      setTimeout(() => {
-        get().refresh()
-      }, 100)
+    bus.on(DEVICE_CHANGE, async () => {
+      await sleep(100)
+      get().refresh()
     })
 
     bus.on(CONNECTION_STATE, (transport: Transport) => {
