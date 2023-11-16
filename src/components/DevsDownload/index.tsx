@@ -7,20 +7,9 @@ import {
   compileWithHost,
   resolveBuildConfig,
 } from "@devicescript/compiler";
-import {
-  JDBus,
-  JDDevice,
-  JDService,
-  createWebBus,
-  DeviceCatalog,
-  DEVICE_ANNOUNCE,
-  createWebSerialTransport,
-  CONNECTION_STATE,
-  ConnectionState,
-  Transport,
-  deviceCatalogImage,
-  SRV_DEVICE_SCRIPT_MANAGER,
-} from "jacdac-ts";
+import { DeviceScriptManagerCmd, OutPipe } from 'jacdac-ts';
+
+import { useJacdacStore } from "../../store/jacdacStore";
 
 // Device script implementation for kitten extension
 export class DevsHost implements Host {
@@ -68,69 +57,13 @@ export class DevsHost implements Host {
 
 const DevsDownloadCard = ({config}) => {
 
+  const { bus, brainAvatar, devsService, deviceAvatar, connectJDBus } = useJacdacStore()
   const skill: Skill = useMemo(() => {
     return JSON.parse(config);
   }, [config]);
 
-  const [jdbus, setJdbus] = useState<JDBus>();
-  const [brainImg, setBrainImg] = useState<string>();
-  const [devicesImg, setDevicesImg] = useState<string[]>([]);
-  const [devsService, setDevsService] = useState<JDService>();
-  const [transport, setTransport] = useState<Transport>();
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState(0);
-
-  const createJDBus = async function () {
-    const transports = [createWebSerialTransport()];
-    const bus: JDBus = new JDBus(transports, {
-      client: false,
-      disableRoleManager: true,
-    });
-    bus.on(DEVICE_ANNOUNCE, async (device: JDDevice) => {
-      if (device.deviceId === bus.selfDeviceId)
-        return
-      console.log("device", device, device.productIdentifier);
-      // TODO: we need some scheduling here
-      setTimeout(() => {
-        if (device.hasService(SRV_DEVICE_SCRIPT_MANAGER)){
-          const devsService = device.services({serviceClass: SRV_DEVICE_SCRIPT_MANAGER})[0]
-          const spec = bus.deviceCatalog.specificationFromProductIdentifier(
-            // device.productIdentifier
-            952937357
-          );
-          const img = deviceCatalogImage(spec, "list")
-          setDevsService(devsService);
-          setBrainImg(img);
-        } else {
-            const spec = bus.deviceCatalog.specificationFromProductIdentifier(device.productIdentifier)
-            console.log("spec", device.productIdentifier, spec)
-            devicesImg.push(deviceCatalogImage(spec, "avatar"));
-            setDevicesImg([...devicesImg]);
-        }
-      }, 100)
-      
-    });
-
-    bus.on(CONNECTION_STATE, (transport: Transport) => {
-      console.log("transport", transport.connectionState);
-      if (transport.connectionState === ConnectionState.Disconnected) {
-        setTransport(null);
-      } else if (transport.connectionState === ConnectionState.Connected) {
-        setTransport(transport);
-      }
-    });
-
-    await bus.connect();
-    (window as any).bus = bus
-
-    return bus;
-  };
-
   const handleConnect = async () => {
-    if (!jdbus) {
-      const bus = await createJDBus();
-      setJdbus(bus);
-    }
+    connectJDBus()
   }
 
   const handleDownload = async () => {
@@ -147,28 +80,21 @@ const DevsDownloadCard = ({config}) => {
     });
     const result = compileWithHost("src/main.ts", host);
     console.log(result);
-
-    setIsDownloading(true);
-    // simulate progress
-    const interval = setInterval(() => {
-      setDownloadProgress((oldProgress) => {
-        if (oldProgress === 100) {
-          clearInterval(interval);
-          setIsDownloading(false);
-          return 100;
-        }
-        return Math.min(oldProgress + 10, 100);
-      });
-    }, 1000);
+    if (result.success){
+      let bytecode = result.binary
+      await OutPipe.sendBytes(devsService, DeviceScriptManagerCmd.DeployBytecode, bytecode, p => {
+        console.log("sending bytecode", p)
+      })
+    }
   };
 
   return (
     <Card hoverable style={{ width: 240, margin: 10 }} bodyStyle={{padding: 0, overflow: 'hidden'}}>
-      { jdbus ? <Flex justify="space-between">
-        { brainImg ? <img src={brainImg} style={{width: 96, height: 96}} /> : null }
+      { bus ? <Flex justify="space-between">
+        { brainAvatar ? <img src={brainAvatar} style={{width: 96, height: 96}} /> : null }
         <Flex vertical align="flex-end" justify="space-between" style={{ padding: 32 }}>
           <Typography.Title level={4} style={{ margin: 0 }}>
-            {devicesImg.map((img, i) => <img key={i} src={img} style={{width: 32, height: 32, margin: 4}} />)}
+            {deviceAvatar.map((img, i) => <img key={i} src={img} style={{width: 32, height: 32, margin: 4}} />)}
           </Typography.Title>
           <Button
             type="primary"
