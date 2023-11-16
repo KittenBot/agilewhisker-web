@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Button, Card, Flex, Typography } from 'antd';
+import { Alert, Button, Card, Flex, Progress, Typography } from 'antd';
 import { Skill } from "@/remark/render-skill";
 
 import {
@@ -58,6 +58,9 @@ export class DevsHost implements Host {
 const DevsDownloadCard = ({config}) => {
 
   const { bus, brainAvatar, devsService, deviceAvatar, connectJDBus } = useJacdacStore()
+  const [ downloadErr, setDownloadErr ] = useState('')
+  const [ downloadProgress, setDownloadProgress ] = useState(0)
+
   const skill: Skill = useMemo(() => {
     return JSON.parse(config);
   }, [config]);
@@ -82,14 +85,31 @@ const DevsDownloadCard = ({config}) => {
     console.log(result);
     if (result.success){
       let bytecode = result.binary
-      await OutPipe.sendBytes(devsService, DeviceScriptManagerCmd.DeployBytecode, bytecode, p => {
-        console.log("sending bytecode", p)
-      })
+      try {
+        await OutPipe.sendBytes(devsService, DeviceScriptManagerCmd.DeployBytecode, bytecode, p => {
+          setDownloadProgress(p*100)
+        })
+        setTimeout(() => {
+          setDownloadProgress(0)
+        }, 1000)
+        
+      } catch (error) {
+        setDownloadErr(error.toString())
+      }
+      
+    } else {
+      setDownloadErr(result.diagnostics[0].messageText.toString())
     }
   };
 
   return (
-    <Card hoverable style={{ width: 240, margin: 10 }} bodyStyle={{padding: 0, overflow: 'hidden'}}>
+    <Card hoverable style={{ width: '50vw', margin: 10 }} bodyStyle={{padding: 0, overflow: 'hidden'}}>
+      { downloadErr && (
+        <Alert message={downloadErr} type="error" closable afterClose={() => setDownloadErr('')} />
+      )}
+      { downloadProgress > 0 && (
+        <Progress percent={downloadProgress} size="small" />
+      )}
       { bus ? <Flex justify="space-between">
         { brainAvatar ? <img src={brainAvatar} style={{width: 96, height: 96}} /> : null }
         <Flex vertical align="flex-end" justify="space-between" style={{ padding: 32 }}>
