@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Button, Card, Flex, Typography } from 'antd';
+import { Skill } from "@/remark/render-skill";
 
 import {
   Host,
@@ -65,7 +66,12 @@ export class DevsHost implements Host {
   }
 }
 
-const DevsDownloadCard = ({ DevsName, code }) => {
+const DevsDownloadCard = ({config}) => {
+
+  const skill: Skill = useMemo(() => {
+    return JSON.parse(config);
+  }, [config]);
+
   const [jdbus, setJdbus] = useState<JDBus>();
   const [brainImg, setBrainImg] = useState<string>();
   const [devicesImg, setDevicesImg] = useState<string[]>([]);
@@ -129,14 +135,14 @@ const DevsDownloadCard = ({ DevsName, code }) => {
 
   const handleDownload = async () => {
     
-    console.log("download", code);
+    console.log("download", skill);
     const host = new DevsHost({
       hwInfo: {
         progName: "DeviceScript-workspace devs/hello",
         progVersion: "6.0.0",
       },
       files: {
-        "src/main.ts": code,
+        "src/main.ts": skill.code,
       },
     });
     const result = compileWithHost("src/main.ts", host);
