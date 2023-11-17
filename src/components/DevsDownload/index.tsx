@@ -10,6 +10,7 @@ import {
 import { DeviceScriptManagerCmd, OutPipe } from 'jacdac-ts';
 
 import { useJacdacStore } from "../../store/jacdacStore";
+import extrea_services from './services.json'
 
 // Device script implementation for kitten extension
 export class DevsHost implements Host {
@@ -24,19 +25,23 @@ export class DevsHost implements Host {
       progName: "hello",
       progVersion: "0.0.1",
     };
+    this.cfg.addServices = extrea_services
+    this.cfg.services = [...this.cfg.services, ...extrea_services]
   }
 
   write(filename: string, contents: string | Uint8Array): void {
+    console.log("write", filename)
     this.files[filename] = contents;
   }
   read(filename: string): string {
-    // console.log("read", filename)
+    console.log("read", filename)
     if (this.files.hasOwnProperty(filename)) {
       return this.files[filename] as string;
     }
     throw new Error("No such file: " + filename);
   }
   resolvePath(p: string) {
+    console.log("resolve", p)
     return p;
   }
 
@@ -74,8 +79,8 @@ const DevsDownloadCard = ({config}) => {
     console.log("download", skill);
     const host = new DevsHost({
       hwInfo: {
-        progName: "DeviceScript-workspace devs/hello",
-        progVersion: "6.0.0",
+        // progName: "DeviceScript-workspace devs/hello",
+        // progVersion: "6.0.0",
       },
       files: {
         "src/main.ts": skill.code,
