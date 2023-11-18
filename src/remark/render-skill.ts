@@ -13,6 +13,7 @@ export interface Skill {
   description?: string;
   tags?: string[];
   dependencies?: string[];
+  params?: Record<string, string>
   
 }
 

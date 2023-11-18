@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Alert, Button, Card, Flex, Progress, Typography } from 'antd';
+import { Alert, Button, Card, Flex, Progress, Divider, Form } from 'antd';
 import { Skill } from "@/remark/render-skill";
 
 import {
@@ -62,17 +62,26 @@ export class DevsHost implements Host {
 
 const DevsDownloadCard = ({config}) => {
 
-  const { connected, brainAvatar, devsService, deviceAvatar, connectJDBus } = useJacdacStore()
-  const [ downloadErr, setDownloadErr ] = useState('')
-  const [ downloadProgress, setDownloadProgress ] = useState(0)
+  const {connected} = useJacdacStore()
 
   const skill: Skill = useMemo(() => {
     return JSON.parse(config);
   }, [config]);
 
-  const handleConnect = async () => {
-    connectJDBus()
-  }
+  return (
+    <Card hoverable style={{ width: '50vw', margin: 10 }} bodyStyle={{padding: 0, overflow: 'hidden'}}>
+      { connected ? <ConnectedState skill={skill}/>
+       : <DisconnectState />
+      }
+    </Card>
+  );
+};
+
+const ConnectedState = ({skill}) => {
+  const { brainAvatar, devsService, deviceAvatar } = useJacdacStore()
+
+  const [ downloadErr, setDownloadErr ] = useState('')
+  const [ downloadProgress, setDownloadProgress ] = useState(0)
 
   const handleDownload = async () => {
     
@@ -108,35 +117,63 @@ const DevsDownloadCard = ({config}) => {
     }
   };
 
-  return (
-    <Card hoverable style={{ width: '50vw', margin: 10 }} bodyStyle={{padding: 0, overflow: 'hidden'}}>
-      { connected ? <div style={{flex: 1, flexDirection: 'column'}}><Flex justify="space-between">
-        { brainAvatar ? <img src={brainAvatar} style={{width: 96, height: 96}} /> : null }
-        <Flex vertical align="flex-end" justify="space-between" style={{ padding: 12, width: '100%' }}>
-          <div style={{ width: '100%'}}>
-            {deviceAvatar.map((img, i) => <img key={i} src={img} style={{width: 32, height: 32, margin: 2}} />)}
-          </div>
-          <Button
-            type="primary"
-            onClick={handleDownload}
-          >Download</Button>
 
-        </Flex>
-        </Flex>
-        { downloadErr && (
-          <Alert message={downloadErr} type="error" closable afterClose={() => setDownloadErr('')} />
-        )}
-        { downloadProgress > 0 && (
-          <Progress percent={downloadProgress} size="small" />
-        )}
+  return (<div style={{flex: 1, flexDirection: 'column'}}><Flex justify="space-between">
+    { brainAvatar ? <img src={brainAvatar} style={{width: 96, height: 96}} /> : null }
+    <Flex vertical align="flex-end" justify="space-between" style={{ padding: 12, width: '100%' }}>
+      <div style={{ width: '100%'}}>
+        {deviceAvatar.map((img, i) => <img key={i} src={img} style={{width: 32, height: 32, margin: 2}} />)}
       </div>
-       : <Flex justify="center" align="middle" style={{height: 50}}>
-        No Jacdac bus connected
-        <Button style={{margin: 8}} type="primary" onClick={handleConnect}>Connect</Button>
-      </Flex>
-      }
-    </Card>
-  );
-};
+      <Button
+        type="primary"
+        onClick={handleDownload}
+      >Download</Button>
+
+    </Flex>
+    </Flex>
+    { skill.params && (
+      <ParamsInput params={skill.params} />
+    )}
+    { downloadErr && (
+      <Alert message={downloadErr} type="error" closable afterClose={() => setDownloadErr('')} />
+    )}
+    { downloadProgress > 0 && (
+      <Progress percent={downloadProgress} size="small" />
+    )}
+  </div>)
+}
+
+const DisconnectState = () => {
+
+  const {connectJDBus} = useJacdacStore()
+
+  const handleConnect = async () => {
+    connectJDBus()
+  }
+
+  return <Flex justify="center" align="middle" style={{height: 50}}>
+    No Jacdac bus connected
+    <Button style={{margin: 8}} type="primary" onClick={handleConnect}>Connect</Button>
+  </Flex>
+}
+
+const ParamsInput = ({params}: {params: Record<string, string>}) => {
+  console.log("params", params)
+  return <div style={{padding: 12}}>
+    <Divider>Parameters</Divider>
+    <Form
+      labelCol={{ span: 4 }}
+      layout="horizontal"
+      style={{maxWidth: 600}}
+    >
+      {Object.keys(params).map((key, i) => {
+        const param = params[key]
+        return <Form.Item key={i} label={key}>
+          <input type="text" defaultValue={param} />
+        </Form.Item>
+      })}
+    </Form>
+  </div>
+}
 
 export default DevsDownloadCard;

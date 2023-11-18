@@ -71,7 +71,8 @@ export const useJacdacStore = create<{
     if (!bus) {
       const transports = [
         createWebSerialTransport(),
-        createWebSocketTransport('ws://localhost:8081')
+        // TODO: add ws server to host app
+        // createWebSocketTransport('ws://localhost:8081')
       ];
       bus = new JDBus(transports, {
         client: false,
