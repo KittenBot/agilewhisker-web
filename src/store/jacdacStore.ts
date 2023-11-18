@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import {
   createWebSerialTransport,
+  createWebSocketTransport,
   deviceCatalogImage,
   JDBus,
   JDDevice,
@@ -35,6 +36,7 @@ export const useJacdacStore = create<{
 
   refresh: async () => {
     const bus = get().bus
+    if (!bus) return
     const devices: JDDevice[] = bus.devices({
       ignoreInfrastructure: true,
       announced: true,
@@ -67,7 +69,10 @@ export const useJacdacStore = create<{
   connectJDBus: async () => {
     let bus: JDBus = get().bus
     if (!bus) {
-      const transports = [createWebSerialTransport()];
+      const transports = [
+        createWebSerialTransport(),
+        createWebSocketTransport('ws://localhost:8081')
+      ];
       bus = new JDBus(transports, {
         client: false,
         disableRoleManager: true,
