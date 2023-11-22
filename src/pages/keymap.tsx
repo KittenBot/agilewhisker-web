@@ -11,6 +11,8 @@ export interface KeyConfig {
   name: string;
   label?: string;
   hid: number;
+  mapped?: number;
+  index?: string; //rNbN
 }
 
 const defaultKeys: KeyConfig[][] = [
@@ -107,34 +109,32 @@ const findHidFromCode = (code) => {
 }
 
 export default function Keymap() {
+  const [keyconfig, setKeyconfig] = useState<KeyConfig[][]>(null)
   const [editing, setEditing] = useState(false)
-  const [editingKey, setEditingKey] = useState(null)
-  const [keymap, setKeymap] = useState({
-  })
+  const [editingIndex, setEditingIndex] = useState(null) // use rNbN
+  const [keymap, setKeymap] = useState({}) // key index to hid
   const [keyboard, setKeyboard] = useState(null);
 
   function handleKey(event) {
-    if (editing && editingKey) {
+    if (editing && editingIndex) {
+      console.log("event", editingIndex, event)
       const { key } = event
-      if (key === "Escape") {
-        setEditingKey(null)
-      } else {
-        let code: string = event.code
-        if (code.startsWith("Key")) {
-          code = code.substr(3)
-        }
-        const _hidInput = findHidFromCode(editingKey)
-        const _hidToMap = findHidFromCode(code)
-        
-        if (_hidInput && _hidToMap) {
-          setKeymap({
-            ...keymap,
-            [_hidInput]: _hidToMap
-          })
-        }
-        // localStorage.setItem("keymap", JSON.stringify(keymap))
-        setEditingKey(null)
+      let code: string = event.code
+      if (code.startsWith("Key")) {
+        code = code.substr(3)
+      } else if (code.startsWith("Digit")) {
+        code = code.substr(5)
       }
+      const _hidToMap = findHidFromCode(code)
+      
+      if (_hidToMap) {
+        setKeymap({
+          ...keymap,
+          [editingIndex]: _hidToMap
+        })
+      }
+      // localStorage.setItem("keymap", JSON.stringify(keymap))
+      setEditingIndex(null)
     }
   }
 
@@ -143,6 +143,22 @@ export default function Keymap() {
     if (keymap) {
       setKeymap(JSON.parse(keymap))
     }
+    const _config = []
+    let y = 0
+    for (const row of defaultKeys) {
+      const _row = []
+      let x = 0
+      for (const key of row) {
+        _row.push({
+          ...key,
+          index: `r${y}b${x}`
+        })
+        x++
+      }
+      y++
+      _config.push(_row)
+    }
+    setKeyconfig(_config)
   }, [])
 
   useEffect(() => {
@@ -150,25 +166,25 @@ export default function Keymap() {
     return () => {
       document.removeEventListener("keydown", handleKey)
     }
-  }, [editingKey, editing])
+  }, [editingIndex, editing])
 
   const [layout, display] = useMemo(() => {
-    console.log("keymap", keymap)
+    if (!keyconfig)
+      return [null, null]
+
     const hidKeymap = {}
-    for (const key of defaultKeys.flat()) {
+    for (const key of keyconfig.flat()) {
       hidKeymap[key.hid] = key
     }
     const layoutAry = []
     const displayMap = {}
-    for (const row of defaultKeys) {
+    for (const row of keyconfig) {
       let rowAry = ""
       for (const key of row) {
         let _key = key
-        if (keymap[key.hid]) {
-          let _hid = keymap[key.hid]
-          if (typeof _hid === "string") {
-            _hid = parseInt(_hid, 16)
-          }
+        if (keymap[key.index]) {
+          console.log("#1", key)
+          let _hid = keymap[key.index]
           _key = hidKeymap[_hid]
         }
         rowAry += _key.name + " "
@@ -182,7 +198,7 @@ export default function Keymap() {
       {default: layoutAry},
       displayMap
     ];
-  }, [keymap])
+  }, [keymap, keyconfig])
 
   return (
     <Layout title="Keymap" description="Keymap Config">
@@ -198,20 +214,19 @@ export default function Keymap() {
           mergeDisplay={true}
           syncInstanceInputs={true}
           physicalKeyboardHighlight={true}
-          onKeyPress={(button) => {
-            if (editingKey) {
-              setEditingKey(null)
+          onKeyPress={(button, event) => {
+            const ele: any = event.target
+            let index = ele.getAttribute("data-skbtnuid")
+            index = index.replace("default-", "")
+            if (editingIndex) {
+              setEditingIndex(null)
             } else if (editing) {
-              setEditingKey(button)
+              setEditingIndex(index)
             }
-            console.log("Button pressed", button);
-          }}
-          handleButtonClicked={(button) => {
-            console.log("Button clicked", button);
           }}
         />
         <Switch checkedChildren="edit" onChange={c => setEditing(c)} />
-        <Modal title="Press a key" open={editingKey} footer={null}>
+        <Modal title="Press a key" open={editingIndex} footer={null} onCancel={() => setEditingIndex(null)} maskClosable>
           <p>Press a key to bind</p>
         </Modal>
       </div>
