@@ -1,10 +1,11 @@
 import Layout from "@theme/Layout";
+import { Modal, Switch } from 'antd'
 
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 
 import "./keymap.css";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export interface KeyConfig {
   name: string;
@@ -92,11 +93,67 @@ const defaultKeys: KeyConfig[][] = [
   ]
 ]
 
+const findHidFromCode = (code) => {
+  code = code.toLowerCase()
+  for (const row of defaultKeys) {
+    for (const key of row) {
+      let name = key.name.replace("{", "").replace("}", "")
+      if (name === code) {
+        return key.hid
+      }
+    }
+  }
+  return null
+}
+
 export default function Keymap() {
+  const [editing, setEditing] = useState(false)
+  const [editingKey, setEditingKey] = useState(null)
   const [keymap, setKeymap] = useState({
   })
   const [keyboard, setKeyboard] = useState(null);
+
+  function handleKey(event) {
+    if (editing && editingKey) {
+      const { key } = event
+      if (key === "Escape") {
+        setEditingKey(null)
+      } else {
+        let code: string = event.code
+        if (code.startsWith("Key")) {
+          code = code.substr(3)
+        }
+        const _hidInput = findHidFromCode(editingKey)
+        const _hidToMap = findHidFromCode(code)
+        
+        if (_hidInput && _hidToMap) {
+          setKeymap({
+            ...keymap,
+            [_hidInput]: _hidToMap
+          })
+        }
+        // localStorage.setItem("keymap", JSON.stringify(keymap))
+        setEditingKey(null)
+      }
+    }
+  }
+
+  useEffect(() => {
+    const keymap = localStorage.getItem("keymap")
+    if (keymap) {
+      setKeymap(JSON.parse(keymap))
+    }
+  }, [])
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKey)
+    return () => {
+      document.removeEventListener("keydown", handleKey)
+    }
+  }, [editingKey, editing])
+
   const [layout, display] = useMemo(() => {
+    console.log("keymap", keymap)
     const hidKeymap = {}
     for (const key of defaultKeys.flat()) {
       hidKeymap[key.hid] = key
@@ -108,7 +165,11 @@ export default function Keymap() {
       for (const key of row) {
         let _key = key
         if (keymap[key.hid]) {
-          _key = hidKeymap[keymap[key.hid]]
+          let _hid = keymap[key.hid]
+          if (typeof _hid === "string") {
+            _hid = parseInt(_hid, 16)
+          }
+          _key = hidKeymap[_hid]
         }
         rowAry += _key.name + " "
         if (_key.label) {
@@ -128,17 +189,31 @@ export default function Keymap() {
       <div>
         <h1>Keymap</h1>
         <Keyboard
-          keyboardRef={(r) => setKeyboard(r)}
-          debug={true}
+          keyboardRef={(r) => {
+            setKeyboard(r)
+          }}
+          // debug={true}
           layout={layout}
           display={display}
           mergeDisplay={true}
           syncInstanceInputs={true}
           physicalKeyboardHighlight={true}
           onKeyPress={(button) => {
+            if (editingKey) {
+              setEditingKey(null)
+            } else if (editing) {
+              setEditingKey(button)
+            }
             console.log("Button pressed", button);
           }}
+          handleButtonClicked={(button) => {
+            console.log("Button clicked", button);
+          }}
         />
+        <Switch checkedChildren="edit" onChange={c => setEditing(c)} />
+        <Modal title="Press a key" open={editingKey} footer={null}>
+          <p>Press a key to bind</p>
+        </Modal>
       </div>
     </Layout>
   );
