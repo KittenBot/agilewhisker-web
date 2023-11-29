@@ -46,19 +46,38 @@ function createImportNode() {
   };
 }
 
+function transformNode<NewNode extends Node>(
+  node: Node,
+  newNode: NewNode,
+): NewNode {
+  Object.keys(node).forEach((key) => {
+    // @ts-expect-error: unsafe but ok
+    delete node[key];
+  });
+  Object.keys(newNode).forEach((key) => {
+    // @ts-expect-error: unsafe but ok
+    node[key] = newNode[key];
+  });
+  return node as NewNode;
+}
+
 export default function plugin(): Transformer {
   const visited = new Set<Code>(); // visit called twice on async
 
   return async (root, vfile) => {
     const { visit } = await import("unist-util-visit");
 
+    visit(root, "mdxJsxFlowElement", (node: Node, nodeIndex: number, parent: Parent) => {
+      console.log(node);
+    })
+
     visit(root, "code", (node: Code, nodeIndex: number, parent: Parent) => {
-      if (!parent || visited.has(node)) return;
-      visited.add(node);
+      // if (!parent || visited.has(node)) return;
+      // visited.add(node);
 
       if (node.lang === "devs") {
-        const { lang, meta, value } = node;
 
+        const { lang, meta, value } = node;
         let skill = {code: value} as Skill;
 
         const directory = path.dirname(vfile.history[0]);
@@ -77,32 +96,28 @@ export default function plugin(): Transformer {
           }
         }
 
-        console.log("#1", skill);
 
-        const startIndex = nodeIndex++;
-        const mdx = [
-          {
-            type: "mdxJsxFlowElement",
-            name: "DevsDownload",
-            attributes: [
-              {
-                type: "mdxJsxAttribute",
-                name: "name",
-                value: "test",
-              },
-              {
-                type: "mdxJsxAttribute",
-                name: "config",
-                value: JSON.stringify(skill),
-              },
-            ],
-          },
-        ];
-
-        node.lang = "ts";
-
-        // insert mdx to current node
-        parent.children.splice(startIndex, 1, ...mdx);
+        // // insert mdx to current node
+        // parent.children.splice(startIndex, 1, ...mdx);
+        transformNode(node, {
+          type: "mdxJsxFlowElement",
+          name: "DevsDownload",
+          attributes: [
+            {
+              type: "mdxJsxAttribute",
+              name: "name",
+              value: "test",
+            },
+            {
+              type: "mdxJsxAttribute",
+              name: "config",
+              value: JSON.stringify({name: 'test'}),
+            },
+          ],
+          data: { _mdxExplicitJsx: true },
+          position: node.position,
+          children: [],
+        });
       }
     });
 
