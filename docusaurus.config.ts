@@ -36,7 +36,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          remarkPlugins: [renderSkill],
+          beforeDefaultRemarkPlugins: [renderSkill],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
