@@ -38,7 +38,7 @@ const ConnectedState = ({skill}) => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      import('@devicescript/compiler').then(module => {
+      import("@kittenbot/devs_compiler").then(module => {
         setCompileWithHost(() => module.compileWithHost);
       });
     }

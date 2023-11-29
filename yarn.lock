@@ -1733,13 +1733,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@devicescript/compiler@npm:^2.15.19":
-  version: 2.15.20
-  resolution: "@devicescript/compiler@npm:2.15.20"
-  checksum: 757cc894ae017dc013f7bebcfdd53839cd4ec84f674eec959852c12391c85161c9b8728682e73e1bae58a69c79a0ed27dce11c434e972afb98e6a8080c232af3
-  languageName: node
-  linkType: hard
-
 "@discoveryjs/json-ext@npm:0.5.7":
   version: 0.5.7
   resolution: "@discoveryjs/json-ext@npm:0.5.7"
@@ -2431,6 +2424,13 @@ __metadata:
     "@jridgewell/resolve-uri": "npm:^3.1.0"
     "@jridgewell/sourcemap-codec": "npm:^1.4.14"
   checksum: cd1a7353135f385909468ff0cf20bdd37e59f2ee49a13a966dedf921943e222082c583ade2b579ff6cd0d8faafcb5461f253e1bf2a9f48fec439211fdbe788f5
+  languageName: node
+  linkType: hard
+
+"@kittenbot/devs_compiler@npm:^2.15.19":
+  version: 2.15.20
+  resolution: "@kittenbot/devs_compiler@npm:2.15.20"
+  checksum: cc9cf670ed678582d974b045d4c9db8c632800e02009c42603485174fa8dea907ba1804d2973e330e9425b48b1db2e8f2a60a15eec04c3390727380f8568cb43
   languageName: node
   linkType: hard
 
@@ -3620,12 +3620,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "agilewhisker-web@workspace:."
   dependencies:
-    "@devicescript/compiler": ^2.15.19
     "@docusaurus/core": 3.0.0
     "@docusaurus/module-type-aliases": 3.0.0
     "@docusaurus/preset-classic": 3.0.0
     "@docusaurus/tsconfig": 3.0.0
     "@docusaurus/types": 3.0.0
+    "@kittenbot/devs_compiler": ^2.15.19
     "@mdx-js/react": ^3.0.0
     antd: ^5.11.1
     clsx: ^1.2.1

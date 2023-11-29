@@ -67,9 +67,9 @@ export default function plugin(): Transformer {
   return async (root, vfile) => {
     const { visit } = await import("unist-util-visit");
 
-    visit(root, "mdxJsxFlowElement", (node: Node, nodeIndex: number, parent: Parent) => {
-      console.log(node);
-    })
+    // visit(root, "mdxJsxFlowElement", (node: Node, nodeIndex: number, parent: Parent) => {
+    //   console.log(node);
+    // })
 
     visit(root, "code", (node: Code, nodeIndex: number, parent: Parent) => {
       // if (!parent || visited.has(node)) return;
