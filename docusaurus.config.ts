@@ -40,7 +40,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/KittenBot/agilewhisker-web/tree/main/docs/',
+            'https://github.com/KittenBot/agilewhisker-web/tree/main/',
         },
         blog: {
           showReadingTime: true,
@@ -74,7 +74,7 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/kittenbot/agilewhisker-web',
           label: 'GitHub',
           position: 'right',
         },
@@ -101,11 +101,11 @@ const config: Config = {
             },
             {
               label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              href: 'https://discord.gg/9vUbF3za',
             },
             {
               label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              href: 'https://twitter.com/kittenbot1',
             },
           ],
         },
@@ -118,12 +118,12 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/kittenbot/agilewhisker-web',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Kittenbot, Inc. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
