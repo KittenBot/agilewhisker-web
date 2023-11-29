@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import { Alert, Button, Card, Flex, Progress, Divider, Form } from 'antd';
+import { Alert, Button, Card, Flex, Progress, Divider, Form, Input } from 'antd';
 import { Skill } from "@/remark/render-skill";
 
 
@@ -28,13 +28,15 @@ const DevsDownloadCard = ({config}) => {
   );
 };
 
-const ConnectedState = ({skill}) => {
+const ConnectedState = ({skill}: {skill: Skill}) => {
   const { brainAvatar, devsService, deviceAvatar } = useJacdacStore()
 
   const [ downloadErr, setDownloadErr ] = useState('')
   const [ downloadProgress, setDownloadProgress ] = useState(0)
 
   const [compileWithHost, setCompileWithHost] = useState(null);
+
+  const [params, setParams] = useState(skill.params || {})
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -51,8 +53,16 @@ const ConnectedState = ({skill}) => {
       return;
     }
     
-    console.log("download", skill);
     const { DevsHost } = await import('./DevsHost'); // 路径需要根据你的项目结构调整
+
+    let code = skill.code
+
+    for (const key in params) {
+      const value = params[key]
+      code = code.replace(new RegExp(`\\$${key}`, 'g'), value)
+    }
+    
+    console.log("download", code);
 
     const host = new DevsHost({
       hwInfo: {
@@ -60,7 +70,7 @@ const ConnectedState = ({skill}) => {
         // progVersion: "6.0.0",
       },
       files: {
-        "src/main.ts": skill.code,
+        "src/main.ts": code,
       },
     });
     const result = compileWithHost("src/main.ts", host);
@@ -100,7 +110,9 @@ const ConnectedState = ({skill}) => {
     </Flex>
     </Flex>
     { skill.params && (
-      <ParamsInput params={skill.params} />
+      <ParamsInput params={params} onChange={(key, value) => {
+        setParams({...params, [key]: value})
+      }} />
     )}
     { downloadErr && (
       <Alert message={downloadErr} type="error" closable afterClose={() => setDownloadErr('')} />
@@ -125,19 +137,23 @@ const DisconnectState = () => {
   </Flex>
 }
 
-const ParamsInput = ({params}: {params: Record<string, string>}) => {
-  console.log("params", params)
+const ParamsInput = ({params, onChange}: {params: Record<string, string>, onChange: any }) => {
+
   return <div style={{padding: 12}}>
     <Divider>Parameters</Divider>
     <Form
+      fields={Object.keys(params).map(key => ({name: key, value: params[key]}))}
       labelCol={{ span: 4 }}
       layout="horizontal"
       style={{maxWidth: 600}}
+      onFieldsChange={(changedFields, allFields) => {
+        onChange(changedFields[0].name[0], changedFields[0].value)
+      }}
     >
       {Object.keys(params).map((key, i) => {
         const param = params[key]
-        return <Form.Item key={i} label={key}>
-          <input type="text" defaultValue={param} />
+        return <Form.Item key={i} name={key} label={key} >
+          <Input />
         </Form.Item>
       })}
     </Form>

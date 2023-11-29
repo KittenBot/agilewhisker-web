@@ -111,7 +111,7 @@ export default function plugin(): Transformer {
             {
               type: "mdxJsxAttribute",
               name: "config",
-              value: JSON.stringify({name: 'test'}),
+              value: JSON.stringify(skill),
             },
           ],
           data: { _mdxExplicitJsx: true },
