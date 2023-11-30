@@ -1,0 +1,246 @@
+.container{
+    width: 100%;
+    /* height: 100vh; */
+    font-family: 'Inter';
+    overflow-x: hidden;
+}
+.showcase {
+    width: 100%;
+    height: 800px;
+    position:relative;
+    overflow: hidden
+}
+.video {
+    width: auto;
+    height:800px;
+}
+.showtext{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    color:#fff
+}
+.showtext p {
+    text-align: center;
+}
+.wrapper {
+    width: 100%;
+    padding: 120px 0;
+    background-color: #1b1b1b;
+    color: #fff;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid #272217;
+    overflow-x: hidden;
+}
+.card {
+    /* width: 1180px; */
+    height: 400px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    justify-content: space-between
+}
+.cardimg {
+    width: 400px;
+    height: 400px;
+    background-color:#494949
+}
+.cardtext {
+    width: 703px;
+    height: 280px;
+    color: #fff
+}
+.card  p{
+    line-height: 36px;
+    font-size: 28px ;
+    margin: 20px 0 0
+    
+}
+.product {
+    /* width: 998px; */
+    text-align: center;
+}
+.container h1 {
+    font-size: 48px;
+    white-space: nowrap;
+    font-weight: 500;
+    margin: 0;
+}
+.container h1 span{
+    color: #108CFF;
+}
+.container h1 p{
+ text-align: center;
+ font-size: 28px;
+ font-weight: 500;   
+}
+.textdesc {
+    margin: 36px 0;
+    font-size: 18px;
+    font-weight: 500;
+}
+.container button{
+    color: #fff;
+    background-color: #108CFF;
+    width: 165px;
+    height: 49px;
+    border: none;
+    font-size: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    box-shadow: inset 0px 2px #70BAFF, inset 0px -4px #0F5EA7;
+    cursor: pointer;
+}
+.container button svg {
+    margin-right: 10px;
+}
+.picturegallery {
+    margin-top: 64px;
+    /* width: 1180px; */
+    height: 329px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three columns with equal width */
+    gap: 20px;
+}
+.picturegallery p {
+    font-size: 28px;
+    margin: 0;
+    font-weight: 500;
+    line-height: 39px;
+    text-align: center;
+}
+.boxheight {
+    height: 1200px !;
+}
+.secondtitle {
+    text-align: center;
+    margin-bottom: 64px;
+}
+.secondtitle h1 {
+    line-height: 58px;
+    margin-bottom: 20px;
+}
+.secondtext {
+    width: 999px;
+    height: 87px;
+    font-size: 28px;
+    font-weight: 400;
+}
+.secondtext p {
+    margin: 0;
+    line-height: 28px;
+}
+.secondpicturegallery {
+    /* width: 1180px; */
+    height: 731px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Three columns with equal width */
+    gap: 18px;
+}
+
+.secondpicturegallery div{
+    position: relative;
+}
+.secondpicturegallery p {
+    margin: 0;
+    width: 295px;
+    height: 47;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 28px;
+    font-weight: 500;
+
+}
+.fourthcontainer {
+    background-image: url('../../static/img/fourth-bg.svg');
+    background-size: cover;
+    width: 100%;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+.fourthcontainer p {
+    /* width: 999px; */
+    font-size: 28px;
+    line-height: 36px;
+    font-weight: 500;
+    text-align: center;
+}
+.lastcontainer {
+    padding: 120px 0;
+    width: 100%;
+    /* height: 871px; */
+    text-align: center;
+    background-color: black;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center
+
+}
+.collapse{
+    margin-top: 36px;
+    /* width: 1180px; */
+    /* height: 387px; */
+}
+.collapse :global(.ant-collapse-header){
+    height: 49px;
+    background-color: #22272B;
+    margin-top: 10px;
+    border-radius: 0 !important;
+    font-size: 24px;
+    font: 600;
+}
+.collapse :global(.ant-collapse-header) span{
+    line-height: 29px;
+}
+.collapse :global(.ant-collapse-content-box){
+    width: 100%;
+    height: 76px;
+    padding: 20px 0 !important;
+    background-color: rgb(0 0 0 / 36%);
+}
+.collapse :global(.ant-collapse-content-box) p{
+    margin: 0;
+    font-size: 18px;
+    line-height: 36px;
+}
+:global(.ant-collapse-header-text){
+    color: #fff;
+    text-align: left;
+}
+:global(.ant-collapse-content-box){
+    color: #fff;
+}
+.discord{
+    background-color: #108CFF !important;
+    box-shadow: inset 0px 2px #70BAFF, inset 0px -4px #0F5EA7 !important;
+}
+.github {
+    background-color: #6A187F !important;
+    box-shadow: inset 0px 2px #A327C3, inset 0px -4px #430F50 !important;
+}
+.link {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Three columns with equal width */
+    gap: 36px;
+}
+.discussions {
+    font-size: 24px;
+    margin: 36px 0;
+    height: 29px;
+    font-weight: 600;
+}

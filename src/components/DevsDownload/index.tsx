@@ -8,8 +8,6 @@ import { DeviceScriptManagerCmd, OutPipe } from 'jacdac-ts';
 
 import { useJacdacStore } from "../../store/jacdacStore";
 
-
-
 const DevsDownloadCard = ({config}) => {
 
   const {connected} = useJacdacStore()
