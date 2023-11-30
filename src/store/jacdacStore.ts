@@ -60,7 +60,7 @@ export const useJacdacStore = create<{
         const spec = bus.deviceCatalog.specificationFromProductIdentifier(device.productIdentifier)
         console.log("spec", device.productIdentifier, spec)
         const img = deviceCatalogImage(spec, "list")
-        _nextDeviceAvatar.push(img)
+        _nextDeviceAvatar.push({img,name:spec.name})
       }
     }
     set(state => ({ deviceAvatar: _nextDeviceAvatar }))

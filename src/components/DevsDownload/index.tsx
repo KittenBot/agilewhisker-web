@@ -18,7 +18,7 @@ const DevsDownloadCard = ({config}) => {
   }, [config]);
 
   return (
-    <Card hoverable style={{ width: '50vw', margin: 10 }} bodyStyle={{padding: 0, overflow: 'hidden'}}>
+    <Card hoverable style={{ width: '50vw', margin: 10 ,border: 'none'}} bodyStyle={{padding: 0, overflow: 'hidden',backgroundColor: 'var(--ifm-background-color)',border: '1px solid var(--ifm-color-emphasis-300)',borderRadius: '8px'}}>
       { connected ? <ConnectedState skill={skill}/>
       : <DisconnectState />
       }
@@ -27,7 +27,7 @@ const DevsDownloadCard = ({config}) => {
 };
 
 const ConnectedState = ({skill}) => {
-  const { brainAvatar, devsService, deviceAvatar } = useJacdacStore()
+  const { brainAvatar, devsService, deviceAvatar, brain} = useJacdacStore()
 
   const [ downloadErr, setDownloadErr ] = useState('')
   const [ downloadProgress, setDownloadProgress ] = useState(0)
@@ -84,16 +84,45 @@ const ConnectedState = ({skill}) => {
   };
 
 
-  return (<div style={{flex: 1, flexDirection: 'column'}}><Flex justify="space-between">
-    { brainAvatar ? <img src={brainAvatar} style={{width: 96, height: 96}} /> : null }
+  return (<div style={{flex: 1, flexDirection: 'column',backgroundColor: 'var(--ifm-background-color)'}}>
+    <Flex justify="space-between" style={{flexDirection:'column-reverse',padding:'0 16px 16px',color: 'var(--ifm-color-content)'}}>
+      { brainAvatar ?
+          <div style={{height:147,width:'118px',display:'flex',flexDirection:'column',backgroundColor:'#fff',borderRadius:'10px',justifyContent:'space-between'}}>
+            <img src={brainAvatar} style={{width: 118, height: '',borderRadius:'10px'}} />
+            <span style={{padding:'10px',color:'#1c1e21'}}>{brain?.name}</span> 
+          </div>
+        : 
+          null 
+      }
     <Flex vertical align="flex-end" justify="space-between" style={{ padding: 12, width: '100%' }}>
       <div style={{ width: '100%'}}>
-        {deviceAvatar.map((img, i) => <img key={i} src={img} style={{width: 32, height: 32, margin: 2}} />)}
+        {deviceAvatar.map((img:any, i) => (
+            <div key={i} style={{height:147,width:'118px',display:'flex',flexDirection:'column',backgroundColor:'#fff',borderRadius:'10px',justifyContent:'space-between'}}>
+              <img src={img.img} style={{width: 118, height: '100px',borderRadius:'10px'}} />
+              <span style={{padding:'10px'}}>{img?.name}</span> 
+            </div>
+          ))
+        }
       </div>
-      <Button
-        type="primary"
-        onClick={handleDownload}
-      >Download</Button>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexDirection: 'row',width:'100%',color: 'var(--ifm-color-content)',marginLeft:'10px'}} >
+        Connected !
+        <div>
+          <Button
+            type="primary"
+            danger
+            style={{marginRight:'10px'}}
+            onClick={()=>(window as any).bus.disconnect()}
+          >
+            disconnect
+          </Button>
+          <Button
+            type="primary"
+            onClick={handleDownload}
+          >
+            🔥 Download Demo
+          </Button>
+        </div>
+      </div>
 
     </Flex>
     </Flex>
@@ -117,7 +146,7 @@ const DisconnectState = () => {
     connectJDBus()
   }
 
-  return <Flex justify="center" align="middle" style={{height: 50}}>
+  return <Flex justify='space-between' align="center"  style={{height: 50,backgroundColor: 'var(--ifm-background-color)',color: 'var(--ifm-color-content)'/*,border: '1px solid var(--ifm-toc-border-color)'*/,borderRadius: '8px',padding:'0 20px'}}>
     No Jacdac bus connected
     <Button style={{margin: 8}} type="primary" onClick={handleConnect}>Connect</Button>
   </Flex>
