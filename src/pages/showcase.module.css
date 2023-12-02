@@ -37,7 +37,7 @@
     overflow-x: hidden;
 }
 .card {
-    /* width: 1180px; */
+    width: 1180px;
     height: 400px;
     display: flex;
     align-items: center;
@@ -46,8 +46,7 @@
 }
 .cardimg {
     width: 400px;
-    height: 400px;
-    background-color:#494949
+    height: 400px
 }
 .cardtext {
     width: 703px;
@@ -162,17 +161,24 @@
 
 }
 .fourthcontainer {
-    background-image: url('../../static/img/fourth-bg.svg');
-    background-size: cover;
     width: 100%;
-    height: 600px;
+    /* height: 600px; */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     color: #fff;
+    background-color: #1b1b1b;
+}
+.fourthcontainer div{
+    text-align: center;
+    margin-bottom: 20px;
+}
+.fourthcontainer div h1{
+    margin-bottom: 20px;
 }
 .fourthcontainer p {
+    margin: 0;
     /* width: 999px; */
     font-size: 28px;
     line-height: 36px;
@@ -193,7 +199,7 @@
 }
 .collapse{
     margin-top: 36px;
-    /* width: 1180px; */
+    width: 1180px;
     /* height: 387px; */
 }
 .collapse :global(.ant-collapse-header){
@@ -213,10 +219,20 @@
     padding: 20px 0 !important;
     background-color: rgb(0 0 0 / 36%);
 }
+.collapse :global(.ant-collapse-item){
+    margin-bottom: 10px;
+}
+.collapse :global(.ant-collapse-item-active){
+    margin-bottom: 20px;
+}
 .collapse :global(.ant-collapse-content-box) p{
     margin: 0;
     font-size: 18px;
     line-height: 36px;
+}
+.collapse :global(.ant-collapse-content-box) {
+    height: auto !important;
+    padding: 20px !important;
 }
 :global(.ant-collapse-header-text){
     color: #fff;
@@ -228,19 +244,21 @@
 .discord{
     background-color: #108CFF !important;
     box-shadow: inset 0px 2px #70BAFF, inset 0px -4px #0F5EA7 !important;
+    width: 144px !important;
 }
 .github {
     background-color: #6A187F !important;
     box-shadow: inset 0px 2px #A327C3, inset 0px -4px #430F50 !important;
+    width: 134px !important;
+    margin-bottom: 64px;
 }
 .link {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Three columns with equal width */
-    gap: 36px;
+    display: flex;
+    
 }
 .discussions {
     font-size: 24px;
     margin: 36px 0;
     height: 29px;
-    font-weight: 600;
+    font-weight: 600
 }
