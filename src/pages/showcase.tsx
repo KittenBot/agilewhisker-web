@@ -35,20 +35,20 @@ const productPng = [
 ]
 const secondPng = [
   {
-    svg: '../../img/funTwo.svg',
-    dec: 'Function two'
+    svg: '../../img/gif_1.gif',
+    dec: 'Drive peripherals and create a sense of atmosphere'
   },
   {
-    svg: '../../img/funOne.svg',
-    dec: 'Function one'
+    svg: '../../img/gif_2.gif',
+    dec: 'Interesting computer interaction, your imagination is unlimited'
   },
   {
-    svg: '../../img/funThree.svg',
-    dec: 'Function three'
+    svg: '../../img/gif_3.gif',
+    dec: 'PC events, such as an email reminder'
   },
   {
-    svg: '../../img/funFour.svg',
-    dec: 'Function four'
+    svg: '../../img/gif_4.gif',
+    dec: 'Home assistant'
   },
 ]
 const thirdPng = [
@@ -123,7 +123,7 @@ const items: CollapseProps['items'] = [
 ];
 
 
-export default function Home(): JSX.Element {
+export default function Showcase(): JSX.Element {
   const videoRef = useRef<any>(null);
   useEffect(() => {
     const video = videoRef.current;
@@ -138,8 +138,29 @@ export default function Home(): JSX.Element {
       console.error("视频加载失败");
     });
   }, []);
+  const scrollDownId = styles.scrollDown
+  useEffect(()=>{
+    const handleScroll = ()=>{
+      const targetDiv = document.getElementById(scrollDownId)
+      if (!targetDiv) return;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      const opacity = 1 - (scrollTop / 100);
+      targetDiv.style.opacity = opacity.toFixed(2);
+    }
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  },[])
   return (
-    <Layout title={`sharecase`} description="">
+    <div>
+      <div id={scrollDownId}>
+        <div className={styles.chevron}/>
+        <div className={styles.chevron}/>
+        <div className={styles.chevron}/>
+        <span id={styles.scrollText}>Scroll down</span>
+      </div>
       <div className={styles.container}>
         <div className={styles.showcase}>
           <video ref={videoRef} className={styles.video} loop muted>
@@ -236,6 +257,7 @@ export default function Home(): JSX.Element {
             }
           </div>
         </div>
+        <div className={styles.lightLine}/>
         <div className={clsx(styles.wrapper)}>
           <div className={styles.secondtitle}>
             <h1>Unleash Your <span>Creativity</span></h1>
@@ -247,19 +269,20 @@ export default function Home(): JSX.Element {
           <div className={clsx(styles.secondpicturegallery)}>
             {
               secondPng.map((item,key) =>(
-                <div>
+                <div className={styles.masks}>
                   <img src={item.svg as any} alt="" />
-                  <p>{item.dec}</p>
+                  <div style={{position:'absolute'}} className={styles.mask}>{item.dec}</div>
                 </div>
               ))
             }
           </div>
         </div>
+        <div className={styles.lightLine}/>
         {
           thirdPng.map((item,index)=>(
-            <div className={styles.wrapper} style={{border:'none'}}>
+            <div className={styles.wrapper} style={{border:'none',paddingTop:index!==0?'0':'120px'}}>
               <div className={styles.card} style={{flexDirection: `${item.position === 'right' ? 'row-reverse' : 'row'}`}}>
-                <div className={styles.cardimg}><img src={item.svg} width={400} height={400} /></div>
+                <div className={styles.cardimg}><img src={item.svg} width={'100%'} height={'100%'} /></div>
                 <div className={styles.cardtext}>
                   <h1 dangerouslySetInnerHTML={{ __html:item.Text.h1 }}/>
                   <p>{item.Text.line}</p>
@@ -268,6 +291,7 @@ export default function Home(): JSX.Element {
             </div>
           ))
         }
+        <div className={styles.lightLine}/>
         <div className={styles.fourthcontainer}>
           <div>
             <h1>Maximize <span>Productivity</span></h1>
@@ -298,6 +322,7 @@ export default function Home(): JSX.Element {
               items={items}
               expandIconPosition={'end'}
               expandIcon={({ isActive }) =>isActive ? closSvg : openSvg }
+              style={{alignItems:'center'}}
             />
           </div>
           <div className={styles.discussions}>
@@ -320,6 +345,6 @@ export default function Home(): JSX.Element {
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }
