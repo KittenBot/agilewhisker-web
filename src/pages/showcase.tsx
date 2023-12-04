@@ -124,20 +124,21 @@ const items: CollapseProps['items'] = [
 
 
 export default function Showcase(): JSX.Element {
-  const videoRef = useRef<any>(null);
-  useEffect(() => {
-    const video = videoRef.current;
-    video.addEventListener("loadeddata", function () {
-      video.play();
-      function render() {
-        requestAnimationFrame(render);
-      }
-      render();
-    });
-    video.addEventListener("error", function () {
-      console.error("视频加载失败");
-    });
-  }, []);
+  // const videoRef = useRef<HTMLVideoElement>(null);
+  // useEffect(() => {
+  //   const video = videoRef.current;
+  //   video.addEventListener("loadeddata", function () {
+  //     console.log('come on');
+  //     video.play();
+  //     function render() {
+  //       requestAnimationFrame(render);
+  //     }
+  //     render();
+  //   });
+  //   video.addEventListener("error", function () {
+  //     console.error("视频加载失败");
+  //   });
+  // }, []);
   const scrollDownId = styles.scrollDown
   useEffect(()=>{
     const handleScroll = ()=>{
@@ -163,7 +164,8 @@ export default function Showcase(): JSX.Element {
       </div>
       <div className={styles.container}>
         <div className={styles.showcase}>
-          <video ref={videoRef} className={styles.video} loop muted>
+          {/* ref={videoRef} */}
+          <video className={styles.video} loop muted preload="auto" autoPlay>
             <source src="../../img/video.mp4" type="video/mp4" />
           </video>
           <div className={styles.showtext}>

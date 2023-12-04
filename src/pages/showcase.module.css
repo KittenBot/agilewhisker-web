@@ -308,6 +308,7 @@
     justify-content: center;
     align-items: center;
     row-gap: 5px;
+    z-index: 100;
 }
 .chevron{
     position: absolute;
