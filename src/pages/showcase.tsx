@@ -30,7 +30,7 @@ const productPng = [
   },
   {
     svg: '../../img/Rectangle95.png',
-    dec: 'Whisker Elite'
+    dec: 'Jacdac Modules'
   }
 ]
 const secondPng = [
@@ -64,7 +64,7 @@ const thirdPng = [
     svg: '../../img/Rectangle92.png',
     Text: {
       h1: 'Programming in TypeScript',
-      line: "Focus on your code development without delving into hardware intricacies."
+      line: "Using TypeScript, you can program and reprogram every aspect of the keyboard's hardware. From custom macros to specific workflow actions, tailor every keystroke to fit your unique needs."
     },
     position: 'right'
   },
@@ -165,7 +165,7 @@ export default function Showcase(): JSX.Element {
       <div className={styles.container}>
         <div className={styles.showcase}>
           {/* ref={videoRef} */}
-          <video className={styles.video} loop muted preload="auto" autoPlay>
+          <video className={styles.video} loop muted preload="auto" autoPlay poster="../../img/screenPic.jpg">
             <source src="../../img/video.mp4" type="video/mp4" />
           </video>
           <div className={styles.showtext}>
@@ -191,7 +191,7 @@ export default function Showcase(): JSX.Element {
           <div className={styles.product}>
             <div>
               <h1>
-                Meet <span>Whisker</span>: A fully customizable{" "}
+                Meet <span>AgileWhisker</span>: A fully customizable{" "}
               </h1>
               <h1> PC Peripheral product </h1>
             </div>
@@ -264,8 +264,8 @@ export default function Showcase(): JSX.Element {
           <div className={styles.secondtitle}>
             <h1>Unleash Your <span>Creativity</span></h1>
             <div className={styles.secondtext}>
-              <p>You can create custom versions of ChatGPT that combine instructions,</p>
-              <p>extra knowledge, and any combination of skills</p>
+              <p>You can experience various interactive experiments in our demo</p>
+              <p>community, or you can customize creations using typescript</p>
             </div>
           </div>
           <div className={clsx(styles.secondpicturegallery)}>
@@ -319,12 +319,12 @@ export default function Showcase(): JSX.Element {
           <div className={styles.collapse}>
             <Collapse 
               defaultActiveKey={['1']} 
+              accordion
               // onChange={onChange}
               ghost 
               items={items}
               expandIconPosition={'end'}
               expandIcon={({ isActive }) =>isActive ? closSvg : openSvg }
-              style={{alignItems:'center'}}
             />
           </div>
           <div className={styles.discussions}>
