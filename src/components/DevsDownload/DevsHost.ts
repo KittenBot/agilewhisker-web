@@ -1,7 +1,7 @@
 import {
     Host,
     resolveBuildConfig,
-  } from "@devicescript/compiler";
+  } from "@kittenbot/devs_compiler";
 
 import extrea_services from './services.json'
 

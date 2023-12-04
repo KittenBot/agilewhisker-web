@@ -6,6 +6,7 @@ import "react-simple-keyboard/build/css/index.css";
 
 import "./keymap.css";
 import { useEffect, useMemo, useRef, useState } from "react";
+import React from "react";
 
 export interface KeyConfig {
   name: string;

@@ -15,9 +15,9 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@devicescript/compiler": "^2.15.19",
     "@docusaurus/core": "3.0.0",
     "@docusaurus/preset-classic": "3.0.0",
+    "@kittenbot/devs_compiler": "^2.15.19",
     "@mdx-js/react": "^3.0.0",
     "antd": "^5.11.1",
     "clsx": "^1.2.1",
