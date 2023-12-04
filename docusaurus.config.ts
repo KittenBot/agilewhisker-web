@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 import renderSkill from './src/remark/render-skill'; 
 
 const config: Config = {
-  title: 'My Site',
+  title: 'AgileWhisker',
   tagline: 'Dinosaurs are cool',
   favicon: 'img/favicon.ico',
 
@@ -59,8 +59,13 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
+    colorMode: {
+      defaultMode: 'dark',
+      disableSwitch: true,
+      respectPrefersColorScheme: false,
+    },
     navbar: {
-      title: 'My Site',
+      title: 'AgileWhisker',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
@@ -126,10 +131,10 @@ const config: Config = {
       ],
       copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
     },
-    prism: {
-      // theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
-    },
+    // prism: {
+    //   theme: prismThemes.github,
+    //   darkTheme: prismThemes.dracula,
+    // },
   } satisfies Preset.ThemeConfig,
 };
 

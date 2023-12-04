@@ -22,11 +22,11 @@ const openSvg = <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmln
 const productPng = [
   {
     svg: '../../img/Rectangle93.png',
-    dec: 'Whisker Elite'
+    dec: 'AgileWhisker Elite'
   },
   {
     svg: '../../img/Rectangle94.png',
-    dec: 'Whisker Keypad-Base'
+    dec: 'AgileWhisker Keypad-Base'
   },
   {
     svg: '../../img/Rectangle95.png',

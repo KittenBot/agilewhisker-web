@@ -141,7 +141,7 @@
     gap: 20px;
 }
 .picturegallery p {
-    font-size: 28px;
+    font-size: 24px;
     margin: 0;
     font-weight: 500;
     line-height: 39px;
@@ -301,7 +301,7 @@
     bottom: 20px;
     left: 50%;
     width: 85px;
-    height: 90px;
+    height: 100px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -349,7 +349,6 @@
   @keyframes move {
     25% {
       opacity: 1;
-  
     }
     33% {
       opacity: 1;
