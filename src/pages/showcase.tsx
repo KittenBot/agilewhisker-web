@@ -93,7 +93,7 @@ Hardware and software, fully open source. We empower users by giving back the ri
 const items: CollapseProps['items'] = [
   {
     key: '1',
-    label: 'What is AgilrWhisker？',
+    label: 'What is AgileWhisker？',
     children: <p>AgileWhisker is set of revolutionary PC peripheral widgets that can be programmed with JavaScript.</p>,
   },
   {

@@ -12,7 +12,8 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "app": "./node_modules/.bin/electron ./hostapp"
   },
   "dependencies": {
     "@docusaurus/core": "3.0.0",
@@ -34,6 +35,10 @@
     "@docusaurus/types": "3.0.0",
     "typescript": "~5.2.2"
   },
+  "workspaces": [
+    "hostapp",
+    "packages/*"
+  ],
   "browserslist": {
     "production": [
       ">0.5%",

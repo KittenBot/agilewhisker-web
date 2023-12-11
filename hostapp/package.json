@@ -1,0 +1,15 @@
+{
+    "name": "agilewhisker-host",
+    "version": "0.0.1",
+    "description": "A jacdac gadget host app for agilewhisker",
+    "main": "main.js",
+    "scripts": {
+        "rebuild": "electron-rebuild"
+    },
+    "dependencies": {
+        "electron": "^13.0.0"
+    },
+    "devDependencies": {
+        "electron-rebuild": "^3.2.3"
+    }
+}

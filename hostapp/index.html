@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Electron</h1>
+        Hello World!
+        <script>
+            const { ipcRenderer } = require('electron')
+            ipcRenderer.on('message', (event, message) => {
+                console.log(message)
+            })
+        </script>
+    </body>
+</html>
