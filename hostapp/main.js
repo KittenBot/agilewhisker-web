@@ -24,9 +24,13 @@ const {
   FRAME_PROCESS_LARGE,
   // transport
   JDBus,
-  createNodeWebSerialTransport
+  createNodeWebSerialTransport,
+  createNodeSocketTransport,
+  // services
+  addServer,
+  addServiceProvider,
 } = require('jacdac-ts')
-const { SerialPort } = require('serialport')
+const { SerialPort } = require('serialport');
 
 const JACDAC_PORT = 8081;
 
@@ -47,12 +51,13 @@ const jdproxy = '<html lang="en"><title>Jacdac DevTools</title><meta name="viewp
 
 async function startJacdacBus() {
   const transports = [
-    await createNodeWebSerialTransport(SerialPort),
+    // await createNodeWebSerialTransport(SerialPort),
+    createNodeSocketTransport()
   ]
   const bus = new JDBus(transports, {
-    client: false,
-    disableRoleManager: true,
-    proxy: true
+    // client: true,
+    // disableRoleManager: true,
+    // proxy: true
   })
 
   bus.passive = false;
@@ -68,8 +73,8 @@ async function startJacdacBus() {
     }
   })
 
-  bus.on(CONNECTION_STATE, async (state) => {
-    console.log("connection state", state)
+  bus.on(CONNECTION_STATE, async (transport) => {
+    console.log("connection state", transport.type, transport.connectionState)
   })
 
   bus.on(FRAME_PROCESS, async (frame) => {
@@ -101,6 +106,16 @@ async function startJacdacBus() {
   await bus.connect()
   
   jdbus = bus;
+
+  // TODO: bind all services to one host device
+  // local services
+  // addServiceProvider(bus, {
+  //   name: "hostapp",
+  //   serviceClasses: [],
+  //   services: () => {
+  //     return []
+  //   }
+  // });
 }
 
 function startHttpServer(){
@@ -159,6 +174,9 @@ function startHttpServer(){
     setTimeout(() => {
       if (server.listening) {
         console.log("Server listening on port", JACDAC_PORT);
+        startJacdacBus();
+      } else {
+        // TODO: start jacdac bus without server
         startJacdacBus();
       }
     }, 1000);
@@ -227,3 +245,22 @@ app.on("ready", () => {
 app.on("window-all-closed", () => {
   app.quit();
 });
+
+ipcMain.on("jd-control", (event, args) => {
+  console.log("message", args);
+  const { command, data } = args;
+  switch (command) {
+    case 'start-service':
+      if (jdbus) {
+        const mqtt = new MQTTServer();
+        addServer(jdbus, 'hostapp', mqtt);
+      }
+      break;
+    
+    default:
+      console.warn("Unknown command", command);
+      break;
+  }
+})
+
+

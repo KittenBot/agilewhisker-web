@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Modal, Switch } from 'antd'
+import { Modal, Switch, Button } from 'antd'
 
 
 function ipcSend(channel: string, ...args: any[]) {
@@ -23,6 +23,9 @@ export default function HostApp() {
     return (<div>
         <h1>Host App</h1>
         <p>Host App</p>
+        <Button onClick={() => {
+            ipcSend('jd-control', {command: 'start-service', data: 'MQTTServer'})
+        }} >Send Message</Button>
     </div>);
 }
 
