@@ -3989,6 +3989,7 @@ __metadata:
   resolution: "agilewhisker-host@workspace:hostapp"
   dependencies:
     electron: ^13.0.0
+    electron-is-dev: ^2.0.0
     electron-rebuild: ^3.2.3
     serialport: ^10.5.0
   languageName: unknown
@@ -6051,6 +6052,13 @@ __metadata:
   version: 1.1.1
   resolution: "ee-first@npm:1.1.1"
   checksum: 1b4cac778d64ce3b582a7e26b218afe07e207a0f9bfe13cc7395a6d307849cfe361e65033c3251e00c27dd060cab43014c2d6b2647676135e18b77d2d05b3f4f
+  languageName: node
+  linkType: hard
+
+"electron-is-dev@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "electron-is-dev@npm:2.0.0"
+  checksum: 7393f46f06153d70a427ea904c60a092e50fbf1015c26c342cebb8324ada8c9e0c0f1f02867af56d9cc76f47be17da8cb311ea6bdc83343e7ebd2323ec4014c8
   languageName: node
   linkType: hard
 

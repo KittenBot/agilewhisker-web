@@ -7,6 +7,7 @@ const {
   MenuItem,
 } = require("electron");
 const path = require("path");
+const isDev = require("electron-is-dev");
 
 let tray = null;
 let mainwin = null;
@@ -20,8 +21,8 @@ function hideApp() {
 
 app.on("ready", () => {
   mainwin = new BrowserWindow({
-    width: 320,
-    height: 240,
+    // width: 320,
+    // height: 240,
     show: false,
     // framed: false,
     fullscreenable: false,
@@ -39,7 +40,12 @@ app.on("ready", () => {
 
   mainwin.setMenu(null);
 
-  mainwin.loadFile("index.html");
+  if (isDev) {
+    mainwin.loadURL('http://localhost:3000/hostapp');
+    mainwin.openDevTools();
+  } else {
+    mainwin.loadFile(path.join(__dirname, "../build/hostapp/index.html"));
+  }
 
   tray = new Tray("./assets/icon-16x16.png");
 
