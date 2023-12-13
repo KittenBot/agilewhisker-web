@@ -11,6 +11,10 @@ const path = require("path");
 const WebSocket = require("faye-websocket")
 const isDev = require("electron-is-dev");
 
+const { PCEvent } = require('./jd_pcevent');
+const { MQTTServer } = require('./jd_mqtt');
+const { PCMonitor } = require('./jd_pcmon');
+
 // for jacdac transport
 const {
   // events
@@ -30,6 +34,7 @@ let tray = null;
 let mainwin = null;
 let server = null;
 let jdbus = null;
+let wsClients = {};
 
 function hideApp() {
   mainwin.hide();
@@ -66,6 +71,34 @@ async function startJacdacBus() {
   bus.on(CONNECTION_STATE, async (state) => {
     console.log("connection state", state)
   })
+
+  bus.on(FRAME_PROCESS, async (frame) => {
+    for (const client_id in wsClients) {
+      if (client_id === frame._jacdac_sender || !frame._jacdac_sender){
+        continue;
+      }
+      const client = wsClients[client_id];
+      if (client) {
+        client.send(Buffer.from(frame));
+      }
+    }
+  })
+
+  bus.on(FRAME_PROCESS_LARGE, async (frame) => {
+    for (const client_id in wsClients) {
+      if (client_id === frame._jacdac_sender || !frame._jacdac_sender){
+        continue;
+      }
+      const client = wsClients[client_id];
+      if (client) {
+        client.send(Buffer.from(frame));
+      }
+    }
+  })
+
+  bus.autoConnect = true;
+  bus.start()
+  await bus.connect()
   
   jdbus = bus;
 }
@@ -98,6 +131,7 @@ function startHttpServer(){
 
         const client = new WebSocket(req, socket, body)
         const client_id = Math.random().toString(36).substring(2, 15)
+        wsClients[client_id] = client;
         console.log("Websocket connection", req.url, remoteAddress, client_id)
 
         client.on('message', (event) => {
@@ -107,13 +141,14 @@ function startHttpServer(){
           } else {
             // forward to jacdac
             const buffer = new Uint8Array(data);
-            data._jacdac_sender = client_id;
+            buffer._jacdac_sender = client_id;
             jdbus.sendFrameAsync(buffer);
           }
         })
 
         client.on('close', () => {
           console.log("Websocket close", req.url, remoteAddress, client_id)
+          delete wsClients[client_id];
         })
       }
     })
