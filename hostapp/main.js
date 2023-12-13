@@ -1,46 +1,73 @@
-const {app, ipcMain, BrowserWindow, Tray} = require('electron')
-const path = require('path')
+const {
+  app,
+  ipcMain,
+  BrowserWindow,
+  Tray,
+  Menu,
+  MenuItem,
+} = require("electron");
+const path = require("path");
 
-let tray = null
-let mainwin = null
+let tray = null;
+let mainwin = null;
 
-app.on('ready', () => {
-    mainwin = new BrowserWindow({
-        width: 320,
-        height: 240,
-        show: false,
-        // framed: false,
-        fullscreenable: false,
-        resizable: false,
-        useContentSize: true,
-        // transparent: true,
-        alwaysOnTop: true,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            backgroundThrottling: false,
-            preload: path.join(__dirname, 'preload.js')
-        }
-    })
+function hideApp() {
+  mainwin.hide();
+  if (process.platform === "darwin") {
+    app.dock.hide();
+  }
+}
 
-    mainwin.setMenu(null)
+app.on("ready", () => {
+  mainwin = new BrowserWindow({
+    width: 320,
+    height: 240,
+    show: false,
+    // framed: false,
+    fullscreenable: false,
+    resizable: false,
+    useContentSize: true,
+    // transparent: true,
+    alwaysOnTop: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      backgroundThrottling: false,
+      preload: path.join(__dirname, "preload.js"),
+    },
+  });
 
-    mainwin.loadFile('index.html')
+  mainwin.setMenu(null);
 
-    tray = new Tray('./assets/icon-16x16.png')
+  mainwin.loadFile("index.html");
 
-    tray.on('click', () => {
-        mainwin.isVisible() ? mainwin.hide() : mainwin.show()
-    })
+  tray = new Tray("./assets/icon-16x16.png");
 
-    mainwin.on('close', (event) => {
-        event.preventDefault()
-        mainwin.hide()
-    })
+  // tray menu
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'Open', click: () => mainWindow.show() },
+    { label: 'Exit', click: () => app.quit() }
+  ]);
 
-    // mainwin.hide()
-})
+  tray.on("click", () => {
+    if (mainwin.isVisible()) {
+      // show context menu
+      tray.popUpContextMenu(contextMenu);
+    } else {
+      mainwin.isVisible() ? mainwin.hide() : mainwin.show();
+    }
+  });
 
-app.on('window-all-closed', () => {
-    app.quit()
-})
+  
+    
+  mainwin.on("close", (event) => {
+    event.preventDefault();
+    hideApp();
+  });
+
+  hideApp();
+});
+
+app.on("window-all-closed", () => {
+  app.quit();
+});
