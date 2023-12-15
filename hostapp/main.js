@@ -254,27 +254,55 @@ app.on("window-all-closed", () => {
   app.quit();
 });
 
-ipcMain.on("jd-control", (event, args) => {
-  console.log("message", args);
-  const { command, data } = args;
-  switch (command) {
-    case 'start-service':
-      if (jdbus) {
-        const mqtt = new MQTTServer();
-        hostServices.push(mqtt);
-        hostdevice.updateServices(hostServices);
-        const services = hostdevice.services();
-        console.log("services", services);
-      }
+ipcMain.handle('get-services', async (event, args) => {
+  const services = [
+    {
+      name: "Ambient",
+      status: false,
+      icon: 'assets/ambient.png'
+    },
+    {
+        name: "Cloud",
+        status: false,
+        icon: 'assets/cloud.png'
+    },
+    {
+        name: "Event",
+        status: false,
+        icon: 'assets/event.png'
+    },
+    {
+        name: "Monitor",
+        status: false,
+        icon: 'assets/monitor.png'
+    }
+  ]
+  return services 
+})
+
+ipcMain.handle('start-service', async (event, args) => {
+  console.log("start service", args);
+  if (!jdbus) {
+    return;
+  }
+  const { name } = args;
+  switch (name) {
+    case 'Ambient':
       break;
-    case 'stop-service':
-      if (jdbus) {
-        const services = hostdevice.services();
-        // hostdevice.removeServices('mqtt');
-      }
+    case 'Cloud':
+      const mqtt = new MQTTServer();
+      hostServices.push(mqtt);
+      hostdevice.updateServices(hostServices);
+      break;
+    case 'Event':
+      break;
+    case 'Monitor':
+      const monitor = new PCMonitor();
+      hostServices.push(monitor);
+      hostdevice.updateServices(hostServices);
       break;
     default:
-      console.warn("Unknown command", command);
+      console.warn("Unknown service", name);
       break;
   }
 })
