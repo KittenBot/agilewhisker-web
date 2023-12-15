@@ -15,6 +15,8 @@ const { PCEvent } = require('./jd_pcevent');
 const { MQTTServer } = require('./jd_mqtt');
 const { PCMonitor } = require('./jd_pcmon');
 
+const extraServices = require('./services.json'); // copy from dev-keyboard/.devicscript/services.json
+
 // for jacdac transport
 const {
   // events
@@ -65,9 +67,10 @@ async function startJacdacBus(hasServer = false) {
     transports.push(createNodeSocketTransport());
   }
   const bus = new JDBus(transports, {
-    // client: true,
-    // disableRoleManager: true,
+    client: true,
+    disableRoleManager: true,
     // proxy: true
+    services: extraServices
   })
 
   bus.passive = false;
@@ -293,6 +296,8 @@ ipcMain.handle('start-service', async (event, name) => {
       hostServices[name] = mqtt;
       break;
     case 'Event':
+      const event = new PCEvent();
+      hostServices[name] = event;
       break;
     case 'Monitor':
       const monitor = new PCMonitor();
