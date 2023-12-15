@@ -10,8 +10,10 @@ class PCEvent extends JDServiceServer {
     CMD_OPEN_APP = 0x81
     CMD_SEND_TXT = 0x82
     CMD_RUN_SCRIPT = 0x83
-    constructor(options={}) {
-        super(SRV_PC_EVENT, options)
+    constructor() {
+        super(SRV_PC_EVENT, {
+            
+        })
 
         this.addCommand(PCEvent.CMD_OPEN_URL, this.handleOpenUrl.bind(this))
         this.addCommand(PCEvent.CMD_OPEN_APP, this.handleOpenApp.bind(this))
