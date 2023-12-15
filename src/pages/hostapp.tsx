@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 import { Card, Col, Row, List, Button } from 'antd'
 
 import ambient_icon from '@site/assets/ambient.png'
@@ -8,24 +9,14 @@ import monitor_icon from '@site/assets/monitor.png'
 
 import styles from './hostapp.module.css';
 
-
-function ipcSend(channel: string, ...args: any[]) {
-    if (typeof window !== 'undefined' && (window as any).electron) {
-        const { ipcRenderer } = (window as any).electron
-        ipcRenderer.send(channel, ...args)
-    }
-}
-
-function ServiceCard(props: { name: string, status: boolean, icon: string }) {
+function ServiceCard(props: { name: string, status: boolean, icon: string, toggle: any }) {
 
     return (<Card
         hoverable
         title={props.name} 
         bordered={false}
         actions={[
-            <Button onClick={() => {
-                ipcSend('jd-control', {command: 'start-service', data: props.name})
-            }}>Start</Button>
+            <Button onClick={props.toggle}>{props.status ? "Stop" : "Start"}</Button>,
         ]}
     >
         <Card.Meta
@@ -39,6 +30,19 @@ function ServiceCard(props: { name: string, status: boolean, icon: string }) {
 export default function HostApp() {
 
     const [services, setServices] = useState([])
+
+    const handleToggleService = async (status: boolean, name: string) => {
+        const { ipcRenderer } = (window as any).electron
+        if (status) {
+            const _nextServices = await ipcRenderer.invoke('stop-service', name)
+            console.log("services", _nextServices)
+            setServices(_nextServices)
+        } else {
+            const _nextServices = await ipcRenderer.invoke('start-service', name)
+            console.log("services", _nextServices)
+            setServices(_nextServices)
+        }
+    }
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -54,19 +58,20 @@ export default function HostApp() {
         }        
     }, [])
 
-    return (<div>
-        <h1>Host App</h1>
+    return (<BrowserOnly>
+    {() => {
+        return (
         <div className={styles.servicelist}>
             <List
                 grid={{ gutter: 16, column: 3 }}
                 dataSource={services}
                 renderItem={item => (
                     <List.Item>
-                        <ServiceCard {...item} />
+                        <ServiceCard {...item} toggle={() => handleToggleService(item.status, item.name)}/>
                     </List.Item>
                 )}
             />
-        </div>
-    </div>);
+        </div>)}}
+    </BrowserOnly>);
 }
 

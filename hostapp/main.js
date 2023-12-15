@@ -40,7 +40,7 @@ let mainwin = null;
 let server = null;
 let jdbus = null;
 let hostdevice = null;
-let hostServices = [];
+let hostServices = {};
 let wsClients = {};
 
 function hideApp() {
@@ -200,7 +200,7 @@ app.on("ready", () => {
     show: false,
     // framed: false,
     fullscreenable: false,
-    resizable: false,
+    // resizable: false,
     useContentSize: true,
     // transparent: true,
     alwaysOnTop: true,
@@ -254,57 +254,64 @@ app.on("window-all-closed", () => {
   app.quit();
 });
 
-ipcMain.handle('get-services', async (event, args) => {
-  const services = [
+function getServices(){
+  return [
     {
       name: "Ambient",
-      status: false,
-      icon: 'assets/ambient.png'
+      status: Object.keys(hostServices).includes("Ambient"),
+      icon: 'img/ambient.png'
     },
     {
         name: "Cloud",
-        status: false,
-        icon: 'assets/cloud.png'
+        status: Object.keys(hostServices).includes("Cloud"),
+        icon: 'img/cloud.png'
     },
     {
         name: "Event",
-        status: false,
-        icon: 'assets/event.png'
+        status: Object.keys(hostServices).includes("Event"),
+        icon: 'img/event.png'
     },
     {
         name: "Monitor",
-        status: false,
-        icon: 'assets/monitor.png'
+        status: Object.keys(hostServices).includes("Monitor"),
+        icon: 'img/monitor.png'
     }
   ]
-  return services 
+}
+
+ipcMain.handle('get-services', async (event, args) => {
+  return getServices() 
 })
 
-ipcMain.handle('start-service', async (event, args) => {
-  console.log("start service", args);
-  if (!jdbus) {
-    return;
-  }
-  const { name } = args;
+ipcMain.handle('start-service', async (event, name) => {
+  console.log("start service", name);
   switch (name) {
     case 'Ambient':
       break;
     case 'Cloud':
       const mqtt = new MQTTServer();
-      hostServices.push(mqtt);
-      hostdevice.updateServices(hostServices);
+      hostServices[name] = mqtt;
       break;
     case 'Event':
       break;
     case 'Monitor':
       const monitor = new PCMonitor();
-      hostServices.push(monitor);
-      hostdevice.updateServices(hostServices);
+      hostServices[name] = monitor;
       break;
     default:
       console.warn("Unknown service", name);
       break;
   }
+  // hostServices to list
+  const _hostServices = []
+  for (const name in hostServices) {
+    _hostServices.push(hostServices[name]);
+  }
+  hostdevice.updateServices(_hostServices);
+  return getServices();
 })
 
+ipcMain.handle('stop-service', async (event, args) => {
 
+  return getServices();
+})

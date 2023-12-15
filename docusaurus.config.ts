@@ -23,7 +23,6 @@ const config: Config = {
   onBrokenMarkdownLinks: 'warn',
 
   staticDirectories: [
-    'assets',
     'static',
   ],
 
