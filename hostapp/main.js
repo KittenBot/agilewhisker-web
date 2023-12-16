@@ -37,6 +37,7 @@ const { SerialPort } = require('serialport');
 
 const JACDAC_PORT = 8081;
 
+let appShouldQuit = false;
 let tray = null;
 let mainwin = null;
 let server = null;
@@ -229,7 +230,10 @@ app.on("ready", () => {
   // tray menu
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Open', click: () => mainWindow.show() },
-    { label: 'Exit', click: () => app.quit() }
+    { label: 'Exit', click: () => {
+      appShouldQuit = true;
+      app.quit() 
+    }}
   ]);
 
   tray.on("click", () => {
@@ -244,8 +248,12 @@ app.on("ready", () => {
   
     
   mainwin.on("close", (event) => {
-    event.preventDefault();
-    hideApp();
+    if (!appShouldQuit) {
+      event.preventDefault();
+      hideApp();
+    } else {
+      server.close();
+    }
   });
 
   hideApp();
