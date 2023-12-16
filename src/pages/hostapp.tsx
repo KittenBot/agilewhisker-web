@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import BrowserOnly from '@docusaurus/BrowserOnly';
 import { Card, Col, Row, List, Button } from 'antd'
 
-import ambient_icon from '@site/assets/ambient.png'
-import cloud_icon from '@site/assets/cloud.png'
-import event_icon from '@site/assets/event.png'
-import monitor_icon from '@site/assets/monitor.png'
-
 import styles from './hostapp.module.css';
+
+declare global {
+    interface Window { 
+        electronAPI: {
+            start_service: (name: string) => Promise<any>,
+            stop_service: (name: string) => Promise<any>,
+            get_services: () => Promise<any>
+        }
+    }
+}
 
 function ServiceCard(props: { name: string, status: boolean, icon: string, toggle: any }) {
 
@@ -32,35 +36,28 @@ export default function HostApp() {
     const [services, setServices] = useState([])
 
     const handleToggleService = async (status: boolean, name: string) => {
-        const { ipcRenderer } = (window as any).electron
+        const { start_service, stop_service } = window.electronAPI
         if (status) {
-            const _nextServices = await ipcRenderer.invoke('stop-service', name)
+            const _nextServices = await stop_service(name)
             console.log("services", _nextServices)
             setServices(_nextServices)
         } else {
-            const _nextServices = await ipcRenderer.invoke('start-service', name)
+            const _nextServices = await start_service(name)
             console.log("services", _nextServices)
             setServices(_nextServices)
         }
     }
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const { ipcRenderer } = (window as any).electron
-            ipcRenderer.on('message', (event: any, message: any) => {
-                console.log("message", message)
-            })
-            // get services from backend
-            ipcRenderer.invoke('get-services').then((services: any) => {
-                console.log("services", services)
-                setServices(services)
-            })
-        }        
+        const { get_services } = window.electronAPI
+        // get services from backend
+        get_services().then((services: any) => {
+            console.log("services", services)
+            setServices(services)
+        })
     }, [])
 
-    return (<BrowserOnly>
-    {() => {
-        return (
+    return (
         <div className={styles.servicelist}>
             <List
                 grid={{ gutter: 16, column: 3 }}
@@ -71,7 +68,6 @@ export default function HostApp() {
                     </List.Item>
                 )}
             />
-        </div>)}}
-    </BrowserOnly>);
+        </div>);
 }
 
