@@ -1,17 +1,18 @@
-endi:
-  name: Endilie Yacop Sucipto
-  title: Maintainer of Docusaurus
-  url: https://github.com/endiliey
-  image_url: https://github.com/endiliey.png
+riven:
+  name: Riven Yang
+  title: Engineer at Kittenbot
+  url: https://github.com/xmeow
+  image_url: https://github.com/xmeow.png
 
-yangshun:
-  name: Yangshun Tay
-  title: Front End Engineer @ Facebook
-  url: https://github.com/yangshun
-  image_url: https://github.com/yangshun.png
+hogan:
+  name: Hogan Li
+  title: Product Manager at Kittenbot
+  url: https://github.com/hogan96
+  image_url: https://github.com/hogan96.png
 
-slorber:
-  name: Sébastien Lorber
-  title: Docusaurus maintainer
-  url: https://sebastienlorber.com
-  image_url: https://github.com/slorber.png
+ccfive:
+  name: Ccfive
+  title: CTO at Kittenbot
+  url: https://github.com/smfox10
+  image_url: https://github.com/smfox10.png
+
