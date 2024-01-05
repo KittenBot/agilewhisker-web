@@ -1,3 +1,7 @@
 {
-    "name": "Encoder Rgb"
+    "name": "Encoder Rgb",
+    "title": "Encoder Rgb",
+    "img": "rgb.svg",
+    "author": "KittenBot",
+    "describe": "This skill use a encoder to control the RGB LED"
 }

@@ -1,2 +1,6 @@
 {
+  "title": "Keyboard Animation",
+  "img": "keyboard.svg",
+  "author": "KittenBot",
+  "describe": "This skill use a extra button to toggle the animation of the keyboard"
 }
