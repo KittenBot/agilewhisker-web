@@ -18,7 +18,7 @@ const flash = async()=>{
 setInterval(async()=>{
   if(isFlashing) return
   let distance = await ultrasonic.reading.read()
-  if(distance<0.30){
+  if(distance<0.75){
     await flash()
   }
 },1000)

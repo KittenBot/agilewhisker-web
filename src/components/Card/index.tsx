@@ -9,10 +9,14 @@ export default function Cards({getSkills}): JSX.Element {
   
   const items = useCurrentSidebarCategory().items
     
-  getSkills&&loading&&getSkills(items).then(allSkills=>{
-    setSkills(allSkills)
-    setLoading(false)
-  })
+  useEffect(() => {
+    if (getSkills && loading) {
+      getSkills(items).then(allSkills => {
+        setSkills(allSkills);
+        setLoading(false);
+      });
+    }
+  }, [getSkills, loading, items])
   
   return (
     <div id={styles.cardsBox}>
