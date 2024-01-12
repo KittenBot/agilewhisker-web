@@ -46,8 +46,7 @@ export const useJacdacStore = create<{
       if (device.hasService(SRV_DEVICE_SCRIPT_MANAGER)){
         const devsService = device.services({serviceClass: SRV_DEVICE_SCRIPT_MANAGER})[0]
         const spec = bus.deviceCatalog.specificationFromProductIdentifier(
-          // device.productIdentifier
-          952937357
+          device.productIdentifier
         );
         const img = deviceCatalogImage(spec, "list")
         set(state => ({ brain: spec, devsService, brainAvatar: img }));
