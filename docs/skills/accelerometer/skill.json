@@ -1,0 +1,7 @@
+{
+  "name": "Accelerometer",
+  "title": "Accelerometer",
+  "img": "rgb.svg",
+  "author": "KittenBot",
+  "describe": "This skill uses the accelerometer and buttons to control mouse movement and clicks respectively."
+}
