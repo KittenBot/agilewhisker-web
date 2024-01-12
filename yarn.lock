@@ -2530,10 +2530,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@kittenbot/devs_compiler@npm:^2.15.19":
-  version: 2.15.20
-  resolution: "@kittenbot/devs_compiler@npm:2.15.20"
-  checksum: cc9cf670ed678582d974b045d4c9db8c632800e02009c42603485174fa8dea907ba1804d2973e330e9425b48b1db2e8f2a60a15eec04c3390727380f8568cb43
+"@kittenbot/devs_compiler@npm:^2.16.1":
+  version: 2.16.1
+  resolution: "@kittenbot/devs_compiler@npm:2.16.1"
+  checksum: cf0f5b069dab30372cbe983b74b8bbb72d5be96026df59dc9f1ee34cb3f3961cc288acc6d31b886be849fb4d9291c17d6406202ac20b242fb1b559879453e94b
   languageName: node
   linkType: hard
 
@@ -3728,7 +3728,7 @@ __metadata:
     "@docusaurus/preset-classic": 3.0.0
     "@docusaurus/tsconfig": 3.0.0
     "@docusaurus/types": 3.0.0
-    "@kittenbot/devs_compiler": ^2.15.19
+    "@kittenbot/devs_compiler": ^2.16.1
     "@mdx-js/react": ^3.0.0
     antd: ^5.11.1
     clsx: ^1.2.1
