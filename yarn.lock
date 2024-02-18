@@ -3732,6 +3732,8 @@ __metadata:
     "@mdx-js/react": ^3.0.0
     antd: ^5.11.1
     clsx: ^1.2.1
+    crypto-js: ^4.2.0
+    esptool-js: ^0.2.1
     jacdac-ts: ^1.33.7
     prism-react-renderer: ^2.1.0
     react: ^18.0.0
@@ -4982,6 +4984,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"crypto-js@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "crypto-js@npm:4.2.0"
+  checksum: f051666dbc077c8324777f44fbd3aaea2986f198fe85092535130d17026c7c2ccf2d23ee5b29b36f7a4a07312db2fae23c9094b644cc35f7858b1b4fcaf27774
+  languageName: node
+  linkType: hard
+
 "crypto-random-string@npm:^4.0.0":
   version: 4.0.0
   resolution: "crypto-random-string@npm:4.0.0"
@@ -5711,6 +5720,16 @@ __metadata:
     esparse: ./bin/esparse.js
     esvalidate: ./bin/esvalidate.js
   checksum: b45bc805a613dbea2835278c306b91aff6173c8d034223fa81498c77dcbce3b2931bf6006db816f62eacd9fd4ea975dfd85a5b7f3c6402cfd050d4ca3c13a628
+  languageName: node
+  linkType: hard
+
+"esptool-js@npm:^0.2.1":
+  version: 0.2.2
+  resolution: "esptool-js@npm:0.2.2"
+  dependencies:
+    pako: ^2.1.0
+    tslib: ^2.4.1
+  checksum: 61b1f0b861c2b028d685d42580ab59a62dc20a4fdb67db5521685004d9fad22a2c3e148bf48fc657d8c9e17f833e5019c43a2ab20c95fa814c8d8d4dd614e897
   languageName: node
   linkType: hard
 
@@ -9264,6 +9283,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pako@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "pako@npm:2.1.0"
+  checksum: 71666548644c9a4d056bcaba849ca6fd7242c6cf1af0646d3346f3079a1c7f4a66ffec6f7369ee0dc88f61926c10d6ab05da3e1fca44b83551839e89edd75a3e
+  languageName: node
+  linkType: hard
+
 "param-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "param-case@npm:3.0.4"
@@ -12228,7 +12254,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.6.0":
+"tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.1, tslib@npm:^2.6.0":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
