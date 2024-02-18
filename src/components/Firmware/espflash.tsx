@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Button, Card, Progress } from "antd";
+import { Button, Card, Progress, message } from "antd";
 import CryptoJS from "crypto-js";
 import { ESPLoader, Transport } from "esptool-js";
 
@@ -157,7 +157,12 @@ const ESPFlashCard = (props: ESPFlashProps) => {
       setIsDownloading(true);
       await espflash.upload();
     } catch (error) {
-      console.error(error);
+      const msg = error.message+'';
+      if (msg.includes("Failed to execute 'requestPort'")) {
+        message.error("No device found");
+      } else {
+        message.error(msg);
+      }
     } finally {
       setIsDownloading(false);
     }
