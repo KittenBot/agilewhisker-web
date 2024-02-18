@@ -1,4 +1,16 @@
-
+import ESPFlashCard from "@site/src/components/Firmware/espflash";
 
 # Grapebit
 
+## Upgrade firmware
+Please connect the board to your computer and click the `Download` button.
+
+
+<ESPFlashCard
+    board="Grapebit"
+    version="1.0.0"
+    config={{
+      vid: 12346,
+      firmware: 'firmwares/grapebit.bin',
+    }}
+/>
