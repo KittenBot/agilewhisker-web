@@ -61,6 +61,15 @@ const config: Config = {
   ],
 
   themeConfig: {
+    algolia: {
+      appId: 'Y669IKU9MN',
+      apiKey: '5dc2399a746af76dec37581be1eddf1f',
+      indexName: 'w-kittenbot',
+      // container: '### REPLACE ME WITH A CONTAINER (e.g. div) ###',
+      contextualSearch: true,
+      searchPagePath: 'search',
+      // debug: false // Set debug to true if you want to inspect the modal
+    },
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     colorMode: {
