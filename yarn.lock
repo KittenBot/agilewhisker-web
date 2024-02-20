@@ -3732,7 +3732,7 @@ __metadata:
     "@mdx-js/react": ^3.0.0
     antd: ^5.11.1
     clsx: ^1.2.1
-    jacdac-ts: ^1.33.6
+    jacdac-ts: ^1.33.7
     prism-react-renderer: ^2.1.0
     react: ^18.0.0
     react-dom: ^18.0.0
@@ -7429,10 +7429,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jacdac-ts@npm:^1.33.6":
-  version: 1.33.6
-  resolution: "jacdac-ts@npm:1.33.6"
-  checksum: ccfe093482c0f70d3e5a57ffc75703832b7d143b5a3bad01d4698aa22a841bef6860c4ac93c36cc6ce3727b105813237441b825e2f5d52c29546a4df3bf520f3
+"jacdac-ts@npm:^1.33.7":
+  version: 1.33.7
+  resolution: "jacdac-ts@npm:1.33.7"
+  checksum: 95d0890572e573c4217bcbbc62b3f44cf210737841a65004e0e3eb9fa618011b793756dd5824388d53f512474485860d114bc011d9793554dddab89e8dcb8139
   languageName: node
   linkType: hard
 
