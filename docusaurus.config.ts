@@ -63,12 +63,10 @@ const config: Config = {
   themeConfig: {
     algolia: {
       appId: 'XDBZ44J9EH',
-      apiKey: '157dbfc3a42d086fa24aef43bd79c4af',
+      apiKey: '3afbce6f67d86e100945c94519cd0ff5',
       indexName: 'w-kittenbot',
-      // container: '### REPLACE ME WITH A CONTAINER (e.g. div) ###',
       contextualSearch: true,
       searchPagePath: 'search',
-      // debug: false // Set debug to true if you want to inspect the modal
     },
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
@@ -95,7 +93,7 @@ const config: Config = {
         {
           href: 'https://github.com/kittenbot/agilewhisker-web',
           label: 'GitHub',
-          position: 'right',
+          position: 'right'
         },
       ],
     },
