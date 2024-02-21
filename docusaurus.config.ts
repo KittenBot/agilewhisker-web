@@ -62,8 +62,8 @@ const config: Config = {
 
   themeConfig: {
     algolia: {
-      appId: 'Y669IKU9MN',
-      apiKey: '5dc2399a746af76dec37581be1eddf1f',
+      appId: 'XDBZ44J9EH',
+      apiKey: '157dbfc3a42d086fa24aef43bd79c4af',
       indexName: 'w-kittenbot',
       // container: '### REPLACE ME WITH A CONTAINER (e.g. div) ###',
       contextualSearch: true,
