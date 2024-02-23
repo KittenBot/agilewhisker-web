@@ -21,6 +21,8 @@
     "@mdx-js/react": "^3.0.0",
     "antd": "^5.11.1",
     "clsx": "^1.2.1",
+    "crypto-js": "^4.2.0",
+    "esptool-js": "^0.2.1",
     "jacdac-ts": "^1.33.7",
     "prism-react-renderer": "^2.1.0",
     "react": "^18.0.0",

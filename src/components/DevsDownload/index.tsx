@@ -150,7 +150,7 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
   </div>)
 }
 
-const DisconnectState = () => {
+export const DisconnectState = () => {
 
   const {connectJDBus} = useJacdacStore()
 
