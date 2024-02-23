@@ -61,6 +61,13 @@ const config: Config = {
   ],
 
   themeConfig: {
+    algolia: {
+      appId: 'XDBZ44J9EH',
+      apiKey: '3afbce6f67d86e100945c94519cd0ff5',
+      indexName: 'w-kittenbot',
+      contextualSearch: true,
+      searchPagePath: 'search',
+    },
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     colorMode: {
@@ -86,7 +93,7 @@ const config: Config = {
         {
           href: 'https://github.com/kittenbot/agilewhisker-web',
           label: 'GitHub',
-          position: 'right',
+          position: 'right'
         },
       ],
     },
