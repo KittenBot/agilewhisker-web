@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Button, Card, Progress, message } from "antd";
-import { useJacdacStore } from "@/store/jacdacStore";
+
+import { DisconnectState } from "../DevsDownload";
+import { useJacdacStore } from "../../store/jacdacStore";
 
 import {
   parseFirmwareFile,
   FirmwareBlob,
-  FirmwareUpdater
+  FirmwareUpdater,
+  PROGRESS,
 } from 'jacdac-ts'
 
 export interface JDFlashCardProps {
@@ -16,7 +19,9 @@ export interface JDFlashCardProps {
 
 const JDFlashCard = (props: JDFlashCardProps) => {
 
-  const {bus} = useJacdacStore()
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const {bus, connected} = useJacdacStore()
   const [firmwareBlob, setBlob] = useState<FirmwareBlob>(null);
 
   useEffect(() => {
@@ -32,9 +37,43 @@ const JDFlashCard = (props: JDFlashCardProps) => {
   }, [props.url]);
 
   const handleUpgrade = async () => {
-    const updater = new FirmwareUpdater(bus, firmwareBlob);
+    const { productIdentifier } = firmwareBlob;
+    // find the device in the bus
+    // TODO: async product id read??
+    let device = bus.devices().find(d => d.productIdentifier === productIdentifier);
+    for (const dev of bus.devices()){
+      if (dev.productIdentifier === productIdentifier){
+        device = dev;
+      }
+    }
+    if (!device) {
+      message.error("Device not found");
+      return;
+    }
+    setIsDownloading(true);
+    const firmwareInfo = device.firmwareInfo;
+    let firmwareUpdater = device.firmwareUpdater;
+    if (!firmwareUpdater) {
+      firmwareUpdater = new FirmwareUpdater(bus, firmwareBlob);
+      device.firmwareUpdater = firmwareUpdater;
+      firmwareUpdater.subscribe(PROGRESS, (v: number) => {
+        setProgress(v*100)
+      });
+    }
+    try {
+      const updateCandidates = [firmwareInfo]
+      await firmwareUpdater.flash(updateCandidates, false)
+    } catch (error) {
+      message.error(error.message);
+    } finally {
+      setIsDownloading(false);
+    }
     
   }
+
+  if (!connected) return(
+    <DisconnectState />
+  );
 
   return (
     <div>
@@ -43,9 +82,13 @@ const JDFlashCard = (props: JDFlashCardProps) => {
         title={firmwareBlob.name}
         description={`Flash uf2 firmware ${firmwareBlob.version} to device`}
       />
-      <Button style={{ margin: 8 }} type="primary" onClick={handleUpgrade}>
-        Download
-      </Button>
+      {isDownloading ? (
+        <Progress percent={progress} status="active" />
+      ) : (
+        <Button style={{ margin: 8 }} type="primary" onClick={handleUpgrade}>
+          Download
+        </Button>
+      )}
     </Card> : <div>
       Reading firmware...
     </div> }
