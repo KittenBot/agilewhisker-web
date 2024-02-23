@@ -5,7 +5,7 @@ Supports cloud connections to upload and download data.
 ```typescript
 import * as ds from "@devicescript/core"
 
-const client = await new ds.CloudAdapter()
+const client = new ds.MQTTClient()
 ```
 
 ---
@@ -19,7 +19,7 @@ Upload a JSON-encoded message to the cloud.
 ```typeScript
 import * as ds from "@devicescript/core"
 
-const mqtt = await new ds.CloudAdapter()
+const mqtt = new ds.MQTTClient()
 
 await mqtt.uploadJson('jacdac','') // topic:string, json:string
 ```
@@ -31,7 +31,7 @@ Upload a binary message to the cloud.
 ```typeScript
 import * as ds from "@devicescript/core"
 
-const mqtt = await new ds.CloudAdapter()
+const mqtt = new ds.MQTTClient()
 
 await mqtt.uploadBinary('jacdac',Uint8Array) // topic:string, bytes:Uint8Array
 
