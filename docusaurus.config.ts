@@ -69,7 +69,7 @@ const config: Config = {
       searchPagePath: 'search',
     },
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/screenPic.jpg',
     colorMode: {
       defaultMode: 'dark',
       disableSwitch: true,
