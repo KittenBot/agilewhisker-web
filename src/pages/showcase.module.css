@@ -86,8 +86,8 @@
     color: #fff
 }
 .card  p{
-    line-height: 36px;
-    font-size: 28px ;
+    line-height: 2rem;
+    font-size: 18px ;
     margin: 20px 0 0;
     font-weight: 400;
 }
@@ -144,7 +144,7 @@
     font-size: 24px;
     margin: 0;
     font-weight: 500;
-    line-height: 39px;
+    line-height: 2rem;
     text-align: center;
 }
 .boxheight {
@@ -166,10 +166,11 @@
 }
 .secondtext p {
     margin: 0;
-    line-height: 36px;
+    line-height: 2rem;
+    font-size: 18px;
 }
 .secondpicturegallery {
-    width: 1180px;
+    width: 1180px; 
     height: 731px;
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Three columns with equal width */
@@ -214,8 +215,8 @@
 .fourthcontainer p {
     margin: 0;
     /* width: 999px; */
-    font-size: 28px;
-    line-height: 36px;
+    font-size: 18px;
+    line-height: 2rem;
     font-weight: 400;
     text-align: center;
 }
@@ -262,7 +263,7 @@
 .collapse :global(.ant-collapse-content-box) p{
     margin: 0;
     font-size: 18px;
-    line-height: 36px;
+    line-height: 2rem;
 }
 .collapse :global(.ant-collapse-content-box) {
     height: auto !important;
@@ -308,6 +309,7 @@
     align-items: center;
     row-gap: 5px;
     z-index: 100;
+    transform: translateX(-50%);
 }
 .chevron{
     position: absolute;
@@ -393,7 +395,143 @@
     }
 }
 
-@media (max-width: 1280px) {
+@media only screen and (max-width: 600px) {
+    .video {
+        width: 100%;
+        height:auto;
+    }
+    .showcase {
+        height: auto;
+    }
+    .container h1{
+        font-size: 30px;
+        white-space: break-spaces;
+        text-align: center;
+    }
+    .showtext {
+        padding: 10px;
+        position: static;
+        transform: translate(0,0);
+        height: auto;
+        background: none;
+
+    }
+    .showtext p {
+        font-size: 20px;
+    }
+    .picturegallery {
+        width: 100%;
+        justify-items: center;
+        padding: 0 20px;
+        height: auto;
+    }
+    .picturegallery{
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .secondpicturegallery {
+        width: 100%;
+        height: auto;
+        grid-template-columns: repeat(1, 1fr);
+        padding: 0 30px;
+    }
+    .secondtext {
+        width: 100%;
+        font-size: 20px;
+    }
+    .secondtext p {
+        font-size: 18px;
+        line-height: 25px ;
+    }
+    .card {
+        width: 100%;
+        flex-wrap: wrap;
+        flex-direction: column-reverse !important;
+        height: auto;
+        padding: 0 20px;
+    }
+    
+    .cardtext h1 {
+       font-size: 20px;
+    }
+    .container h1 {
+        font-weight: 400;
+    }
+    .cardimg {
+        width: 100%;
+        height: auto;
+    }
+    .card  p{
+        font-weight: 400;
+        font-size: 16px;
+        text-align: center;
+    }
+    .cardtext {
+        height: auto;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    .fourthcontainer {
+        padding: 0 10px;
+    }
+    .fourthcontainer p {
+        font-size: 18px;
+    }
+    .fourthcontainer img {
+       max-width: calc(100% + 20px);
+    }
+    .mask {
+        font-size: 18px;
+    }
+    .wrapper{
+        padding: 40px 20px;
+    }
+    .collapse {
+        width: 100%;
+    }
+    .collapse :global(.ant-collapse-header-text){
+        font-size: 16px;
+        line-height: 24px !important;
+    }
+    .collapse :global(.ant-collapse-header){
+        padding: 0 16px !important;
+        align-items: center !important;
+    }
+    .collapse :global(.ant-collapse-content-box) p {
+        font-size: 16px;
+        padding: 0 !important;
+        background-color: rgb(0 0 0 / 36%);
+    }
+    .collapse :global(.ant-collapse-content-box) ul{
+        font-size: 16px !important;
+    }
+
+    .collapse :global(.ant-collapse-content-box) p {
+        width: 100%;
+        line-height: 24px;
+        font-size: 16px;
+        padding:  0  20px;
+        background-color: rgb(0 0 0 / 36%);
+    }
+    .discussions {
+        font-size: 18px;
+    }
+    .container button {
+        font-size: 18px;
+        font-weight: 600;
+    }
+}
+
+@media  (min-width: 601px) and (max-width: 800px){
+    .cardimg{
+        width: 300px;
+        height: 300px;
+    }
+    .card {
+        align-items: flex-start
+    }
+}
+
+@media  (min-width: 601px) and (max-width: 1204px) {
     .showtext,.showcase,.video{
         height: 600px;
     }
@@ -403,19 +541,66 @@
         justify-content: space-around;
     }
     .cardimg {
-        width: 300px;
-        height: 300px
+        /* width: 100%; */
+        height: auto;
+    }
+    .cardimg img {
+        width: auto;
+    }
+    .cardimg[data-status="right"] {
+        margin-left: 20px;
+    }
+    .cardimg[data-status="left"]{
+        margin-right: 20px;
     }
     .cardtext {
         max-width: 50vw;
     }
     .container h1 {
         font-weight: 400;
+        white-space: normal;
     }
     .card  p{
-        font-weight: 300;
+        font-weight: 400;
     }
     .collapse{
         width: 100vw;
+    }
+    .secondpicturegallery {
+        width: 100%;
+        height: auto;
+        padding: 0 10px;
+    }
+    .picturegallery {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+    }
+    .container h1 {
+        font-size: 28px;
+    }
+    .collapse :global(.ant-collapse-header-text){
+        font-size: 16px;
+        line-height: 24px !important;
+    }
+    .collapse :global(.ant-collapse-header){
+        padding: 0 16px !important;
+        align-items: center !important;
+    }
+    .collapse :global(.ant-collapse-content-box) p {
+        font-size: 16px;
+        padding: 0 !important;
+        background-color: rgb(0 0 0 / 36%);
+    }
+    .collapse :global(.ant-collapse-content-box) ul{
+        font-size: 16px !important;
+    }
+
+    .collapse :global(.ant-collapse-content-box) p {
+        width: 100%;
+        line-height: 24px;
+        font-size: 16px;
+        padding:  0  20px;
+        background-color: rgb(0 0 0 / 36%);
     }
 }
