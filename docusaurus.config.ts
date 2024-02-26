@@ -68,7 +68,7 @@ const config: Config = {
       contextualSearch: false,
     },
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/screenPic.jpg',
     colorMode: {
       defaultMode: 'dark',
       disableSwitch: true,
@@ -89,6 +89,11 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         // {to: '/showcase',label: 'Showcase',position:'left' },
+        {
+          href: 'https://www.crowdsupply.com/kittenbot/agilewhisker-keyboard',
+          label: 'CrowdSupply',
+          position: 'right'
+        },
         {
           href: 'https://github.com/kittenbot/agilewhisker-web',
           label: 'GitHub',
@@ -112,12 +117,8 @@ const config: Config = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
               label: 'Discord',
-              href: 'https://discord.gg/9vUbF3za',
+              href: 'https://discord.gg/QSFZknE8',
             },
             {
               label: 'Twitter',
