@@ -1,4 +1,4 @@
-import {themes as prismThemes} from 'prism-react-renderer';
+// import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import renderSkill from './src/remark/render-skill'; 
@@ -62,11 +62,10 @@ const config: Config = {
 
   themeConfig: {
     algolia: {
-      appId: 'XDBZ44J9EH',
       apiKey: '3afbce6f67d86e100945c94519cd0ff5',
       indexName: 'w-kittenbot',
-      contextualSearch: true,
-      searchPagePath: 'search',
+      appId: 'XDBZ44J9EH',
+      contextualSearch: false,
     },
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
