@@ -91,6 +91,11 @@ const config: Config = {
         {to: '/blog', label: 'Blog', position: 'left'},
         // {to: '/showcase',label: 'Showcase',position:'left' },
         {
+          href: 'https://www.crowdsupply.com/kittenbot/agilewhisker-keyboard',
+          label: 'CrowdSupply',
+          position: 'right'
+        },
+        {
           href: 'https://github.com/kittenbot/agilewhisker-web',
           label: 'GitHub',
           position: 'right'
@@ -113,12 +118,8 @@ const config: Config = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
               label: 'Discord',
-              href: 'https://discord.gg/9vUbF3za',
+              href: 'https://discord.gg/QSFZknE8',
             },
             {
               label: 'Twitter',
