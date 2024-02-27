@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Button, Card, Progress, message } from "antd";
 import CryptoJS from "crypto-js";
 import { ESPLoader, Transport } from "esptool-js";
+import styles from '../HomepageFeatures/styles.module.css'
 
 const blob2BinaryString = ( blob: Blob ) => {
   return new Promise( ( resolve, reject ) => {
@@ -169,18 +170,19 @@ const ESPFlashCard = (props: ESPFlashProps) => {
     
   };
   return (
-    <Card hoverable>
+    <Card hoverable className={styles.card} style={{background:'none',border: '1px solid var(--ifm-color-emphasis-300)'}}>
       <Card.Meta
+        className={styles.cardmeta}
         title={props.board}
         description={`Flash esp32 firmware ${props.version} to device`}
       />
-      {isDownloading ? (
-        <Progress percent={progress} status="active" />
-      ) : (
-        <Button style={{ margin: 8 }} type="primary" onClick={handleDownload}>
-          Download
-        </Button>
-      )}
+        {isDownloading ? (
+          <Progress percent={progress} status="active" />
+        ) : (
+          <Button style={{ margin: 8 }} type="primary" onClick={handleDownload}>
+            Download
+          </Button>
+        )}
     </Card>
   );
 };

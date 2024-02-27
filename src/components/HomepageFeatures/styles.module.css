@@ -9,3 +9,15 @@
   height: 200px;
   width: 200px;
 }
+.cardmeta :global(.ant-card-meta-detail) div{
+  color: var(--ifm-color-content);
+}
+.card :global(.ant-card-body) {
+  display: flex;
+}
+.card :global(.ant-card-meta){
+  flex: 1;
+}
+.card :global(.ant-btn) {
+  flex: 1;
+}

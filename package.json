@@ -25,8 +25,10 @@
     "esptool-js": "^0.2.1",
     "jacdac-ts": "^1.33.7",
     "prism-react-renderer": "^2.1.0",
+    "prismjs": "^1.29.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-simple-code-editor": "^0.13.1",
     "react-simple-keyboard": "^3.7.40",
     "zustand": "^4.4.6"
   },
