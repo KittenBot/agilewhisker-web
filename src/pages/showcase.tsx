@@ -146,7 +146,7 @@ export default function Showcase(): JSX.Element {
       const targetDiv = document.getElementById(scrollDownId)
       if (!targetDiv) return;
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      
+
       const opacity = 1 - (scrollTop / 100);
       targetDiv.style.opacity = opacity.toFixed(2);
     }
@@ -166,7 +166,7 @@ export default function Showcase(): JSX.Element {
       <div className={styles.container}>
         <div className={styles.showcase}>
           {/* ref={videoRef} */}
-          <video className={styles.video} loop muted preload="auto" autoPlay poster="../../img/screenPic.jpg">
+          <video className={styles.video} loop muted preload="auto" autoPlay playsInline poster="../../img/screenPic.jpg">
             <source src="../../img/video.mp4" type="video/mp4" />
           </video>
           <div className={styles.showtext}>
