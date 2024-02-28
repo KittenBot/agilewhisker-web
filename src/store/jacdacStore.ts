@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import {
   createWebSerialTransport,
+  createUSBTransport,
   createWebSocketTransport,
   deviceCatalogImage,
   JDBus,
@@ -23,7 +24,7 @@ export const useJacdacStore = create<{
   deviceAvatar: string[];
   devsService: JDService;
 
-  connectJDBus: () => Promise<void>;
+  connectJDBus: (usbConnect?:boolean) => Promise<void>;
   refresh: () => Promise<void>;
 
 }>((set, get) => ({
@@ -65,11 +66,11 @@ export const useJacdacStore = create<{
     set(state => ({ deviceAvatar: _nextDeviceAvatar }))
   },
 
-  connectJDBus: async () => {
+  connectJDBus: async (usbConnect?:boolean) => {
     let bus: JDBus = get().bus
     if (!bus) {
       const transports = [
-        createWebSerialTransport(),
+        usbConnect ?  createUSBTransport() :createWebSerialTransport()
         // TODO: add ws server to host app
         // createWebSocketTransport('ws://localhost:8081')
       ];

@@ -72,7 +72,7 @@ const JDFlashCard = (props: JDFlashCardProps) => {
   }
 
   if (!connected) return(
-    <DisconnectState />
+    <DisconnectState usbConnect={true} />
   );
 
   return (

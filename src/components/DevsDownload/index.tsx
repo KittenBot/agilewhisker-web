@@ -159,12 +159,12 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
   </div>)
 }
 
-export const DisconnectState = () => {
+export const DisconnectState = ({ usbConnect }: { usbConnect?: boolean }) => {
 
   const {connectJDBus} = useJacdacStore()
 
   const handleConnect = async () => {
-    connectJDBus()
+    connectJDBus(usbConnect)
   }
 
   return <Flex justify='space-between' align="center"  style={{height: 50,backgroundColor: 'var(--ifm-background-color)',color: 'var(--ifm-color-content)'/*,border: '1px solid var(--ifm-toc-border-color)'*/,borderRadius: '8px',padding:'0 20px'}}>
