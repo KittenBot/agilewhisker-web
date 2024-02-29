@@ -68,16 +68,16 @@ export const useJacdacStore = create<{
 
   connectJDBus: async (usbConnect?:boolean) => {
     let bus: JDBus = get().bus
-    if (!bus) {
+    if (!bus || (usbConnect && bus._transports[0].type === "serial") || (!usbConnect && bus._transports[0].type === 'usb')) {
       const transports = [
         usbConnect ?  createUSBTransport() :createWebSerialTransport()
         // TODO: add ws server to host app
         // createWebSocketTransport('ws://localhost:8081')
       ];
-      bus = new JDBus(transports, {
-        client: false,
-        disableRoleManager: true,
-      });
+        bus = new JDBus(transports, {
+          client: false,
+          disableRoleManager: true,
+        });
       bus.on(DEVICE_CHANGE, async () => {
         await sleep(100)
         get().refresh()
