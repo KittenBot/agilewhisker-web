@@ -30,7 +30,7 @@ function ServiceCard(props: { name: string, status: boolean, icon: string, toggl
     >
         <Card.Meta
             className={styles.cardContainer}
-            avatar={<img className={styles.serviceicon} alt="logo" src={props.icon} />}
+            avatar={<img className={styles.serviceicon} alt="logo" src={`${location.origin}/${props.icon}`} />}
             title={<a>{props.name}</a>}
             description={<span className={styles.description} >{props.status ? "Running" : "Stopped"}</span>}
         />
