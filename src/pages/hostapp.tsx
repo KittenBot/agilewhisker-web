@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row, List, Button, Menu, Layout } from 'antd'
+import { Card, Col, Row, List, Button, Menu, Layout, Switch } from 'antd'
 
 import styles from './hostapp.module.css';
 import MenuItem from 'antd/es/menu/MenuItem';
@@ -18,14 +18,14 @@ declare global {
     }
 }
 
-function ServiceCard(props: { name: string, status: boolean, icon: string, toggle: any }) {
+function ServiceCard(props: { name: string, status: boolean, icon: string, toggle: any,disabled?: boolean}) {
 
     return (<Card
         hoverable
         title={props.name} 
         bordered={false}
         actions={[
-            <Button onClick={props.toggle}>{props.status ? "Stop" : "Start"}</Button>,
+            <Switch checkedChildren="on" unCheckedChildren="off" disabled={props.disabled} checked={props.status} onChange={props.toggle} />
         ]}
     >
         <Card.Meta
