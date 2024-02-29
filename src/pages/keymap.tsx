@@ -109,7 +109,7 @@ const findHidFromCode = (code) => {
   return null
 }
 
-export default function Keymap() {
+export default function Keymap({noNavbar}:{noNavbar?:boolean}) {
   const [keyconfig, setKeyconfig] = useState<KeyConfig[][]>(null)
   const [editing, setEditing] = useState(false)
   const [editingIndex, setEditingIndex] = useState(null) // use rNbN
@@ -202,35 +202,70 @@ export default function Keymap() {
   }, [keymap, keyconfig])
 
   return (
-    <Layout title="Keymap" description="Keymap Config">
-      <div>
-        <h1>Keymap</h1>
-        <Keyboard
-          keyboardRef={(r) => {
-            setKeyboard(r)
-          }}
-          // debug={true}
-          layout={layout}
-          display={display}
-          mergeDisplay={true}
-          syncInstanceInputs={true}
-          physicalKeyboardHighlight={true}
-          onKeyPress={(button, event) => {
-            const ele: any = event.target
-            let index = ele.getAttribute("data-skbtnuid")
-            index = index.replace("default-", "")
-            if (editingIndex) {
-              setEditingIndex(null)
-            } else if (editing) {
-              setEditingIndex(index)
-            }
-          }}
-        />
-        <Switch checkedChildren="edit" onChange={c => setEditing(c)} />
-        <Modal title="Press a key" open={editingIndex} footer={null} onCancel={() => setEditingIndex(null)} maskClosable>
-          <p>Press a key to bind</p>
-        </Modal>
-      </div>
-    </Layout>
+    <>
+    {
+      noNavbar ?
+        <div className="keymap">
+          <h1>Keymap</h1>
+          <Keyboard
+            keyboardRef={(r) => {
+              setKeyboard(r)
+            }}
+            style={{width:'100%'}}
+            // debug={true}
+            layout={layout}
+            display={display}
+            mergeDisplay={true}
+            syncInstanceInputs={true}
+            physicalKeyboardHighlight={true}
+            onKeyPress={(button, event) => {
+              const ele: any = event.target
+              let index = ele.getAttribute("data-skbtnuid")
+              index = index.replace("default-", "")
+              if (editingIndex) {
+                setEditingIndex(null)
+              } else if (editing) {
+                setEditingIndex(index)
+              }
+            }}
+          />
+          <Switch checkedChildren="edit" onChange={c => setEditing(c)} />
+          <Modal title="Press a key" open={editingIndex} footer={null} onCancel={() => setEditingIndex(null)} maskClosable>
+            <p>Press a key to bind</p>
+          </Modal>
+        </div>
+      :
+      <Layout title="Keymap" description="Keymap Config">
+        <div>
+          <h1>Keymap</h1>
+          <Keyboard
+            keyboardRef={(r) => {
+              setKeyboard(r)
+            }}
+            // debug={true}
+            layout={layout}
+            display={display}
+            mergeDisplay={true}
+            syncInstanceInputs={true}
+            physicalKeyboardHighlight={true}
+            onKeyPress={(button, event) => {
+              const ele: any = event.target
+              let index = ele.getAttribute("data-skbtnuid")
+              index = index.replace("default-", "")
+              if (editingIndex) {
+                setEditingIndex(null)
+              } else if (editing) {
+                setEditingIndex(index)
+              }
+            }}
+          />
+          <Switch checkedChildren="edit" onChange={c => setEditing(c)} />
+          <Modal title="Press a key" open={editingIndex} footer={null} onCancel={() => setEditingIndex(null)} maskClosable>
+            <p>Press a key to bind</p>
+          </Modal>
+        </div>
+      </Layout>
+    }
+    </>
   );
 }

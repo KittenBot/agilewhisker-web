@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row, List, Button } from 'antd'
+import { Card, Col, Row, List, Button, Menu, Layout } from 'antd'
 
 import styles from './hostapp.module.css';
+import MenuItem from 'antd/es/menu/MenuItem';
+import type { GetProp, MenuProps } from 'antd';
+import Keymap from './keymap';
+
+const { Header, Sider, Content } = Layout;
 
 declare global {
     interface Window { 
@@ -24,16 +29,36 @@ function ServiceCard(props: { name: string, status: boolean, icon: string, toggl
         ]}
     >
         <Card.Meta
+            className={styles.cardContainer}
             avatar={<img className={styles.serviceicon} alt="logo" src={props.icon} />}
             title={<a>{props.name}</a>}
-            description={props.status ? "Running" : "Stopped"}
+            description={<span className={styles.description} >{props.status ? "Running" : "Stopped"}</span>}
         />
     </Card>)
 }
-
+type MenuTheme = GetProp<MenuProps, 'theme'>;
+type MenuItem = GetProp<MenuProps, 'items'>[number];
+function getItem(
+    label: React.ReactNode,
+    key?: React.Key | null,
+    icon?: React.ReactNode,
+    children?: MenuItem[]
+  ): MenuItem {
+    return {
+      key,
+      icon,
+      children,
+      label,
+    } as MenuItem;
+  }
+const items: MenuItem[] = [
+    getItem('keymaps', '1'),
+    getItem('Services', '2'),
+  ];
 export default function HostApp() {
 
     const [services, setServices] = useState([])
+    const [tabs,setTabs] = useState<any> ('1')
 
     const handleToggleService = async (status: boolean, name: string) => {
         const { start_service, stop_service } = window.electronAPI
@@ -56,18 +81,45 @@ export default function HostApp() {
             setServices(services)
         })
     }, [])
+    const [mode, setMode] = useState<'vertical' | 'inline'>('inline');
+    const [theme, setTheme] = useState<MenuTheme>('light');
 
     return (
-        <div className={styles.servicelist}>
-            <List
-                grid={{ gutter: 16, column: 3 }}
-                dataSource={services}
-                renderItem={item => (
-                    <List.Item>
-                        <ServiceCard {...item} toggle={() => handleToggleService(item.status, item.name)}/>
-                    </List.Item>
-                )}
-            />
-        </div>);
+        <Layout>
+            <Sider style={{ background: '#fff',paddingTop:'10px'}} trigger={null} collapsible collapsed={false}>
+                <Menu
+                    style={{ height: '100%',borderInlineEnd:'none'}}
+                    defaultSelectedKeys={['1']}
+                    defaultOpenKeys={['sub1']}
+                    onClick={(value: any) => {
+                    console.log(value);
+                    setTabs(value.key)
+                    }}
+                    mode={mode}
+                    theme={theme}
+                    items={items}
+                />
+            </Sider>
+            <Layout style={{padding:'20px'}}>
+                {
+                    tabs === '2' &&
+                    <List
+                        grid={{ gutter: 16, column: 3 }}
+                        dataSource={services}
+                        renderItem={item => (
+                            <List.Item>
+                                <ServiceCard {...item} toggle={() => handleToggleService(item.status, item.name)}/>
+                            </List.Item>
+                        )}
+                    />
+                }
+                {
+                    tabs === '1' && 
+                    <Keymap noNavbar={true} />
+                }
+            </Layout>
+        {/* </div> */}
+        </Layout>
+    );
 }
 
