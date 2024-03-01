@@ -36,7 +36,7 @@ const DevsDownloadCard = ({config}) => {
 };
 
 const ConnectedState = ({skill}: {skill: Skill}) => {
-  const { brainAvatar, devsService, deviceAvatar, brain} = useJacdacStore()
+  const { brainAvatar, devsService, deviceAvatar, brain, bus} = useJacdacStore()
 
   const [ downloadErr, setDownloadErr ] = useState('')
   const [ downloadProgress, setDownloadProgress ] = useState(0)
@@ -130,7 +130,7 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
             type="primary"
             danger
             style={{marginRight:'10px'}}
-            onClick={()=>(window as any).bus.disconnect()}
+            onClick={()=> bus.disconnect()}
           >
             disconnect
           </Button>

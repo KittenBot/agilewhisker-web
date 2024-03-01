@@ -101,22 +101,16 @@ export default function HostApp() {
                 />
             </Sider>
             <Layout style={{padding:'20px'}}>
-                {
-                    tabs === '2' &&
-                    <List
-                        grid={{ gutter: 16, column: 3 }}
-                        dataSource={services}
-                        renderItem={item => (
-                            <List.Item>
-                                <ServiceCard {...item} toggle={() => handleToggleService(item.status, item.name)}/>
-                            </List.Item>
-                        )}
-                    />
-                }
-                {
-                    tabs === '1' && 
-                    <Keymap noNavbar={true} />
-                }
+                tabs === '2' &&
+                <List
+                    grid={{ gutter: 16, column: 3 }}
+                    dataSource={services}
+                    renderItem={item => (
+                        <List.Item>
+                            <ServiceCard {...item} toggle={() => handleToggleService(item.status, item.name)}/>
+                        </List.Item>
+                    )}
+                />
             </Layout>
         {/* </div> */}
         </Layout>
