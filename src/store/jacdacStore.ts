@@ -20,7 +20,7 @@ export const useJacdacStore = create<{
   bus: JDBus;
   connected: boolean;
   device: JDDevice;
-  brain: DeviceSpec;
+  spec: DeviceSpec;
   brainAvatar: string
   deviceAvatar: string[];
   devsService: JDService;
@@ -31,7 +31,7 @@ export const useJacdacStore = create<{
 }>((set, get) => ({
   bus: null,
   connected: false,
-  brain: null,
+  spec: null,
   device: null,
   devsService: null,
   brainAvatar: null,
@@ -52,7 +52,7 @@ export const useJacdacStore = create<{
           device.productIdentifier
         );
         const img = deviceCatalogImage(spec, "list")
-        set(state => ({ brain: spec, devsService, brainAvatar: img, device }));
+        set(state => ({ spec, devsService, brainAvatar: img, device }));
       } else {
         let productIdentifier = device.productIdentifier
         while(!productIdentifier){

@@ -23,6 +23,33 @@ export interface KeyConfig {
   index?: string; //rNbN
 }
 
+const numberPad: KeyConfig[][] = [
+  [
+    { name: "{numlock}", hid: 0x59 },
+    { name: "{numpaddivide}", hid: 0x54 },
+    { name: "{numpadmultiply}", hid: 0x55 },
+  ],
+  [
+    { name: "{numpad7}", hid: 0x5F },
+    { name: "{numpad8}", hid: 0x60 },
+    { name: "{numpad9}", hid: 0x61 },
+  ],
+  [
+    { name: "{numpad4}", hid: 0x5C },
+    { name: "{numpad5}", hid: 0x5D },
+    { name: "{numpad6}", hid: 0x5E },
+  ],
+  [
+    { name: "{numpad1}", hid: 0x59 },
+    { name: "{numpad2}", hid: 0x5A },
+    { name: "{numpad3}", hid: 0x5B },
+  ],
+  [
+    { name: "{numpad0}", hid: 0x62 },
+    { name: "{numpaddecimal}", hid: 0x63 },
+  ]
+]
+
 const defaultKeys: KeyConfig[][] = [
   [
     { name: "{esc}", hid: 0x29 },
@@ -123,7 +150,35 @@ export default function Keymap() {
   const [keymap, setKeymap] = useState({}) // key index to hid
   const [keyboard, setKeyboard] = useState(null);
 
-  const {bus, connected, device} = useJacdacStore()
+  const {spec, connected, device} = useJacdacStore()
+
+  useEffect(() => {
+    const keymap = localStorage.getItem("keymap")
+    if (keymap) {
+      setKeymap(JSON.parse(keymap))
+    }
+    let _keyconfig = defaultKeys
+    if (spec?.productIdentifiers.includes(0x3ae6b1e2)){
+      _keyconfig = numberPad
+    }
+
+    const _config = []
+    let y = 0
+    for (const row of _keyconfig) {
+      const _row = []
+      let x = 0
+      for (const key of row) {
+        _row.push({
+          ...key,
+          index: `r${y}b${x}`
+        })
+        x++
+      }
+      y++
+      _config.push(_row)
+    }
+    setKeyconfig(_config)
+  }, [spec])
 
   useEffect(() => {
     if (device) {
@@ -137,7 +192,7 @@ export default function Keymap() {
     const pkt = Packet.from(0x80, jdpack('s', ['keymap']))
     const ret = await settingService.sendCmdAwaitResponseAsync(pkt)
     const [key, value] = jdunpack<[string, Uint8Array]>(ret.data, 'z b')
-    console.log("keymap", key, value)
+
   }
 
   function handleKey(event) {
@@ -162,29 +217,6 @@ export default function Keymap() {
       setEditingIndex(null)
     }
   }
-
-  useEffect(() => {
-    const keymap = localStorage.getItem("keymap")
-    if (keymap) {
-      setKeymap(JSON.parse(keymap))
-    }
-    const _config = []
-    let y = 0
-    for (const row of defaultKeys) {
-      const _row = []
-      let x = 0
-      for (const key of row) {
-        _row.push({
-          ...key,
-          index: `r${y}b${x}`
-        })
-        x++
-      }
-      y++
-      _config.push(_row)
-    }
-    setKeyconfig(_config)
-  }, [])
 
   useEffect(() => {
     document.addEventListener("keydown", handleKey)
