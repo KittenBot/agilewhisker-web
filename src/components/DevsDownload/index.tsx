@@ -36,7 +36,7 @@ const DevsDownloadCard = ({config}) => {
 };
 
 const ConnectedState = ({skill}: {skill: Skill}) => {
-  const { brainAvatar, devsService, deviceAvatar, brain} = useJacdacStore()
+  const { brainAvatar, devsService, deviceAvatar, spec, bus} = useJacdacStore()
 
   const [ downloadErr, setDownloadErr ] = useState('')
   const [ downloadProgress, setDownloadProgress ] = useState(0)
@@ -108,7 +108,7 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
       { brainAvatar ?
           <div style={{height:147,width:'118px',display:'flex',flexDirection:'column',backgroundColor:'#fff',borderRadius:'10px',justifyContent:'space-between'}}>
             <img src={brainAvatar} style={{width: 118, height: '',borderRadius:'10px'}} />
-            <span style={{padding:'10px',color:'#1c1e21'}}>{brain?.name}</span> 
+            <span style={{padding:'10px',color:'#1c1e21'}}>{spec?.name}</span> 
           </div>
         : 
           null 
@@ -130,7 +130,7 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
             type="primary"
             danger
             style={{marginRight:'10px'}}
-            onClick={()=>(window as any).bus.disconnect()}
+            onClick={()=> bus.disconnect()}
           >
             disconnect
           </Button>

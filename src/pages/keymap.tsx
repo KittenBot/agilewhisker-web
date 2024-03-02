@@ -1,12 +1,19 @@
 import Layout from "@theme/Layout";
-import { Modal, Switch } from 'antd'
+import { Card, Modal, Switch } from 'antd'
 
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
+import { DisconnectState } from "../components/DevsDownload";
+import {
+  jdpack, Packet, jdunpack,
+  JDDevice,
+  SRV_SETTINGS,
+} from 'jacdac-ts'
 
 import "./keymap.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
+import { useJacdacStore } from "../store/jacdacStore";
 
 export interface KeyConfig {
   name: string;
@@ -15,6 +22,33 @@ export interface KeyConfig {
   mapped?: number;
   index?: string; //rNbN
 }
+
+const numberPad: KeyConfig[][] = [
+  [
+    { name: "{numlock}", hid: 0x59 },
+    { name: "{numpaddivide}", hid: 0x54 },
+    { name: "{numpadmultiply}", hid: 0x55 },
+  ],
+  [
+    { name: "{numpad7}", hid: 0x5F },
+    { name: "{numpad8}", hid: 0x60 },
+    { name: "{numpad9}", hid: 0x61 },
+  ],
+  [
+    { name: "{numpad4}", hid: 0x5C },
+    { name: "{numpad5}", hid: 0x5D },
+    { name: "{numpad6}", hid: 0x5E },
+  ],
+  [
+    { name: "{numpad1}", hid: 0x59 },
+    { name: "{numpad2}", hid: 0x5A },
+    { name: "{numpad3}", hid: 0x5B },
+  ],
+  [
+    { name: "{numpad0}", hid: 0x62 },
+    { name: "{numpaddecimal}", hid: 0x63 },
+  ]
+]
 
 const defaultKeys: KeyConfig[][] = [
   [
@@ -109,12 +143,57 @@ const findHidFromCode = (code) => {
   return null
 }
 
-export default function Keymap({noNavbar}:{noNavbar?:boolean}) {
+export default function Keymap() {
   const [keyconfig, setKeyconfig] = useState<KeyConfig[][]>(null)
   const [editing, setEditing] = useState(false)
   const [editingIndex, setEditingIndex] = useState(null) // use rNbN
   const [keymap, setKeymap] = useState({}) // key index to hid
   const [keyboard, setKeyboard] = useState(null);
+
+  const {spec, connected, device} = useJacdacStore()
+
+  useEffect(() => {
+    const keymap = localStorage.getItem("keymap")
+    if (keymap) {
+      setKeymap(JSON.parse(keymap))
+    }
+    let _keyconfig = defaultKeys
+    if (spec?.productIdentifiers.includes(0x3ae6b1e2)){
+      _keyconfig = numberPad
+    }
+
+    const _config = []
+    let y = 0
+    for (const row of _keyconfig) {
+      const _row = []
+      let x = 0
+      for (const key of row) {
+        _row.push({
+          ...key,
+          index: `r${y}b${x}`
+        })
+        x++
+      }
+      y++
+      _config.push(_row)
+    }
+    setKeyconfig(_config)
+  }, [spec])
+
+  useEffect(() => {
+    if (device) {
+      readKeymap(device)
+    }
+
+  }, [device])
+
+  async function readKeymap(device: JDDevice) {
+    const settingService = device.services({serviceClass: SRV_SETTINGS})[0]
+    const pkt = Packet.from(0x80, jdpack('s', ['keymap']))
+    const ret = await settingService.sendCmdAwaitResponseAsync(pkt)
+    const [key, value] = jdunpack<[string, Uint8Array]>(ret.data, 'z b')
+
+  }
 
   function handleKey(event) {
     if (editing && editingIndex) {
@@ -138,29 +217,6 @@ export default function Keymap({noNavbar}:{noNavbar?:boolean}) {
       setEditingIndex(null)
     }
   }
-
-  useEffect(() => {
-    const keymap = localStorage.getItem("keymap")
-    if (keymap) {
-      setKeymap(JSON.parse(keymap))
-    }
-    const _config = []
-    let y = 0
-    for (const row of defaultKeys) {
-      const _row = []
-      let x = 0
-      for (const key of row) {
-        _row.push({
-          ...key,
-          index: `r${y}b${x}`
-        })
-        x++
-      }
-      y++
-      _config.push(_row)
-    }
-    setKeyconfig(_config)
-  }, [])
 
   useEffect(() => {
     document.addEventListener("keydown", handleKey)
@@ -202,42 +258,11 @@ export default function Keymap({noNavbar}:{noNavbar?:boolean}) {
   }, [keymap, keyconfig])
 
   return (
-    <>
-    {
-      noNavbar ?
-        <div className="keymap">
-          <h1>Keymap</h1>
-          <Keyboard
-            keyboardRef={(r) => {
-              setKeyboard(r)
-            }}
-            style={{width:'100%'}}
-            // debug={true}
-            layout={layout}
-            display={display}
-            mergeDisplay={true}
-            syncInstanceInputs={true}
-            physicalKeyboardHighlight={true}
-            onKeyPress={(button, event) => {
-              const ele: any = event.target
-              let index = ele.getAttribute("data-skbtnuid")
-              index = index.replace("default-", "")
-              if (editingIndex) {
-                setEditingIndex(null)
-              } else if (editing) {
-                setEditingIndex(index)
-              }
-            }}
-          />
-          <Switch checkedChildren="edit" onChange={c => setEditing(c)} />
-          <Modal title="Press a key" open={editingIndex} footer={null} onCancel={() => setEditingIndex(null)} maskClosable>
-            <p>Press a key to bind</p>
-          </Modal>
-        </div>
-      :
+    <>     
       <Layout title="Keymap" description="Keymap Config">
         <div>
           <h1>Keymap</h1>
+          {connected ? null : <DisconnectState />}
           <Keyboard
             keyboardRef={(r) => {
               setKeyboard(r)
@@ -265,7 +290,6 @@ export default function Keymap({noNavbar}:{noNavbar?:boolean}) {
           </Modal>
         </div>
       </Layout>
-    }
     </>
   );
 }

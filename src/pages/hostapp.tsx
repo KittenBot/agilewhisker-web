@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row, List, Button, Menu, Layout } from 'antd'
+import { Card, Col, Row, List, Button, Menu, Layout, Switch } from 'antd'
 
 import styles from './hostapp.module.css';
 import MenuItem from 'antd/es/menu/MenuItem';
@@ -18,19 +18,19 @@ declare global {
     }
 }
 
-function ServiceCard(props: { name: string, status: boolean, icon: string, toggle: any }) {
+function ServiceCard(props: { name: string, status: boolean, icon: string, toggle: any,disabled?: boolean}) {
 
     return (<Card
         hoverable
         title={props.name} 
         bordered={false}
         actions={[
-            <Button onClick={props.toggle}>{props.status ? "Stop" : "Start"}</Button>,
+            <Switch checkedChildren="on" unCheckedChildren="off" disabled={props.disabled} checked={props.status} onChange={props.toggle} />
         ]}
     >
         <Card.Meta
             className={styles.cardContainer}
-            avatar={<img className={styles.serviceicon} alt="logo" src={props.icon} />}
+            avatar={<img className={styles.serviceicon} alt="logo" src={`${location.origin}/${props.icon}`} />}
             title={<a>{props.name}</a>}
             description={<span className={styles.description} >{props.status ? "Running" : "Stopped"}</span>}
         />
@@ -101,22 +101,16 @@ export default function HostApp() {
                 />
             </Sider>
             <Layout style={{padding:'20px'}}>
-                {
-                    tabs === '2' &&
-                    <List
-                        grid={{ gutter: 16, column: 3 }}
-                        dataSource={services}
-                        renderItem={item => (
-                            <List.Item>
-                                <ServiceCard {...item} toggle={() => handleToggleService(item.status, item.name)}/>
-                            </List.Item>
-                        )}
-                    />
-                }
-                {
-                    tabs === '1' && 
-                    <Keymap noNavbar={true} />
-                }
+                tabs === '2' &&
+                <List
+                    grid={{ gutter: 16, column: 3 }}
+                    dataSource={services}
+                    renderItem={item => (
+                        <List.Item>
+                            <ServiceCard {...item} toggle={() => handleToggleService(item.status, item.name)}/>
+                        </List.Item>
+                    )}
+                />
             </Layout>
         {/* </div> */}
         </Layout>

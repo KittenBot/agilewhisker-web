@@ -7,11 +7,11 @@ import {
   JDBus,
   JDDevice,
   JDService,
-
   DeviceSpec,
   Transport,
 
-  DEVICE_ANNOUNCE, DEVICE_CHANGE, CONNECTION_STATE, SRV_DEVICE_SCRIPT_MANAGER
+  DEVICE_ANNOUNCE, DEVICE_CHANGE, CONNECTION_STATE, SRV_DEVICE_SCRIPT_MANAGER,
+  SRV_SETTINGS, Packet
 } from 'jacdac-ts'
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
@@ -19,7 +19,8 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 export const useJacdacStore = create<{
   bus: JDBus;
   connected: boolean;
-  brain: DeviceSpec;
+  device: JDDevice;
+  spec: DeviceSpec;
   brainAvatar: string
   deviceAvatar: string[];
   devsService: JDService;
@@ -30,7 +31,8 @@ export const useJacdacStore = create<{
 }>((set, get) => ({
   bus: null,
   connected: false,
-  brain: null,
+  spec: null,
+  device: null,
   devsService: null,
   brainAvatar: null,
   deviceAvatar: [],
@@ -50,7 +52,7 @@ export const useJacdacStore = create<{
           device.productIdentifier
         );
         const img = deviceCatalogImage(spec, "list")
-        set(state => ({ brain: spec, devsService, brainAvatar: img }));
+        set(state => ({ spec, devsService, brainAvatar: img, device }));
       } else {
         let productIdentifier = device.productIdentifier
         while(!productIdentifier){
@@ -91,6 +93,7 @@ export const useJacdacStore = create<{
           set(state => ({ connected: false }));
         }
       });
+      // for debug only
       (window as any).bus = bus
     }
 
