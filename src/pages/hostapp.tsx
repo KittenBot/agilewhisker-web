@@ -52,8 +52,7 @@ function getItem(
     } as MenuItem;
   }
 const items: MenuItem[] = [
-    getItem('keymaps', '1'),
-    getItem('Services', '2'),
+    getItem('Services', '1'),
   ];
 export default function HostApp() {
 
@@ -101,7 +100,6 @@ export default function HostApp() {
                 />
             </Sider>
             <Layout style={{padding:'20px'}}>
-                tabs === '2' &&
                 <List
                     grid={{ gutter: 16, column: 3 }}
                     dataSource={services}
