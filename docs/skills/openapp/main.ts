@@ -11,7 +11,7 @@ const slider = new ds.Potentiometer()
 const mouse = startHidMouse({})
 
 btn.down.subscribe(async () => {
-    await cd.openUrl("$URL")
+    await cd.startApp("$APP")
 })
 
 while(1){

@@ -10,7 +10,7 @@ import {
   DeviceSpec,
   Transport,
 
-  DEVICE_ANNOUNCE, DEVICE_CHANGE, CONNECTION_STATE, SRV_DEVICE_SCRIPT_MANAGER,
+  DEVICE_ANNOUNCE, DEVICE_CHANGE, CONNECTION_STATE, SRV_DEVICE_SCRIPT_MANAGER,SRV_ROLE_MANAGER,
   SRV_SETTINGS, Packet
 } from 'jacdac-ts'
 
@@ -61,6 +61,7 @@ export const useJacdacStore = create<{
         }
         const spec = bus.deviceCatalog.specificationFromProductIdentifier(device.productIdentifier)
         console.log("spec", device.productIdentifier, spec)
+        if (!spec) continue
         const img = deviceCatalogImage(spec, "list")
         _nextDeviceAvatar.push({img,name:spec.name})
       }
@@ -72,9 +73,8 @@ export const useJacdacStore = create<{
     let bus: JDBus = get().bus
     if (!bus || (usbConnect && bus._transports[0].type === "serial") || (!usbConnect && bus._transports[0].type === 'usb')) {
       const transports = [
-        usbConnect ?  createUSBTransport() :createWebSerialTransport()
-        // TODO: add ws server to host app
-        // createWebSocketTransport('ws://localhost:8081')
+        usbConnect ?  createUSBTransport() :createWebSerialTransport(),
+        createWebSocketTransport('ws://localhost:8081')
       ];
         bus = new JDBus(transports, {
           client: false,

@@ -110,7 +110,6 @@ export default function HostApp() {
                     )}
                 />
             </Layout>
-        {/* </div> */}
         </Layout>
     );
 }
