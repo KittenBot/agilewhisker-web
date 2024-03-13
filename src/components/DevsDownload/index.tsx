@@ -104,25 +104,26 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
 
 
   return (<div style={{flex: 1, flexDirection: 'column',backgroundColor: 'var(--ifm-background-color)'}}>
-    <Flex justify="space-between" style={{flexDirection:'column-reverse',padding:'0 16px 16px',color: 'var(--ifm-color-content)'}}>
-      { brainAvatar ?
-          <div style={{height:147,width:'118px',display:'flex',flexDirection:'column',backgroundColor:'#fff',borderRadius:'10px',justifyContent:'space-between'}}>
-            <img src={brainAvatar} style={{width: 118, height: '',borderRadius:'10px'}} />
-            <span style={{padding:'10px',color:'#1c1e21'}}>{spec?.name}</span> 
-          </div>
-        : 
-          null 
-      }
-    <Flex vertical align="flex-end" justify="space-between" style={{ padding: 12, width: '100%' }}>
-      <div style={{ width: '100%'}}>
+    <Flex justify="space-between" style={{padding:'0 16px 16px',color: 'var(--ifm-color-content)'}}>
+      <div style={{ width: '100%', display: 'flex'}}>
         {deviceAvatar.map((img:any, i) => (
-            <div key={i} style={{height:147,width:'118px',display:'flex',flexDirection:'column',backgroundColor:'#fff',borderRadius:'10px',justifyContent:'space-between'}}>
+            <div key={i} style={{height:147,width:'118px',display:'flex',flexDirection:'column',backgroundColor:'#fff',borderRadius:'10px',justifyContent:'space-between', margin: 5}}>
               <img src={img.img} style={{width: 118, height: '100px',borderRadius:'10px'}} />
               <span style={{padding:'10px'}}>{img?.name}</span> 
             </div>
           ))
         }
       </div>
+      { brainAvatar ?
+          <div style={{height:147,width:250,display:'flex',flexDirection:'column',backgroundColor:'#fff',borderRadius:'10px',justifyContent:'space-between', margin: 5}}>
+            <img src={brainAvatar} style={{width: 118, height: '',borderRadius:'10px'}} />
+            <span style={{padding:'10px',color:'#1c1e21'}}>{spec?.name}</span> 
+          </div>
+        : 
+          null 
+      }
+    </Flex>
+    <Flex vertical align="flex-end" justify="space-between" style={{ padding: 12, width: '100%' }}>
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexDirection: 'row',width:'100%',color: 'var(--ifm-color-content)',marginLeft:'10px'}} >
         Connected !
         <div>
@@ -142,8 +143,6 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
           </Button>
         </div>
       </div>
-
-    </Flex>
     </Flex>
     { skill.params && (
       <ParamsInput params={params} onChange={(key, value) => {
