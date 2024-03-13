@@ -1,9 +1,9 @@
 {
     "params": {
-        "URL": "https://microsoft.github.io/jacdac-docs/clients/makecode/"
+        "APP": "/Applications/Notion.app"
     },
-    "title": "PC Event",
+    "title": "Open APP",
     "img": "pc.svg",
     "author": "KittenBot",
-    "describe": "This skill trigger pc events when a button is pressed"
+    "describe": "This skill will start an application on the computer."
 }

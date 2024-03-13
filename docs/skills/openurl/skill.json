@@ -2,8 +2,8 @@
     "params": {
         "URL": "https://microsoft.github.io/jacdac-docs/clients/makecode/"
     },
-    "title": "PC Event",
+    "title": "Open URL",
     "img": "pc.svg",
     "author": "KittenBot",
-    "describe": "This skill trigger pc events when a button is pressed"
+    "describe": "This skill open a URL in the browser."
 }
