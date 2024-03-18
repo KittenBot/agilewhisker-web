@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
-import { Card, Modal, Switch, Alert } from 'antd'
+import { Button, Card, Dropdown, Modal, Switch, Alert, Space } from 'antd'
 
 import Keyboard from "react-simple-keyboard";
 
@@ -100,6 +100,7 @@ export default function Elite60(props: { keymap: number[], update: (index: numbe
 
   const [editingIndex, setEditingIndex] = useState(null)
   const [targetIndex, setTargetIndex] = useState(null)
+  const [showAllkeys, setShowAllkeys] = useState(false)
 
   const [isEditing, setEditing] = useState(false)
 
@@ -184,17 +185,27 @@ export default function Elite60(props: { keymap: number[], update: (index: numbe
     }
   }
 
-  const rebuildKeymap = (map, src, dest) => {
-    const _next = [...map]
-    _next[src.row*14+src.col] = dest.hid
-    return _next
-  }
+  const allkeyMenu = useMemo(() => {
+    const menu = []
+    for (const row of elite60) {
+      for (const key of row) {
+        menu.push({
+          label: key.name,  
+        })
+      }
+    }
+    return menu
+  }, [elite60])
 
   return (
     <Card
       style={{ margin: 16}}
     >
-    {editingIndex ? <Alert message="Press a key to bind" type="info" showIcon banner closable onClose={() => setEditingIndex(null)}/> : null}
+    {editingIndex ? <Alert message={`Press a key to bind to ${editingIndex.name}@${editingIndex.row}-${editingIndex.col}`} type="info" showIcon banner closable onClose={() => setEditingIndex(null)} action={
+      <Button size="small" danger onClick={() => setShowAllkeys(true)}>
+        All Keys
+      </Button>
+    }/> : null}
     <Keyboard
       keyboardRef={(r) => {
         setKeyboard(r)
@@ -221,6 +232,19 @@ export default function Elite60(props: { keymap: number[], update: (index: numbe
       setTargetIndex(null)
     }}>
       <p>Remap: {editingIndex?.name} to {targetIndex?.name} ?</p>
+    </Modal>
+    <Modal title="All Key mapping" open={showAllkeys} onOk={() => {
+
+    }} onCancel={() => {
+      setShowAllkeys(false)
+    }}>
+        <Dropdown menu={{items: allkeyMenu}} trigger={['click']}>
+          <a onClick={(e) => e.preventDefault()}>
+            <Space>
+              Select a key
+            </Space>
+          </a>
+        </Dropdown>
     </Modal>
     </Card>
   )
