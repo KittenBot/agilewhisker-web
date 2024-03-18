@@ -1,0 +1,38 @@
+
+.numPad {
+  display: flex;
+  align-items: flex-end;
+}
+
+.simple-keyboard-numpad.simple-keyboard {
+  width: 160px;
+  border-radius: 0;
+}
+
+.simple-keyboard-numpad.simple-keyboard .hg-button {
+  width: 50px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.simple-keyboard-numpadEnd.simple-keyboard {
+  width: 50px;
+  margin: 0;
+  padding: 5px 5px 5px 0;
+  border-radius: 0;
+}
+
+.simple-keyboard-numpadEnd.simple-keyboard .hg-button {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.simple-keyboard-numpadEnd .hg-button.hg-standardBtn.hg-button-plus {
+  height: 85px;
+}
+
+.simple-keyboard-numpadEnd.simple-keyboard .hg-button.hg-button-enter {
+  height: 85px;
+}
