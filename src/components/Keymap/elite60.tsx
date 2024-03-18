@@ -11,7 +11,7 @@ export interface KeyConfig {
   index?: string; //rNbN
 }
 
-
+// this is the default keymap for the elite60
 const elite60: KeyConfig[][] = [
   [
     { name: "{esc}", hid: 0x29 },
@@ -27,7 +27,7 @@ const elite60: KeyConfig[][] = [
     { name: "0", hid: 0x27 },
     { name: "-", hid: 0x2D },
     { name: "=", hid: 0x2E },
-    { name: "{backspace}", hid: 0x4C, label: "⌫" },
+    { name: "{backspace}", hid: 0x2A, label: "⌫" },
     { name: "{encoder}", hid: 0x58, label: "⭕" },
   ],
   [
@@ -44,7 +44,7 @@ const elite60: KeyConfig[][] = [
     { name: "p", hid: 0x13 },
     { name: "[", hid: 0x2F },
     { name: "]", hid: 0x30 },
-    { name: "\\", hid: 0x32 },
+    { name: "\\", hid: 0x31 },
   ],
   [
     { name: "{capslock}", hid: 0x39 },
@@ -75,7 +75,7 @@ const elite60: KeyConfig[][] = [
     { name: "/", hid: 0x38 },
     { name: "{shiftright}", hid: 0xE5 },
     { name: "{arrowup}", hid: 0x52 },
-    { name: "{delete}", hid: 0x66 },
+    { name: "{delete}", hid: 0x4c },
   ],
   [
     { name: "{controlleft}", hid: 0xE0, label: "Ctrl" },
@@ -92,82 +92,83 @@ const elite60: KeyConfig[][] = [
 
 
 
-export default function Elite60() {
+export default function Elite60(props: { keymap: number[] }) {
 
-  const [layoutName, setLayout] = useState('default')
+  const { keymap } = props
+  const [layoutName, setLayoutName] = useState('default')
+  const [layout, setLayout] = useState(null)
+  const [display, setDisplay] = useState(null)
   const [keyconfig, setKeyconfig] = useState<KeyConfig[][]>(null)
-  const [keymap, setKeymap] = useState(elite60) // key index to hid
   const [keyboard, setKeyboard] = useState(null);
 
   // only load keymap from jacdac config
   useEffect(() => {
-    let _keyconfig = elite60
-
-    const _config = []
-    let y = 0
-    for (const row of _keyconfig) {
-      const _row = []
-      let x = 0
+    // key config to hid map
+    const hid2key = {}
+    for (const row of elite60) {
       for (const key of row) {
-        _row.push({
-          ...key,
-          index: `r${y}b${x}`
-        })
-        x++
+        if (keymap.includes(key.hid)) {
+          hid2key[key.hid] = key
+        }
       }
-      y++
-      _config.push(_row)
     }
-    setKeyconfig(_config)
-  }, [])
+    console.log("hid2key", hid2key)
+    console.log("keymap", keymap)
 
-  const [layout, display] = useMemo(() => {
-    if (!keyconfig)
-      return [null, null]
-
-    const hidKeymap = {}
-    for (const key of keyconfig.flat()) {
-      hidKeymap[key.hid] = key
+    // rebuild keyconfig with hid2key
+    const _config = []
+    const _keyconfig = []
+    for (let y=0;y<5;y++) {
+      const _row = []
+      for (let x=0;x<14;x++) {
+        const key = hid2key[keymap[y*14+x]]
+        if (key) {
+          _row.push({
+            ...key,
+            index: `r${y}b${x}`
+          })
+        }
+      }
+      _keyconfig.push(_row)
     }
+    console.log("_keyconfig", _keyconfig)
+    
+    // rebuild layout and display
     const layoutAry = []
     const shiftAry = []
     const displayMap = {}
-    for (const row of keyconfig) {
+    for (const row of _keyconfig) {
       let rowAry = ""
       for (const key of row) {
-        let _key = key
-        if (keymap[key.index]) {
-          console.log("#1", key)
-          let _hid = keymap[key.index]
-          _key = hidKeymap[_hid]
-        }
-        rowAry += _key.name + " "
-        if (_key.label) {
-          displayMap[_key.name] = _key.label
+        rowAry += key.name + " "
+        if (key.label) {
+          displayMap[key.name] = key.label
         }
       }
       layoutAry.push(rowAry.trim())
       shiftAry.push(rowAry.trim())
     }
+    // trick to add encoder key
+    layoutAry[0] += " {encoder}"
+    shiftAry[0] = "{escape} {f1} {f2} {f3} {f4} {f5} {f6} {f7} {f8} {f9} {f10} {f11} {f12} {backspace} {encoder}"
+    displayMap["{encoder}"] = "⭕"
 
-    // replace first row with function keys
-    shiftAry[0] = "{escape} {f1} {f2} {f3} {f4} {f5} {f6} {f7} {f8} {f9} {f10} {f11} {f12} ⭕"
+    setLayout({
+      default: layoutAry,
+      shift: shiftAry
+    })
 
-    return [
-      {
-        default: layoutAry,
-        shift: shiftAry
-      },
-      displayMap
-    ];
-  }, [keymap, keyconfig])
 
+    setDisplay(displayMap)
+
+  }, [keymap])
+  
   const handleKeyPress = (button: string, event: any) => {
     const ele: any = event.target
     let index = ele.getAttribute("data-skbtnuid")
     index = index.replace("default-", "")
     if (button === "{metaright}"){
-      setLayout(layoutName === "default" ? "shift" : "default")
+      setLayoutName(layoutName === "default" ? "shift" : "default")
 
     }
   }
