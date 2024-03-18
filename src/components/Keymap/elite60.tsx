@@ -99,12 +99,8 @@ export default function Elite60() {
   const [keymap, setKeymap] = useState(elite60) // key index to hid
   const [keyboard, setKeyboard] = useState(null);
 
-
+  // only load keymap from jacdac config
   useEffect(() => {
-    const keymap = localStorage.getItem("keymap")
-    if (keymap) {
-      setKeymap(JSON.parse(keymap))
-    }
     let _keyconfig = elite60
 
     const _config = []

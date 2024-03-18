@@ -35,7 +35,9 @@ const numberPad: KeyConfig[][] = [
 const numberPadEnd: KeyConfig[][] = [
   [
     { name: "{numpadsubtract}", hid: 0x56 },
+  ],[
     { name: "{numpadadd}", hid: 0x57 },
+  ],[
     { name: "{numpadenter}", hid: 0x58 },
   ]
 
@@ -43,12 +45,36 @@ const numberPadEnd: KeyConfig[][] = [
 
 export default function NumberPad() {
   const [keyboard, setKeyboard] = useState(null);
+  const [layout, setLayout] = useState([])
+  const [layoutEnd, setLayoutEnd] = useState([])
+
+  useEffect(() => {
+    const _layout = []
+    const _layoutEnd = []
+    for (const row of numberPad) {
+      let rowAry = ""
+      for (const key of row) {
+        rowAry += key.name + " "
+      }
+      _layout.push(rowAry.trim())
+    }
+    for (const row of numberPadEnd) {
+      let rowAry = ""
+      for (const key of row) {
+        rowAry += key.name + " "
+      }
+      _layoutEnd.push(rowAry.trim())
+    }
+    setLayout(_layout)
+    setLayoutEnd(_layoutEnd)
+  }, [])
 
 
   return (
     <div style={{
       display: "flex",
       alignItems: "flex-end",
+      justifyContent: "center",
     }}>
     <Keyboard
       baseClass={"simple-keyboard-numpad"}
@@ -57,13 +83,7 @@ export default function NumberPad() {
       }}
       // debug={true}
       layout={{
-        default: [
-          "{numlock} {numpaddivide} {numpadmultiply}",
-          "{numpad7} {numpad8} {numpad9}",
-          "{numpad4} {numpad5} {numpad6}",
-          "{numpad1} {numpad2} {numpad3}",
-          "{numpad0} {numpaddecimal}"
-        ]
+        default: layout
       }}
       mergeDisplay={true}
       syncInstanceInputs={true}
@@ -72,7 +92,7 @@ export default function NumberPad() {
     <Keyboard
       baseClass={"simple-keyboard-numpadEnd"}
       layout={{
-        default: ["{numpadsubtract}", "{numpadadd}", "{numpadenter}"]
+        default: layoutEnd
       }}
     />
     </div>
