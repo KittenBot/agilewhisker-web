@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
+import { Card, Modal, Switch, Alert } from 'antd'
 
 import Keyboard from "react-simple-keyboard";
 
@@ -92,14 +93,20 @@ const elite60: KeyConfig[][] = [
 
 
 
-export default function Elite60(props: { keymap: number[] }) {
+export default function Elite60(props: { keymap: number[], update: (index: number, value: number) => void}) {
 
-  const { keymap } = props
+  const { keymap, update } = props
   const [layoutName, setLayoutName] = useState('default')
+
+  const [editingIndex, setEditingIndex] = useState(null)
+  const [targetIndex, setTargetIndex] = useState(null)
+
+  const [isEditing, setEditing] = useState(false)
+
   const [layout, setLayout] = useState(null)
   const [display, setDisplay] = useState(null)
-  const [keyconfig, setKeyconfig] = useState<KeyConfig[][]>(null)
   const [keyboard, setKeyboard] = useState(null);
+  const [keyIndex, setKeyIndex] = useState({})
 
   // only load keymap from jacdac config
   useEffect(() => {
@@ -118,15 +125,15 @@ export default function Elite60(props: { keymap: number[] }) {
     // rebuild keyconfig with hid2key
     const _config = []
     const _keyconfig = []
+    const _keyindex = {}
     for (let y=0;y<5;y++) {
       const _row = []
       for (let x=0;x<14;x++) {
         const key = hid2key[keymap[y*14+x]]
         if (key) {
-          _row.push({
-            ...key,
-            index: `r${y}b${x}`
-          })
+          const _keyconf = {...key, row: y, col: x}
+          _row.push(_keyconf)
+          _keyindex[key['name']] = _keyconf
         }
       }
       _keyconfig.push(_row)
@@ -158,22 +165,36 @@ export default function Elite60(props: { keymap: number[] }) {
       shift: shiftAry
     })
 
-
     setDisplay(displayMap)
 
+    setKeyIndex(_keyindex)
+
   }, [keymap])
-  
-  const handleKeyPress = (button: string, event: any) => {
-    const ele: any = event.target
-    let index = ele.getAttribute("data-skbtnuid")
-    index = index.replace("default-", "")
+
+  const handleKeyPress = (button: string, editing) => {
+    const index = keyIndex[button]
     if (button === "{metaright}"){
       setLayoutName(layoutName === "default" ? "shift" : "default")
+    }
 
+    if (!editing){
+      setEditingIndex(index)
+    } else if (editing) {
+      setTargetIndex(index)
     }
   }
 
+  const rebuildKeymap = (map, src, dest) => {
+    const _next = [...map]
+    _next[src.row*14+src.col] = dest.hid
+    return _next
+  }
+
   return (
+    <Card
+      style={{ margin: 16}}
+    >
+    {editingIndex ? <Alert message="Press a key to bind" type="info" showIcon banner closable onClose={() => setEditingIndex(null)}/> : null}
     <Keyboard
       keyboardRef={(r) => {
         setKeyboard(r)
@@ -185,8 +206,23 @@ export default function Elite60(props: { keymap: number[] }) {
       syncInstanceInputs={true}
       physicalKeyboardHighlight={true}
       layoutName={layoutName}
-      onKeyPress={handleKeyPress}
+      onKeyPress={(button) => handleKeyPress(button, editingIndex)}
     />
+    <div>
+      Key Map: 
+      <Switch checkedChildren="edit" onChange={c => setEditing(c)} />
+    </div>
+    <Modal title="Press a key" open={editingIndex && targetIndex} maskClosable onOk={() => {
+      update(editingIndex.row*14+editingIndex.col, targetIndex.hid)
+      setEditingIndex(null)
+      setTargetIndex(null)
+    }} onCancel={() => {
+      setEditingIndex(null)
+      setTargetIndex(null)
+    }}>
+      <p>Remap: {editingIndex?.name} to {targetIndex?.name} ?</p>
+    </Modal>
+    </Card>
   )
 }
 
