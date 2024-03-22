@@ -23,6 +23,30 @@ const led = new Led()
 
 ---
 
+## set color
+
+![image-20240322162450751](https://learn.kittenbot.cn/2024md_pic/202403221624852.png)
+
+
+
+Illuminate lights with indices 0 to 7 in red color.
+
+```typescript
+import { Led } from "@devicescript/core"
+import "@devicescript/runtime"
+
+const led = new Led()
+const pixels = await led.buffer()
+
+for (let i = 0; i < 8; i++) {
+    pixels.setAt(i, 0xff0000); 
+}
+await led.show(); 
+```
+
+> 1. The statement `import "@devicescript/runtime"` is typically used in conjunction with `import { Led } from "@devicescript/core"`.
+> 2. After setting the light's index and color with `pixels.setAt(i, 0xffffff)`, don't forget to make it take effect by using `await led.show()`.
+
 ## Registers
 
 ### pixels
