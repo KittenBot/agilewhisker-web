@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useEffect, useState } from 'react';
 import { Card, Col, Row, List, Button, Menu, Layout, Switch } from 'antd'
 
 import styles from './hostapp.module.css';
-import MenuItem from 'antd/es/menu/MenuItem';
-import type { GetProp, MenuProps } from 'antd';
-import Keymap from './keymap';
+import Settings from '../components/Hostapp/settings';
 
 const { Header, Sider, Content } = Layout;
 
@@ -13,7 +12,9 @@ declare global {
         electronAPI: {
             start_service: (name: string) => Promise<any>,
             stop_service: (name: string) => Promise<any>,
-            get_services: () => Promise<any>
+            get_services: () => Promise<any>,
+            save_settings: (settings: any) => Promise<any>,
+            get_settings: () => Promise<any>
         }
     }
 }
@@ -36,24 +37,7 @@ function ServiceCard(props: { name: string, status: boolean, icon: string, toggl
         />
     </Card>)
 }
-type MenuTheme = GetProp<MenuProps, 'theme'>;
-type MenuItem = GetProp<MenuProps, 'items'>[number];
-function getItem(
-    label: React.ReactNode,
-    key?: React.Key | null,
-    icon?: React.ReactNode,
-    children?: MenuItem[]
-  ): MenuItem {
-    return {
-      key,
-      icon,
-      children,
-      label,
-    } as MenuItem;
-  }
-const items: MenuItem[] = [
-    getItem('Services', '1'),
-  ];
+
 export default function HostApp() {
 
     const [services, setServices] = useState([])
@@ -80,8 +64,6 @@ export default function HostApp() {
             setServices(services)
         })
     }, [])
-    const [mode, setMode] = useState<'vertical' | 'inline'>('inline');
-    const [theme, setTheme] = useState<MenuTheme>('light');
 
     return (
         <Layout>
@@ -90,17 +72,14 @@ export default function HostApp() {
                     style={{ height: '100%',borderInlineEnd:'none'}}
                     defaultSelectedKeys={['1']}
                     defaultOpenKeys={['sub1']}
-                    onClick={(value: any) => {
-                    console.log(value);
-                    setTabs(value.key)
-                    }}
-                    mode={mode}
-                    theme={theme}
-                    items={items}
-                />
+                    onClick={(e) => setTabs(e.key)}
+                >
+                    <Menu.Item key="1">Services</Menu.Item>
+                    <Menu.Item key="2">Settings</Menu.Item>
+                </Menu>
             </Sider>
             <Layout style={{padding:'20px'}}>
-                <List
+                {tabs === '1' && <List
                     grid={{ gutter: 16, column: 3 }}
                     dataSource={services}
                     renderItem={item => (
@@ -108,7 +87,9 @@ export default function HostApp() {
                             <ServiceCard {...item} toggle={() => handleToggleService(item.status, item.name)}/>
                         </List.Item>
                     )}
-                />
+                />}
+                {tabs === '2' && <Settings />}
+
             </Layout>
         </Layout>
     );

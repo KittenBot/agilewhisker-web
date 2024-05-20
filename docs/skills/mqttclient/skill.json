@@ -1,0 +1,7 @@
+{
+  "name": "MqttClient",
+  "title": "MqttClient",
+  "img": "pc.svg",
+  "author": "KittenBot",
+  "describe": "This skill act as a MQTT client, it can connect to a MQTT server and publish/subscribe messages."
+}
