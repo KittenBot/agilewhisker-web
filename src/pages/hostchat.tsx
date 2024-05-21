@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input, Button, List, Typography } from "antd";
 import ReactMarkdown from "react-markdown";
 
@@ -11,8 +11,17 @@ type Message = {
 
 const HostChat = () => {
   const [context, setContext] = useState<Message[]>([]);
+  const [settings, setSettings] = useState<any>({});
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { get_settings } = window.electronAPI;
+
+  useEffect(() => {
+    get_settings().then((settings: any) => {
+      console.log("settings", settings);
+      setSettings(settings);
+    });
+  }, []);
 
   const sendMessage = async () => {
     if (inputValue.trim()) {
@@ -22,45 +31,56 @@ const HostChat = () => {
       const systemPrompt = 'The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.';
 
       const messages: Message[] = [
-        { content: systemPrompt, role: 'assistant' },
         ...context,
         { content: inputValue, role: 'user' }
       ]
 
       try {
-        const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        // openai api like call
+        const url = settings.openaiUrl || 'http://127.0.0.1:11434/v1/chat/completions'
+        const res = await fetch(url, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + settings.openaiKey
           },
           body: JSON.stringify({ 
-            model: 'gpt-3.5-turbo',
-            messages,
+            model: settings.openaiModel || 'llama2',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              ...messages
+            ],
             stream: true
           })
         });
 
+        if (!res.ok) {
+          throw new Error('Failed to send message');
+        }
+
+        setContext([
+          ...context,
+          { content: inputValue, role: 'user' }
+        ]);
+
         const reader = res.body?.getReader();
         const decoder = new TextDecoder();
         let cacheRes = ''
-        let botMsg = '';
         let done = false;
 
         while (!done) {
           const { value, done: _done } = await reader.read();
           done = _done;
           cacheRes += decoder.decode(value, { stream: true });
-
+          let botMsg = '';
           const lines = cacheRes.split('\n').filter((line) => line.trim());
           for (const line of lines) {
             if (line.startsWith('data: ')) {
               const message = JSON.parse(line.substring(6));
               console.log(message);
-              if (message.choices && message.choices[0].delta) {
+              if (message.choices && message.choices[0].delta?.content) {
                 const _txt: string = message.choices[0].delta.content;
                 botMsg += _txt;
-                console.log(">>>>>", _txt);
                 const updatedMessages = [...messages, { content: botMsg, role: 'assistant' }];
                 setContext(updatedMessages);
               }
@@ -81,10 +101,7 @@ const HostChat = () => {
         bordered
         dataSource={context}
         renderItem={(item) => (
-          <List.Item>
-            <Typography.Text strong style={{ color: item.role === 'user' ? 'blue' : 'green' }}>
-              {item.role === 'user' ? 'User' : 'Bot'}:
-            </Typography.Text>
+          <List.Item style={{ color: item.role === 'user' ? 'blue' : 'green', fontWeight: item.role === 'user' ? 'bold' : 'normal' }}>
             <ReactMarkdown>{item.content}</ReactMarkdown>
           </List.Item>
         )}

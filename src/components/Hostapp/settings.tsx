@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, message } from 'antd';
 
+export interface SettingsProps {
+  mqttbroker: string;
+  mqtttopic: string;
+  openaiUrl: string;
+  openaiKey: string;
+  openaiModel: string;
+}
+
 const Settings: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -25,13 +33,22 @@ const Settings: React.FC = () => {
 
   return (
     <Form form={form} layout="vertical" onFinish={onFinish}>
-      <Form.Item name="username" label="Username" rules={[{ required: true, message: 'Please input your username!' }]}>
+      <Form.Item name="mqttbroker" label="Mqtt-Broker" rules={[{ required: true, message: 'The mqtt borker' }]}>
         <Input />
       </Form.Item>
-      <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Please input your email!' }]}>
+      <Form.Item name="mqtttopic" label="Mqtt-Topic" rules={[{ required: true, message: 'The mqtt topic' }]}>
         <Input />
       </Form.Item>
       <Form.Item name="serverUrl" label="Server URL" rules={[{ required: true, message: 'Please input the server URL!' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item name="openaiKey" label="OpenAI Key" rules={[{ required: true, message: 'The openai key' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item name="openaiModel" label="OpenAI Model" rules={[{ required: true, message: 'The openai model' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item name="openaiUrl" label="OpenAI URL" rules={[{ required: true, message: 'The openai url' }]}>
         <Input />
       </Form.Item>
       <Form.Item>
