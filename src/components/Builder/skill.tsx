@@ -1,5 +1,5 @@
 
-class SkillBuilder {
+export class SkillBuilder {
   libs: string[] = ['import * as ds from "@devicescript/core"'];
   instances: Record<string, string> = {};
   main: string = '';
@@ -46,7 +46,7 @@ abstract class Skill {
   thumbnail: string;
   devs: string; // device script to run
   instance?: string;
-  libs?: string[] // libraries to import in the devicescript builder
+  libs: string[] = [] // libraries to import in the devicescript builder
   params?: Record<string, any> // parameters to replace in the script
   isEvent?: boolean // is an event
 
@@ -90,7 +90,7 @@ abstract class Skill {
   }
 }
 
-class SkillButton extends Skill {
+export class SkillButton extends Skill {
   event: string;
   constructor(name: string, event: string, options: any = {}) {
     super(`button_${name}`, name, options)
@@ -102,7 +102,7 @@ class SkillButton extends Skill {
   }
 }
 
-class SkillOpenUrl extends Skill {
+export class SkillOpenUrl extends Skill {
   constructor(name: string, options: any = {}) {
     super(`cd`, name, options)
     this.instance = `await new ds.PCEvent()`
