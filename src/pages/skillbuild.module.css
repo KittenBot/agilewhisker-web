@@ -1,0 +1,101 @@
+.layout {
+  height: 100vh;
+}
+
+.sider {
+  background: #f0f0f0; /* Light background for a friendly look */
+  color: #333;
+}
+
+.menu {
+  background: #f0f0f0; /* Light background for the menu */
+  color: #333;
+}
+
+.activeMenuItem {
+  background: #d9e3f0 !important; /* Active menu item background for a friendly look */
+}
+
+.deviceSection {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+}
+
+.deviceButton {
+  width: 100%;
+  text-align: left;
+  background: #d9e3f0; /* Soft blue for a friendly look */
+  color: #333;
+  border: none;
+}
+
+.deviceMenu {
+  background: #e9f5ff; /* Soft blue for device menu */
+  color: #333;
+}
+
+.content {
+  background: #ffffff; /* White background for a clean look */
+  color: #333;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.searchInput {
+  width: 200px;
+  background: #e9f5ff; /* Soft blue for input */
+  color: #333;
+  border: none;
+  padding: 5px;
+}
+
+.topBarButton {
+  background: #d9e3f0; /* Soft blue for button */
+  color: #333;
+  border: none;
+}
+
+.iconsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.icon {
+  width: 64px;
+  height: 64px;
+  background: #f0f0f0; /* Light background for icons */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  color: #333;
+  border-radius: 8px; /* Rounded corners for a friendly look */
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.instruction {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+}
+
+.rightSider {
+  background: #f0f0f0; /* Light background for right sider */
+  color: #333;
+}
