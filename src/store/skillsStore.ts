@@ -14,6 +14,7 @@ interface SkillConf {
     id: string
     type: string
     param: any
+    description: string
 }
 
 const initialBuilds = (): string[] => {
@@ -35,6 +36,9 @@ const initialBuilds = (): string[] => {
 
 const buildSkill = (skill: SkillConf): Skill => {
     let param = skill.param
+    if (!skill.description) {
+        skill.description = ''
+    }
     if (typeof param === 'object' && param.type) {
         param = buildSkill(skill.param) 
     }
@@ -56,7 +60,7 @@ const buildSkill = (skill: SkillConf): Skill => {
 export const useSkillsStore = create<{
     current: string // current skill build
     builds: string[]
-    skills: Record<string, Skill>
+    skills: SkillConf[]
     generate: () => string // generate code for current build
     save: (key: string) => void
     load: (key: string) => void
@@ -64,7 +68,7 @@ export const useSkillsStore = create<{
 }>((set, get) => ({
     current: '',
     builds: initialBuilds(),
-    skills: {},
+    skills: [],
     save: (key: string) => {
         console.log('save current skill to loc with key', key)
     },
@@ -77,14 +81,15 @@ export const useSkillsStore = create<{
             localStorage.setItem('skillbuilds', JSON.stringify(_builds))
         }
         const _builds: SkillConf[] = JSON.parse(_buildsStr)
-        const _skills = {}
-        Skill.builder.skills = []
+        if (Skill.builder?.skills)
+            Skill.builder.skills = []
         for (const _build of _builds) {
-            _skills[_build.id] = buildSkill(_build)
+            const ret = buildSkill(_build)
+            _build.description = ret.description
         }
         set({ 
             current: key,
-            skills: _skills
+            skills: _builds
         })
     },
     delete: (key: string) => {

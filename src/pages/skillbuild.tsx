@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Wrapper from "@theme/Layout";
 
-import { Layout, Menu, Button, Pagination, Input } from 'antd';
+import { Avatar, Card, Row, Col, Layout, Menu, Button, Pagination, Input } from 'antd';
 import {
   PlusOutlined,
   AppstoreOutlined,
@@ -20,7 +20,7 @@ const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
 const SkillBuild = () => {
-  const { generate, builds, load, current } = useSkillsStore()
+  const { generate, builds, skills, load, current } = useSkillsStore()
   useEffect(() => {
     if (builds.length > 0) {
       load(builds[0])
@@ -65,21 +65,31 @@ const SkillBuild = () => {
           />
           <Button icon={<PlaySquareOutlined />} className={styles.topBarButton} onClick={handleCompile}/>
         </div>
-        <div className={styles.iconsGrid}>
-          {/* Example icons */}
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-          <div className={styles.icon}><UserOutlined /></div>
-        </div>
+        <Row gutter={[4, 4]}>
+
+          {skills.map((skill) => (
+            <Col key={skill.id} span={6}>
+              <Card
+                className={styles.skillCard}
+                hoverable
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  console.log('drag over')
+                }}
+                onDrop={(e) => {
+                  e.preventDefault()
+                  console.log('drop')
+                }}
+              >
+                <Card.Meta
+                  avatar={<Avatar src="https://microsoft.github.io/jacdac-docs/images/devices/kittenbot/keycapbuttonv10.preview.jpg" />}
+                  title={skill.id}
+                  description={skill.description}
+                />
+              </Card>
+            </Col>
+          ))}
+        </Row>
         <Pagination className={styles.pagination} defaultCurrent={1} total={20} />
         <div className={styles.instruction}>Skill Options here</div>
       </Content>

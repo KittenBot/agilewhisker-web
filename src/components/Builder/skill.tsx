@@ -109,6 +109,7 @@ export class SkillButton extends Skill {
     if (!this.params['$EVENT']) {
       this.params['$EVENT'] = 'console.log("button clicked")'
     }
+    this.description = `${name}->${this.params['$EVENT'].description}`
   }
 }
 
@@ -117,6 +118,7 @@ export class SkillOpenUrl extends Skill {
     super(`cd`, name, '$URL', options)
     this.instance = `await new ds.PCEvent()`
     this.devs = `await cd.openUrl("$URL")`
+    this.description = `Open ${this.params['$URL']}`
   }
 }
 
@@ -125,6 +127,7 @@ export class SkillStartApp extends Skill {
     super(`cd`, name, '$APP', options)
     this.instance = `await new ds.PCEvent()`
     this.devs = `await cd.openApp("$APP")`
+    this.description = `Open ${this.params['$APP']}`
   }
 }
 
@@ -134,7 +137,7 @@ export class SkillAiService extends Skill {
     this.instance = `await new ds.PCEvent()`
     // run ai script with name $SCRIPT, $PARAMS 
     this.devs = `await cd.runScript("aiscript://$SCRIPT?$PARAMS")`
-
+    this.description = `Run AI script`
   }
 }
 
@@ -143,5 +146,6 @@ export class SkillSendText extends Skill {
     super(`cd`, name, '$TXT', options)
     this.instance = `await new ds.PCEvent()`
     this.devs = `await cd.sendText("$TXT")`
+    this.description = `Send text`
   }
 }

@@ -64,29 +64,15 @@
   border: none;
 }
 
-.iconsGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.icon {
-  width: 64px;
-  height: 64px;
-  background: #f0f0f0; /* Light background for icons */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 24px;
-  color: #333;
-  border-radius: 8px; /* Rounded corners for a friendly look */
-}
-
 .pagination {
   display: flex;
   justify-content: center;
   margin-top: 20px;
+}
+
+.skillCard {
+  width: 300px;
+  margin-top: 16px;
 }
 
 .instruction {
