@@ -1,5 +1,20 @@
 import { create } from 'zustand'
-import { Skill } from '../components/Builder/skill'
+import { 
+    Skill,
+    SkillBuilder,
+    SkillButton,
+    SkillOpenUrl,
+    SkillStartApp,
+    SkillSendText,
+    SkillAiService
+
+} from '../components/Builder/skill'
+
+interface SkillConf {
+    id: string
+    type: string
+    param: any
+}
 
 const initialBuilds = (): string[] => {
     let _builds = []
@@ -18,6 +33,26 @@ const initialBuilds = (): string[] => {
     return _builds
 }
 
+const buildSkill = (skill: SkillConf): Skill => {
+    let param = skill.param
+    if (typeof param === 'object' && param.type) {
+        param = buildSkill(skill.param) 
+    }
+    if (skill.type === 'SkillButton') {
+        return new SkillButton(skill.id, param)
+    } else if (skill.type === 'SkillOpenUrl') {
+        return new SkillOpenUrl(skill.id, param)
+    } else if (skill.type === 'SkillStartApp') {
+        return new SkillStartApp(skill.id, param)
+    } else if (skill.type === 'SkillSendText') {
+        return new SkillSendText(skill.id, param)
+    } else if (skill.type === 'SkillAiService') {
+        return new SkillAiService(skill.id, param)
+    }
+
+    throw new Error('Unknown skill type')
+}
+
 export const useSkillsStore = create<{
     current: string // current skill build
     builds: string[]
@@ -25,6 +60,7 @@ export const useSkillsStore = create<{
     generate: () => string // generate code for current build
     save: (key: string) => void
     load: (key: string) => void
+    delete: (key: string) => void
 }>((set, get) => ({
     current: '',
     builds: initialBuilds(),
@@ -35,10 +71,26 @@ export const useSkillsStore = create<{
     load: (key: string) => {
         if (key === get().current) return
         const _buildsStr = localStorage.getItem(key)
-        if (!_buildsStr) return
-        const _builds = JSON.parse(_buildsStr)
-        console.log('load skill build', key, _builds)
-        set({ current: key })
+        if (!_buildsStr) {
+            console.error('No build found with key', key)
+            const _builds = get().builds.filter((build) => build !== key)
+            localStorage.setItem('skillbuilds', JSON.stringify(_builds))
+        }
+        const _builds: SkillConf[] = JSON.parse(_buildsStr)
+        const _skills = {}
+        Skill.builder.skills = []
+        for (const _build of _builds) {
+            _skills[_build.id] = buildSkill(_build)
+        }
+        set({ 
+            current: key,
+            skills: _skills
+        })
+    },
+    delete: (key: string) => {
+        const _builds = get().builds.filter((build) => build !== key)
+        localStorage.removeItem(key)
+        localStorage.setItem('skillbuilds', JSON.stringify(_builds))
     },
     generate: () => {
         return Skill.builder.buildAll()

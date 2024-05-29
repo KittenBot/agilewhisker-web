@@ -3,6 +3,7 @@ import Wrapper from "@theme/Layout";
 
 import { Layout, Menu, Button, Pagination, Input } from 'antd';
 import {
+  PlusOutlined,
   AppstoreOutlined,
   SettingOutlined,
   UserOutlined,
@@ -13,17 +14,23 @@ import {
 } from '@ant-design/icons';
 import styles from './skillbuild.module.css';
 import { useSkillsStore } from '../store/skillsStore';
+import { Skill } from '../components/Builder/skill';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
 const SkillBuild = () => {
-  const { builds, load, current } = useSkillsStore()
+  const { generate, builds, load, current } = useSkillsStore()
   useEffect(() => {
     if (builds.length > 0) {
       load(builds[0])
     }
   }, [builds])
+
+  const handleCompile = () => {
+    const code = generate()
+    console.log(code)
+  }
 
   return (
     // <Wrapper title="Skill Builder">
@@ -37,6 +44,10 @@ const SkillBuild = () => {
               onClick={() => load(build)}
             >{build}</Menu.Item>
           ))}
+          <Menu.Item key="new" className={styles.newMenuItem}>
+            <PlusOutlined />
+            New Build
+          </Menu.Item>
         </Menu>
         <div className={styles.deviceSection}>
           <Button icon={<SettingOutlined />} className={styles.deviceButton}>Deivce</Button>
@@ -52,7 +63,7 @@ const SkillBuild = () => {
             placeholder="Search"
             prefix={<SearchOutlined />}
           />
-          <Button icon={<PlaySquareOutlined />} className={styles.topBarButton} />
+          <Button icon={<PlaySquareOutlined />} className={styles.topBarButton} onClick={handleCompile}/>
         </div>
         <div className={styles.iconsGrid}>
           {/* Example icons */}
@@ -69,7 +80,7 @@ const SkillBuild = () => {
           <div className={styles.icon}><UserOutlined /></div>
           <div className={styles.icon}><UserOutlined /></div>
         </div>
-        <Pagination className={styles.pagination} defaultCurrent={2} total={60} />
+        <Pagination className={styles.pagination} defaultCurrent={1} total={20} />
         <div className={styles.instruction}>Skill Options here</div>
       </Content>
       <Sider className={styles.rightSider}>
