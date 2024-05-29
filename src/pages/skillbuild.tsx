@@ -1,35 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Wrapper from "@theme/Layout";
+
 import { Layout, Menu, Button, Pagination, Input } from 'antd';
 import {
   AppstoreOutlined,
   SettingOutlined,
   UserOutlined,
   SearchOutlined,
+  PlaySquareOutlined,
   YoutubeOutlined,
   VideoCameraOutlined
 } from '@ant-design/icons';
 import styles from './skillbuild.module.css';
+import { useSkillsStore } from '../store/skillsStore';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
-const App = () => {
+const SkillBuild = () => {
+  const { builds, load, current } = useSkillsStore()
+  useEffect(() => {
+    if (builds.length > 0) {
+      load(builds[0])
+    }
+  }, [builds])
+
   return (
+    // <Wrapper title="Skill Builder">
     <Layout className={styles.layout}>
       <Sider className={styles.sider}>
         <Menu mode="vertical" className={styles.menu}>
-          <Menu.Item key="1" icon={<AppstoreOutlined />}>
-            Template1
-          </Menu.Item>
-          <Menu.Item key="2" icon={<AppstoreOutlined />}>
-            Template2
-          </Menu.Item>
-          <Menu.Item key="3" icon={<AppstoreOutlined />} className={styles.activeMenuItem}>
-            Template3
-          </Menu.Item>
-          <Menu.Item key="4" icon={<AppstoreOutlined />}>
-            Template4
-          </Menu.Item>
+          {builds.map((build) => (
+            <Menu.Item 
+              key={build}
+              className={build === current ? styles.activeMenuItem : ''}
+              onClick={() => load(build)}
+            >{build}</Menu.Item>
+          ))}
         </Menu>
         <div className={styles.deviceSection}>
           <Button icon={<SettingOutlined />} className={styles.deviceButton}>Deivce</Button>
@@ -45,7 +52,7 @@ const App = () => {
             placeholder="Search"
             prefix={<SearchOutlined />}
           />
-          <Button icon={<SettingOutlined />} className={styles.topBarButton} />
+          <Button icon={<PlaySquareOutlined />} className={styles.topBarButton} />
         </div>
         <div className={styles.iconsGrid}>
           {/* Example icons */}
@@ -103,7 +110,8 @@ const App = () => {
         </Menu>
       </Sider>
     </Layout>
+    // </Wrapper>
   );
 };
 
-export default App;
+export default SkillBuild;
