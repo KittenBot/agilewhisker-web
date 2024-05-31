@@ -8,32 +8,49 @@ import { DeviceScriptManagerCmd, OutPipe } from 'jacdac-ts';
 
 import { useJacdacStore } from "../../store/jacdacStore";
 import CodeEditor from "../codeEditor";
+import { useDevsStore } from "../../store/devsStore";
 
+import styles from './devs.module.css'
+
+// only use this in remark skill render
 const DevsDownloadCard = ({config}) => {
+  const {
+    code, params, setCode, setParams
+  } = useDevsStore()
 
-  const [code,setCode] = useState(JSON.parse(config).code)
-  const handleChange = (value) => {
-    setCode(value)
-    skill.code = value
-  }
-
-  const skill: Skill = useMemo(() => {
-    if (config)
-      return JSON.parse(config);
+  useEffect(() => {
+    try {
+      const conf = JSON.parse(config)
+      if (conf.code)
+        setCode(conf.code)
+      if (conf.params){
+        setParams(conf.params)
+      } else {
+        setParams({})
+      }
+    } catch (error) {
+      console.warn("Failed to parse config", error, config)
+    }
   }, [config]);
 
+
+  const handleChange = (value) => {
+    setCode(value)
+  }
+
+  console.log("code", code, params)
   return (
     <>
       <Card hoverable style={{ width: '50vw', margin: 10 ,border: 'none'}} bodyStyle={{padding: 0, overflow: 'hidden',backgroundColor: 'var(--ifm-background-color)',border: '1px solid var(--ifm-color-emphasis-300)',borderRadius: '8px'}}>
-        <JDConnection skill={skill}/>
+        <JDConnection />
       </Card>
       <CodeEditor defaultCode={code} onChange={handleChange} />
     </>
   );
 };
 
-export const JDConnection = (props: {skill?: Skill}) => {
-  const {skill} = props
+export const JDConnection = () => {
+  const { code, params, setParams } = useDevsStore()
   const {webSerialConnected, webSocketConnected} = useJacdacStore()
 
   const isConnected = webSerialConnected || webSocketConnected
@@ -44,8 +61,6 @@ export const JDConnection = (props: {skill?: Skill}) => {
 
   const [compileWithHost, setCompileWithHost] = useState(null);
 
-  const [params, setParams] = useState(skill.params || {})
-
   useEffect(() => {
     if (typeof window !== 'undefined') {
       import("@kittenbot/devs_compiler").then(module => {
@@ -54,7 +69,6 @@ export const JDConnection = (props: {skill?: Skill}) => {
     }
   }, []);
 
-
   const handleDownload = async () => {
     if (!compileWithHost) {
       console.error("Compiler not loaded");
@@ -62,15 +76,13 @@ export const JDConnection = (props: {skill?: Skill}) => {
     }
     
     const { DevsHost } = await import('./DevsHost'); // 路径需要根据你的项目结构调整
-
-    let code = skill.code
-
+    let _code = code
     for (const key in params) {
       const value = params[key]
-      code = code.replace(new RegExp(`\\$${key}`, 'g'), value)
+      _code = code.replace(new RegExp(`\\$${key}`, 'g'), value)
     }
     
-    console.log("download", code);
+    console.log("download", _code);
 
     const host = new DevsHost({
       hwInfo: {
@@ -78,7 +90,7 @@ export const JDConnection = (props: {skill?: Skill}) => {
         // progVersion: "6.0.0",
       },
       files: {
-        "src/main.ts": code,
+        "src/main.ts": _code,
       },
     });
     const result = compileWithHost("src/main.ts", host);
@@ -146,7 +158,7 @@ export const JDConnection = (props: {skill?: Skill}) => {
         </div>
       </div>
     </Flex>
-    { skill.params && (
+    { Object.keys(params).length && (
       <ParamsInput params={params} onChange={(key, value) => {
         setParams({...params, [key]: value})
       }} />
@@ -177,19 +189,22 @@ export const DisconnectState = ({ usbConnect }: { usbConnect?: boolean }) => {
 const ParamsInput = ({params, onChange}: {params: Record<string, string>, onChange: any }) => {
 
   return <div style={{padding: 12}}>
-    <Divider>Parameters</Divider>
     <Form
       fields={Object.keys(params).map(key => ({name: key, value: params[key]}))}
       labelCol={{ span: 4 }}
       layout="horizontal"
-      style={{maxWidth: 600}}
+      style={{maxWidth: 600, color: 'var(--ifm-color-content)'}}
       onFieldsChange={(changedFields, allFields) => {
         onChange(changedFields[0].name[0], changedFields[0].value)
       }}
     >
       {Object.keys(params).map((key, i) => {
-        const param = params[key]
-        return <Form.Item key={i} name={key} label={key} >
+        return <Form.Item 
+          key={i}
+          name={key}
+          label={<span className={styles.formItemLabel}>{key}</span>}
+          className={styles.formItem}
+        >
           <Input />
         </Form.Item>
       })}
