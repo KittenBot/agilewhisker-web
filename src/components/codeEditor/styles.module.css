@@ -6,8 +6,6 @@
     background: none !important;
 }
 :global(.editorContainer){
-    width: 50vw;
-    height: 586px;
     overflow: auto;
     border: 1px solid var(--ifm-color-emphasis-300);
     border-radius: 8px;

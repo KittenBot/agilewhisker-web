@@ -86,7 +86,7 @@ export const useJacdacStore = create<{
       })
 
       bus.on(CONNECTION_STATE, (transport: Transport) => {
-        console.log("transport", transport.connectionState);
+        console.log("transport", transport);
         if (transport.connectionState === "connected") {
           set(state => ({ connected: true }));
         } else if (transport.connectionState === 'disconnected'){

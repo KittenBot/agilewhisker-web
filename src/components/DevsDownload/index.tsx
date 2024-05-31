@@ -139,7 +139,7 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
             type="primary"
             onClick={handleDownload}
           >
-            🔥 Download Demo
+            🔥 Download
           </Button>
         </div>
       </div>
