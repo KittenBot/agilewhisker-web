@@ -33,18 +33,12 @@ const DevsDownloadCard = ({config}) => {
     }
   }, [config]);
 
-
-  const handleChange = (value) => {
-    setCode(value)
-  }
-
-  console.log("code", code, params)
   return (
     <>
       <Card hoverable style={{ width: '50vw', margin: 10 ,border: 'none'}} bodyStyle={{padding: 0, overflow: 'hidden',backgroundColor: 'var(--ifm-background-color)',border: '1px solid var(--ifm-color-emphasis-300)',borderRadius: '8px'}}>
         <JDConnection />
       </Card>
-      <CodeEditor defaultCode={code} onChange={handleChange} />
+      <CodeEditor />
     </>
   );
 };
@@ -117,7 +111,7 @@ export const JDConnection = () => {
 
   if (!isConnected) return <DisconnectState />
 
-  return (<div style={{flex: 1, flexDirection: 'column',backgroundColor: 'var(--ifm-background-color)'}}>
+return (<div style={{backgroundColor: 'var(--ifm-background-color)'}}>
     <Flex justify="space-between" style={{padding:'0 16px 16px',color: 'var(--ifm-color-content)'}}>
       <div style={{ width: '100%', display: 'flex'}}>
         {deviceAvatar.map((img:any, i) => (
@@ -151,18 +145,18 @@ export const JDConnection = () => {
           </Button>
           <Button
             type="primary"
-            onClick={handleDownload}
+            onClick={() => handleDownload()}
           >
             🔥 Download
           </Button>
         </div>
       </div>
     </Flex>
-    { Object.keys(params).length && (
+    { Object.keys(params).length > 0 ?
       <ParamsInput params={params} onChange={(key, value) => {
         setParams({...params, [key]: value})
-      }} />
-    )}
+      }} /> : null
+    }
     { downloadErr && (
       <Alert message={downloadErr} type="error" closable afterClose={() => setDownloadErr('')} />
     )}

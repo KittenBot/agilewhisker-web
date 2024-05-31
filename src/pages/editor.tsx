@@ -12,10 +12,7 @@ const DevsEditor = () => {
   return (
     <Wrapper title="Skill Builder">
       <JDConnection />
-      <CodeEditor
-        defaultCode={code}
-        onChange={handleChanges}
-      />
+      <CodeEditor />
     </Wrapper>
   );
 
