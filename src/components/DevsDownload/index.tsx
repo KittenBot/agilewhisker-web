@@ -11,7 +11,6 @@ import CodeEditor from "../codeEditor";
 
 const DevsDownloadCard = ({config}) => {
 
-  const {connected} = useJacdacStore()
   const [code,setCode] = useState(JSON.parse(config).code)
   const handleChange = (value) => {
     setCode(value)
@@ -26,16 +25,18 @@ const DevsDownloadCard = ({config}) => {
   return (
     <>
       <Card hoverable style={{ width: '50vw', margin: 10 ,border: 'none'}} bodyStyle={{padding: 0, overflow: 'hidden',backgroundColor: 'var(--ifm-background-color)',border: '1px solid var(--ifm-color-emphasis-300)',borderRadius: '8px'}}>
-        { connected ? <ConnectedState skill={skill}/>
-        : <DisconnectState />
-        }
+        <JDConnection skill={skill}/>
       </Card>
       <CodeEditor defaultCode={code} onChange={handleChange} />
     </>
   );
 };
 
-const ConnectedState = ({skill}: {skill: Skill}) => {
+export const JDConnection = (props: {skill?: Skill}) => {
+  const {skill} = props
+  const {webSerialConnected, webSocketConnected} = useJacdacStore()
+
+  const isConnected = webSerialConnected || webSocketConnected
   const { brainAvatar, devsService, deviceAvatar, spec, bus} = useJacdacStore()
 
   const [ downloadErr, setDownloadErr ] = useState('')
@@ -102,6 +103,7 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
     }
   };
 
+  if (!isConnected) return <DisconnectState />
 
   return (<div style={{flex: 1, flexDirection: 'column',backgroundColor: 'var(--ifm-background-color)'}}>
     <Flex justify="space-between" style={{padding:'0 16px 16px',color: 'var(--ifm-color-content)'}}>
@@ -125,7 +127,7 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
     </Flex>
     <Flex vertical align="flex-end" justify="space-between" style={{ padding: 12, width: '100%' }}>
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexDirection: 'row',width:'100%',color: 'var(--ifm-color-content)',marginLeft:'10px'}} >
-        Connected !
+        Connected to {webSerialConnected ? 'USB' : 'WebSocket'}
         <div>
           <Button
             type="primary"
@@ -133,7 +135,7 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
             style={{marginRight:'10px'}}
             onClick={()=> bus.disconnect()}
           >
-            disconnect
+            Disconnect
           </Button>
           <Button
             type="primary"

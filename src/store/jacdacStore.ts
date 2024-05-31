@@ -18,7 +18,8 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const useJacdacStore = create<{
   bus: JDBus;
-  connected: boolean;
+  webSerialConnected: boolean;
+  webSocketConnected: boolean;
   device: JDDevice;
   spec: DeviceSpec;
   brainAvatar: string
@@ -30,7 +31,8 @@ export const useJacdacStore = create<{
 
 }>((set, get) => ({
   bus: null,
-  connected: false,
+  webSerialConnected: false,
+  webSocketConnected: false,
   spec: null,
   device: null,
   devsService: null,
@@ -86,12 +88,12 @@ export const useJacdacStore = create<{
       })
 
       bus.on(CONNECTION_STATE, (transport: Transport) => {
-        console.log("transport", transport);
-        if (transport.connectionState === "connected") {
-          set(state => ({ connected: true }));
-        } else if (transport.connectionState === 'disconnected'){
-          set(state => ({ connected: false }));
-        }
+        console.log("transport", transport.type, transport.connectionState);
+        if (transport.type === "web") {
+          set(state => ({ webSocketConnected: transport.connectionState === 'connected' }));
+        } else if (transport.type === "serial") {
+          set(state => ({ webSerialConnected: transport.connectionState === 'connected' }));
+        } 
       });
       // for debug only
       (window as any).bus = bus
