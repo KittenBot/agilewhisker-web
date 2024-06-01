@@ -14,6 +14,7 @@ import {
 } from '@ant-design/icons';
 import styles from './skillbuild.module.css';
 import { useSkillsStore } from '../store/skillsStore';
+import { useDevsStore } from '../store/devsStore';
 import { Skill } from '../components/Builder/skill';
 
 const { Sider, Content } = Layout;
@@ -21,15 +22,18 @@ const { SubMenu } = Menu;
 
 const SkillBuild = () => {
   const { generate, builds, skills, load, current } = useSkillsStore()
+  const { compileWithHost } = useDevsStore()
   useEffect(() => {
     if (builds.length > 0) {
       load(builds[0])
     }
   }, [builds])
 
-  const handleCompile = () => {
+  const handleCompile = async () => {
     const code = generate()
     console.log(code)
+    const result = await compileWithHost()
+    console.log(result)
   }
 
   return (
