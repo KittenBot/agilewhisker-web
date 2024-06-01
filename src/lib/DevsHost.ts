@@ -23,18 +23,18 @@ export class DevsHost implements Host {
     }
   
     write(filename: string, contents: string | Uint8Array): void {
-      console.log("write", filename)
+      // console.log("write", filename)
       this.files[filename] = contents;
     }
     read(filename: string): string {
-      console.log("read", filename)
+      // console.log("read", filename)
       if (this.files.hasOwnProperty(filename)) {
         return this.files[filename] as string;
       }
       throw new Error("No such file: " + filename);
     }
     resolvePath(p: string) {
-      console.log("resolve", p)
+      // console.log("resolve", p)
       return p;
     }
   

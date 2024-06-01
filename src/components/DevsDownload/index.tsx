@@ -7,7 +7,7 @@ import { Skill } from "@/remark/render-skill";
 import { DeviceScriptManagerCmd, OutPipe } from 'jacdac-ts';
 
 import { useJacdacStore } from "../../store/jacdacStore";
-import CodeEditor from "../codeEditor";
+import CodeEditor from "../CodeEditor";
 import { useDevsStore } from "../../store/devsStore";
 
 import styles from './devs.module.css'
@@ -35,7 +35,6 @@ const DevsDownloadCard = ({config}) => {
 
 
   const handleChange = (value) => {
-    setCode(value)
   }
 
   console.log("code", code, params)
@@ -44,7 +43,7 @@ const DevsDownloadCard = ({config}) => {
       <Card hoverable style={{ width: '50vw', margin: 10 ,border: 'none'}} bodyStyle={{padding: 0, overflow: 'hidden',backgroundColor: 'var(--ifm-background-color)',border: '1px solid var(--ifm-color-emphasis-300)',borderRadius: '8px'}}>
         <JDConnection />
       </Card>
-      <CodeEditor defaultCode={code} onChange={handleChange} />
+      <CodeEditor code={code} onChange={c => setCode(c)} />
     </>
   );
 };

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Wrapper from "@theme/Layout";
 
-import { Avatar, Card, Row, Col, Layout, Menu, Button, Pagination, Input } from 'antd';
+import { Avatar, Card, Row, Col, Layout, Menu, Button, Pagination, Input, Modal } from 'antd';
 import {
+  CodeOutlined,
   PlusOutlined,
   AppstoreOutlined,
   SettingOutlined,
@@ -15,12 +16,14 @@ import {
 import styles from './skillbuild.module.css';
 import { useSkillsStore } from '../store/skillsStore';
 import { useDevsStore } from '../store/devsStore';
-import { Skill } from '../components/Builder/skill';
+import CodeEditor from '../components/CodeEditor';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
 const SkillBuild = () => {
+  const [userCode, setUserCode] = useState('')
+  const [showCode, setShowCode] = useState(false)
   const { generate, builds, skills, load, current } = useSkillsStore()
   const { compileWithHost } = useDevsStore()
   useEffect(() => {
@@ -34,6 +37,24 @@ const SkillBuild = () => {
     console.log(code)
     const result = await compileWithHost()
     console.log(result)
+  }
+
+  const handleShowCode = async () => {
+    const code = generate()
+    setUserCode(code)
+    setShowCode(true)
+  }
+
+  const handleOk = () => {
+
+  }
+
+  const handleCancel = () => {
+    setShowCode(false)
+  }
+
+  const handleChange = (value) => {
+    console.log(value)
   }
 
   return (
@@ -67,7 +88,10 @@ const SkillBuild = () => {
             placeholder="Search"
             prefix={<SearchOutlined />}
           />
+          <div>
+          <Button icon={<CodeOutlined />} className={styles.topBarButton} onClick={handleShowCode} />
           <Button icon={<PlaySquareOutlined />} className={styles.topBarButton} onClick={handleCompile}/>
+          </div>
         </div>
         <Row gutter={[4, 4]}>
 
@@ -134,6 +158,13 @@ const SkillBuild = () => {
           </Menu.Item>
         </Menu>
       </Sider>
+      <Modal title="Generated Code" open={showCode} onOk={handleOk} onCancel={handleCancel}>
+        <p>Code Editor</p>
+        <CodeEditor
+          code={userCode}
+          onChange={handleChange}
+        />
+      </Modal>
     </Layout>
     // </Wrapper>
   );
