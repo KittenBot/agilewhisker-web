@@ -21,9 +21,23 @@ import CodeEditor from '../components/CodeEditor';
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
+const SkillConfigModal = (props: {
+  skill: any,
+  handleChange: (skill) => void,
+}) => {
+  const { skill, handleChange } = props
+  console.log(skill)
+  return (
+    <Modal title="Skill Configuration" open={!!skill} onOk={() => handleChange(skill)} onCancel={() => handleChange(null)}>
+      <p>Configuration for</p>
+    </Modal>
+  )
+}
+
 const SkillBuild = () => {
   const [userCode, setUserCode] = useState('')
   const [showCode, setShowCode] = useState(false)
+  const [editingSkill, setEditingSkill] = useState(null)
   const { generate, builds, skills, load, current } = useSkillsStore()
   const { compileWithHost } = useDevsStore()
   useEffect(() => {
@@ -55,6 +69,15 @@ const SkillBuild = () => {
 
   const handleChange = (value) => {
     console.log(value)
+  }
+
+  const showConfigModal = (skill) => {
+    setEditingSkill(skill)
+  }
+
+  const handleSkillChanged = (skill) => {
+    console.log(skill)
+    setEditingSkill(null)
   }
 
   return (
@@ -100,6 +123,16 @@ const SkillBuild = () => {
               <Card
                 className={styles.skillCard}
                 hoverable
+                title={<div>
+                  <Avatar src="https://microsoft.github.io/jacdac-docs/images/devices/kittenbot/keycapbuttonv10.preview.jpg" />
+                  {skill.id}
+                </div>}
+                extra={<Button
+                  icon={<SettingOutlined />}
+                  size="small"
+                  className={styles.configButton}
+                  onClick={() => showConfigModal(skill)}
+                />}
                 onDragOver={(e) => {
                   e.preventDefault()
                   console.log('drag over')
@@ -110,8 +143,6 @@ const SkillBuild = () => {
                 }}
               >
                 <Card.Meta
-                  avatar={<Avatar src="https://microsoft.github.io/jacdac-docs/images/devices/kittenbot/keycapbuttonv10.preview.jpg" />}
-                  title={skill.id}
                   description={skill.description}
                 />
               </Card>
@@ -165,6 +196,10 @@ const SkillBuild = () => {
           onChange={handleChange}
         />
       </Modal>
+      <SkillConfigModal
+        skill={editingSkill}
+        handleChange={handleSkillChanged}
+      />
     </Layout>
     // </Wrapper>
   );
