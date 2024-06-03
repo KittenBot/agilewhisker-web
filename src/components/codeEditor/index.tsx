@@ -5,11 +5,10 @@ import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-typescript';
 import styles from './styles.module.css';
-import { useDevsStore } from '../../store/devsStore';
 
 
-const CodeEditor = () => {
-  const { code, setCode } = useDevsStore()
+const CodeEditor = ({code, onChange}) => {
+  console.log(code, onChange)
   return (
     <div className='editorContainer'>
       <Editor
@@ -17,7 +16,7 @@ const CodeEditor = () => {
         value={code}
         lang='ts'
         onValueChange={code => {
-          setCode(code)
+          onChange(code)
         }}
         highlight={code => highlight(code, languages.typescript)}
         padding={10}
