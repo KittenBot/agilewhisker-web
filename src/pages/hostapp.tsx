@@ -14,7 +14,8 @@ declare global {
             stop_service: (name: string) => Promise<any>,
             get_services: () => Promise<any>,
             save_settings: (settings: any) => Promise<any>,
-            get_settings: () => Promise<any>
+            get_settings: () => Promise<any>,
+            onUserText: (callback: (text: string) => void) => void
         }
     }
 }

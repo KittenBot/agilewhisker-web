@@ -14,12 +14,16 @@ const HostChat = () => {
   const [settings, setSettings] = useState<any>({});
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { get_settings } = window.electronAPI;
+  const { get_settings, onUserText } = window.electronAPI;
 
   useEffect(() => {
     get_settings().then((settings: any) => {
       console.log("settings", settings);
       setSettings(settings);
+    });
+    onUserText((text: string) => {
+      console.log("text", text);
+      setInputValue(text);
     });
   }, []);
 

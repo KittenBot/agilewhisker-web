@@ -39,9 +39,6 @@ const Settings: React.FC = () => {
       <Form.Item name="mqtttopic" label="Mqtt-Topic" rules={[{ required: true, message: 'The mqtt topic' }]}>
         <Input />
       </Form.Item>
-      <Form.Item name="serverUrl" label="Server URL" rules={[{ required: true, message: 'Please input the server URL!' }]}>
-        <Input />
-      </Form.Item>
       <Form.Item name="openaiKey" label="OpenAI Key" rules={[{ required: true, message: 'The openai key' }]}>
         <Input />
       </Form.Item>
