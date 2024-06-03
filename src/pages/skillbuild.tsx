@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Wrapper from "@theme/Layout";
 
-import { Avatar, Card, Row, Col, Layout, Menu, Button, Pagination, Input, Modal } from 'antd';
+import { Avatar, Card, Row, Col, Layout, Menu, Button, Pagination, Input, Modal, message } from 'antd';
 import {
   CodeOutlined,
   PlusOutlined,
@@ -17,6 +17,7 @@ import styles from './skillbuild.module.css';
 import { useSkillsStore } from '../store/skillsStore';
 import { useDevsStore } from '../store/devsStore';
 import CodeEditor from '../components/CodeEditor';
+import { useJacdacStore } from '../store/jacdacStore';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -26,7 +27,7 @@ const SkillConfigModal = (props: {
   handleChange: (skill) => void,
 }) => {
   const { skill, handleChange } = props
-  console.log(skill)
+
   return (
     <Modal title="Skill Configuration" open={!!skill} onOk={() => handleChange(skill)} onCancel={() => handleChange(null)}>
       <p>Configuration for</p>
@@ -37,8 +38,12 @@ const SkillConfigModal = (props: {
 const SkillBuild = () => {
   const [userCode, setUserCode] = useState('')
   const [showCode, setShowCode] = useState(false)
+  const [messageApi, contextHolder] = message.useMessage();
   const [editingSkill, setEditingSkill] = useState(null)
   const { generate, builds, skills, load, current } = useSkillsStore()
+  const { bus, webSerialConnected, webSocketConnected, brainAvatar, spec, connectJDBus } = useJacdacStore()
+  const isConnected = webSerialConnected || webSocketConnected
+
   const { compileWithHost } = useDevsStore()
   useEffect(() => {
     if (builds.length > 0) {
@@ -51,6 +56,12 @@ const SkillBuild = () => {
     console.log(code)
     const result = await compileWithHost()
     console.log(result)
+    if (!result.success){
+      messageApi.error('Compile failed')
+      return
+    }
+    // download
+    
   }
 
   const handleShowCode = async () => {
@@ -83,6 +94,7 @@ const SkillBuild = () => {
   return (
     // <Wrapper title="Skill Builder">
     <Layout className={styles.layout}>
+      {contextHolder}
       <Sider className={styles.sider}>
         <Menu mode="vertical" className={styles.menu}>
           {builds.map((build) => (
@@ -98,9 +110,20 @@ const SkillBuild = () => {
           </Menu.Item>
         </Menu>
         <div className={styles.deviceSection}>
-          <Button icon={<SettingOutlined />} className={styles.deviceButton}>Deivce</Button>
           <Menu mode="vertical" className={styles.deviceMenu}>
-            <Menu.Item key="device1">Elite60 Keyboard</Menu.Item>
+            <Menu.Item key="device" className={styles.deviceMenuTitle} icon={<SettingOutlined />}>
+              Deivce
+            </Menu.Item>
+            {spec? <Menu.Item key="device0" icon={
+              <Avatar
+                size="small"
+                src={brainAvatar}
+              />
+            }>{spec.name}</Menu.Item> : 
+            <Menu.Item key="connect">
+              <Button type="primary" onClick={() => connectJDBus()}>Connect</Button>
+            </Menu.Item>
+            }
           </Menu>
         </div>
       </Sider>

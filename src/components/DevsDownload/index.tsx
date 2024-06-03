@@ -49,50 +49,22 @@ const DevsDownloadCard = ({config}) => {
 };
 
 export const JDConnection = () => {
-  const { code, params, setParams } = useDevsStore()
-  const {webSerialConnected, webSocketConnected} = useJacdacStore()
+  const { compileWithHost, code, params, setParams } = useDevsStore()
 
+  const { webSerialConnected, webSocketConnected, brainAvatar, devsService, deviceAvatar, spec, bus} = useJacdacStore()
   const isConnected = webSerialConnected || webSocketConnected
-  const { brainAvatar, devsService, deviceAvatar, spec, bus} = useJacdacStore()
 
   const [ downloadErr, setDownloadErr ] = useState('')
   const [ downloadProgress, setDownloadProgress ] = useState(0)
 
-  const [compileWithHost, setCompileWithHost] = useState(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      import("@kittenbot/devs_compiler").then(module => {
-        setCompileWithHost(() => module.compileWithHost);
-      });
-    }
-  }, []);
 
   const handleDownload = async () => {
     if (!compileWithHost) {
       console.error("Compiler not loaded");
       return;
     }
-    
-    const { DevsHost } = await import('./DevsHost'); // 路径需要根据你的项目结构调整
-    let _code = code
-    for (const key in params) {
-      const value = params[key]
-      _code = code.replace(new RegExp(`\\$${key}`, 'g'), value)
-    }
-    
-    console.log("download", _code);
 
-    const host = new DevsHost({
-      hwInfo: {
-        // progName: "DeviceScript-workspace devs/hello",
-        // progVersion: "6.0.0",
-      },
-      files: {
-        "src/main.ts": _code,
-      },
-    });
-    const result = compileWithHost("src/main.ts", host);
+    const result = await compileWithHost();
     console.log(result);
     if (result.success){
       let bytecode = result.binary

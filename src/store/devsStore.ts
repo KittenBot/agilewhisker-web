@@ -13,7 +13,7 @@ export const useDevsStore = create<{
   params: Record<string, string>;
   setCode: (code: string) => void;
   setParams: (params: Record<string, string>) => void;
-  compileWithHost: (code?: string) => Promise<void>;
+  compileWithHost: (code?: string) => Promise<any>;
   compiler: any;
 }>((set, get) => {
   const devsState = {
@@ -49,7 +49,7 @@ export const useDevsStore = create<{
         },
       });
       const result = compiler("src/main.ts", host);
-      console.log(result);
+      return result;
     };
     set({ compiler, compileWithHost });
   });
