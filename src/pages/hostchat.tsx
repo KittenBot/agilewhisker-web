@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Input, Button, List, Typography } from "antd";
 import ReactMarkdown from "react-markdown";
 
@@ -9,24 +9,45 @@ type Message = {
   role: string;
 }
 
+interface History {
+  id: string;
+  history: Message[];
+}
+
+
 const HostChat = () => {
+  const [hash, setHash] = useState<string>('0/0');
   const [context, setContext] = useState<Message[]>([]);
   const [settings, setSettings] = useState<any>({});
-  const [llms, setLlms] = useState<string[]>([])
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const { get_settings, onUserText } = window.electronAPI;
+    const { get_settings, onUserText, onLoadHistory } = window.electronAPI;
     get_settings().then((settings: any) => {
-      console.log("settings", settings);
       setSettings(settings);
     });
     onUserText((text: string) => {
-      console.log("text", text);
       setInputValue(text);
     });
+    onLoadHistory((history: History) => {
+      setContext(history.history);
+      setHash(history.id);
+      console.log("history", history)
+    });
+    const param = new URLSearchParams(window.location.search);
+    const id = param.get('id') // llmid/historyid
+    setHash(id);
+    console.log("id", id)
   }, []);
+
+  const saveHistory = useMemo(() => {
+    const { save_history } = window.electronAPI;
+    return (messages: Message[]) => {
+      save_history({ id: hash, history: messages });
+    }
+  }, [hash]);
+
 
   const sendMessage = async () => {
     if (inputValue.trim()) {
@@ -72,27 +93,36 @@ const HostChat = () => {
         const decoder = new TextDecoder();
         let cacheRes = ''
         let done = false;
+        let updatedMessages;
 
         while (!done) {
           const { value, done: _done } = await reader.read();
+          console.log(value, _done);
           done = _done;
           cacheRes += decoder.decode(value, { stream: true });
           let botMsg = '';
           const lines = cacheRes.split('\n').filter((line) => line.trim());
           for (const line of lines) {
-            if (line.startsWith('data: ')) {
+            console.log(line);
+            if (line.includes('[DONE]')) {
+              break;
+            } else if (line.startsWith('data: ')) {
               const message = JSON.parse(line.substring(6));
               console.log(message);
               if (message.choices && message.choices[0].delta?.content) {
                 const _txt: string = message.choices[0].delta.content;
                 botMsg += _txt;
-                const updatedMessages = [...messages, { content: botMsg, role: 'assistant' }];
+                updatedMessages = [...messages, { content: botMsg, role: 'assistant' }];
                 setContext(updatedMessages);
               }
             }
           }
 
         }
+        setIsLoading(false);
+        saveHistory(updatedMessages)
+        
+
       } catch (error) {
         
       }
@@ -119,7 +149,12 @@ const HostChat = () => {
         onPressEnter={sendMessage}
         placeholder="Type your message here..."
       />
-      <Button type="primary" onClick={sendMessage} style={{ marginTop: 8 }}>
+      <Button
+        type="primary"
+        onClick={sendMessage}
+        style={{ marginTop: 8 }}
+        disabled={isLoading}
+      >
         Send
       </Button>
 

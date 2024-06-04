@@ -53,8 +53,8 @@ const LLMConfig = (props: LLMConfigProps) => {
 
     return (
         <Modal
-            title="Create LLM Robot"
-            visible={props.isModalVisible}
+            title="LLM Robot"
+            open={props.isModalVisible}
             onOk={handleOk}
             onCancel={handleCancel}
         >
@@ -74,7 +74,7 @@ const LLMConfig = (props: LLMConfigProps) => {
                 <Form.Item
                     name="title"
                     label="Title"
-                    rules={[{ required: true, message: 'Please input the title!' }]}
+                    rules={[{ message: 'Please input the title!' }]}
                 >
                     <Input placeholder="Enter the title" />
                 </Form.Item>
@@ -86,7 +86,7 @@ const LLMConfig = (props: LLMConfigProps) => {
                     <Input.TextArea placeholder="Enter the description" />
                 </Form.Item>
                 <Form.Item
-                    name="systemPrompt"
+                    name="system"
                     label="System Prompt"
                     rules={[{ required: true, message: 'Please input the system prompt!' }]}
                 >
