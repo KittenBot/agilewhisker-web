@@ -15,9 +15,9 @@ const HostChat = () => {
   const [llms, setLlms] = useState<string[]>([])
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { get_settings, onUserText, list_llm } = window.electronAPI;
 
   useEffect(() => {
+    const { get_settings, onUserText } = window.electronAPI;
     get_settings().then((settings: any) => {
       console.log("settings", settings);
       setSettings(settings);

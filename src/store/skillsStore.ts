@@ -19,6 +19,10 @@ interface SkillConf {
 
 const initialBuilds = (): string[] => {
     let _builds = []
+    // ssr check
+    if (typeof window == 'undefined') {
+        return _builds
+    }
     let _buildsStr = localStorage.getItem('skillbuilds')
     if (!_buildsStr) {
         _builds = ["My Build"]

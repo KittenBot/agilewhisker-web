@@ -27,6 +27,12 @@ interface LLMConfigProps {
 const LLMConfig = (props: LLMConfigProps) => {
     const [form] = Form.useForm();
 
+    useEffect(() => {
+        if (props.llm) {
+            form.setFieldsValue(props.llm);
+        }
+    }, [props.llm]);
+
     const handleOk = () => {
         form
           .validateFields()
@@ -115,7 +121,7 @@ const LLMS: React.FC = () => {
 
     const handleSaveLLM = (values: any) => {
         if (values) {
-            save_llm(values.id, values).then(() => {
+            save_llm({id: values.id, llm: values}).then(() => {
                 list_llm().then((llms: string[]) => {
                     console.log("llms", llms);
                     setLlms(llms);
@@ -133,7 +139,14 @@ const LLMS: React.FC = () => {
                 dataSource={llms}
                 renderItem={(llm: string) => (
                     <List.Item key={llm}>
-                        {llm}
+                        <List.Item.Meta
+                            title={<a onClick={
+                                async () => {
+                                    const _conf = await get_llm(llm)
+                                    setCurrentLLM(_conf)
+                                }
+                            }>{llm}</a>}
+                        />
                     </List.Item>
                 )}
             />
