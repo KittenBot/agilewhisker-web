@@ -54,8 +54,6 @@ const HostChat = () => {
       setInputValue('');
       setIsLoading(true);
 
-      const systemPrompt = 'The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.';
-
       const messages: Message[] = [
         ...context,
         { content: inputValue, role: 'user' }
@@ -73,7 +71,6 @@ const HostChat = () => {
           body: JSON.stringify({ 
             model: settings.openaiModel || 'llama2',
             messages: [
-              { role: 'system', content: systemPrompt },
               ...messages
             ],
             stream: true
@@ -129,6 +126,11 @@ const HostChat = () => {
 
     }
   };
+  const roleColor = {
+    user: 'blue',
+    assistant: 'green',
+    system: 'red'
+  }
 
   return (
     <div style={{ padding: 16, background: 'white', height: '100vh' }}>
@@ -136,7 +138,7 @@ const HostChat = () => {
         bordered
         dataSource={context}
         renderItem={(item) => (
-          <List.Item style={{ color: item.role === 'user' ? 'blue' : 'green', fontWeight: item.role === 'user' ? 'bold' : 'normal' }}>
+          <List.Item style={{ color: roleColor[item.role], fontWeight: item.role === 'user' ? 'bold' : 'normal' }}>
             <ReactMarkdown>{item.content}</ReactMarkdown>
           </List.Item>
         )}
