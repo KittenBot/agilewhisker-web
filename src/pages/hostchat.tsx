@@ -12,9 +12,10 @@ type Message = {
 const HostChat = () => {
   const [context, setContext] = useState<Message[]>([]);
   const [settings, setSettings] = useState<any>({});
+  const [llms, setLlms] = useState<string[]>([])
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { get_settings, onUserText } = window.electronAPI;
+  const { get_settings, onUserText, list_llm } = window.electronAPI;
 
   useEffect(() => {
     get_settings().then((settings: any) => {
@@ -100,7 +101,7 @@ const HostChat = () => {
   };
 
   return (
-    <div style={{ padding: 16, background: 'white' }}>
+    <div style={{ padding: 16, background: 'white', height: '100vh' }}>
       <List
         bordered
         dataSource={context}

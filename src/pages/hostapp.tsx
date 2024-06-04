@@ -4,6 +4,7 @@ import { Card, Col, Row, List, Button, Menu, Layout, Switch } from 'antd'
 
 import styles from './hostapp.module.css';
 import Settings from '../components/Hostapp/settings';
+import LLMS from '../components/Hostapp/llms';
 
 const { Header, Sider, Content } = Layout;
 
@@ -15,7 +16,10 @@ declare global {
             get_services: () => Promise<any>,
             save_settings: (settings: any) => Promise<any>,
             get_settings: () => Promise<any>,
-            onUserText: (callback: (text: string) => void) => void
+            onUserText: (callback: (text: string) => void) => void,
+            list_llm: () => Promise<string[]>,
+            get_llm: (name: string) => Promise<any>,
+            save_llm: (name: string, data: any) => Promise<any>,
         }
     }
 }
@@ -77,6 +81,7 @@ export default function HostApp() {
                 >
                     <Menu.Item key="1">Services</Menu.Item>
                     <Menu.Item key="2">Settings</Menu.Item>
+                    <Menu.Item key="3">LLM</Menu.Item>
                 </Menu>
             </Sider>
             <Layout style={{padding:'20px'}}>
@@ -90,6 +95,7 @@ export default function HostApp() {
                     )}
                 />}
                 {tabs === '2' && <Settings />}
+                {tabs === '3' && <LLMS />}
 
             </Layout>
         </Layout>
