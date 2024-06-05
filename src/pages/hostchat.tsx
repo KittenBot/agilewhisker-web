@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ProChat, ProChatInstance } from '@ant-design/pro-chat';
+import { debounce } from 'lodash';
+import { ChatMessage, ProChat, ProChatInstance } from '@ant-design/pro-chat';
 
 type Message = {
   content: string;
@@ -8,28 +9,33 @@ type Message = {
 
 interface History {
   id: string;
-  history: Message[];
+  system: string;
+  history: ChatMessage[];
 }
 
 
 const HostChat = () => {
   const chatRef = useRef<ProChatInstance>();
   const [hash, setHash] = useState<string>('0/0');
-  const [context, setContext] = useState<Message[]>([]);
+  const [promt, setPromt] = useState<string>('');
+  const [context, setContext] = useState<ChatMessage[]>([]);
   const [settings, setSettings] = useState<any>({});
 
+  
   useEffect(() => {
     const { get_settings, onUserText, onLoadHistory } = window.electronAPI;
     get_settings().then((settings: any) => {
       setSettings(settings);
     });
     onUserText((text: string) => {
+      console.log("input", text)
       chatRef.current?.sendMessage(text);
     });
     onLoadHistory((history: History) => {
+      console.log("history", history)
       setContext(history.history);
       setHash(history.id);
-      console.log("history", history)
+      setPromt(history.system || 'You are a helpful assistant.');
     });
     const param = new URLSearchParams(window.location.search);
     const id = param.get('id') // llmid/historyid
@@ -40,21 +46,25 @@ const HostChat = () => {
   const saveHistory = useMemo(() => {
     const { save_history } = window.electronAPI;
     return (messages: Message[]) => {
+      console.log("saveHistory", messages)
       save_history({ id: hash, history: messages });
     }
   }, [hash]);
 
+  const debouncedSaveHistory = debounce(saveHistory, 1000);
+
 
   return (
     <div style={{ padding: 16, background: 'white', height: '100vh' }}>
-      <ProChat
+      {promt ? <ProChat
         chatRef={chatRef}
-        showTitle
+        initialChats={context}
         helloMessage={
           '欢迎使用 ProChat ，我是你的专属机器人，这是我们的 Github：[ProChat](https://github.com/ant-design/pro-chat)'
         }
         onChatsChange={(messages) => {
           console.log('onChatsChange', messages);
+          debouncedSaveHistory(messages);
         }}
         request={async (inputValue) => {
           console.log('request', inputValue);
@@ -68,6 +78,10 @@ const HostChat = () => {
             body: JSON.stringify({ 
               model: settings.openaiModel || 'llama2',
               messages: [
+                {
+                  role: 'system',
+                  content: promt
+                },
                 ...inputValue
               ],
               stream: true
@@ -100,10 +114,10 @@ const HostChat = () => {
                       botMsg += _txt;
                       controller.enqueue(encoder.encode(_txt));
                     }
-                    if (message.choices && message.choices[0].finish_reason === 'stop') {
-                      done = true;
-                      controller.close();
-                    }
+                    // if (message.choices && message.choices[0].finish_reason === 'stop') {
+                    //   done = true;
+                    //   controller.close();
+                    // }
                   }
                 }
 
@@ -113,7 +127,7 @@ const HostChat = () => {
           });
           return new Response(readableStream);
         }}
-      />
+      /> : null}
 
     </div>
   );
