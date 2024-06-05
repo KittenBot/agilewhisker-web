@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Input, Button, List, Typography } from "antd";
 import ReactMarkdown from "react-markdown";
+import { ProChat } from '@ant-design/pro-chat';
 
 const { TextArea } = Input;
 
@@ -134,7 +135,7 @@ const HostChat = () => {
 
   return (
     <div style={{ padding: 16, background: 'white', height: '100vh' }}>
-      <List
+      {/* <List
         bordered
         dataSource={context}
         renderItem={(item) => (
@@ -158,7 +159,16 @@ const HostChat = () => {
         disabled={isLoading}
       >
         Send
-      </Button>
+      </Button> */}
+      <ProChat
+        helloMessage={
+          '欢迎使用 ProChat ，我是你的专属机器人，这是我们的 Github：[ProChat](https://github.com/ant-design/pro-chat)'
+        }
+        request={async (messages) => {
+          const mockedData: string = `这是一段模拟的对话数据。本次会话传入了${messages.length}条消息`;
+          return new Response(mockedData);
+        }}
+      />
 
     </div>
   );
