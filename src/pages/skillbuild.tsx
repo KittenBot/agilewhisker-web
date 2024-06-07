@@ -18,6 +18,7 @@ import { useSkillsStore } from '../store/skillsStore';
 import { useDevsStore } from '../store/devsStore';
 import CodeEditor from '../components/CodeEditor';
 import { useJacdacStore } from '../store/jacdacStore';
+import { parseColoredText } from '../lib/codeparse';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -54,7 +55,7 @@ const SkillBuild = () => {
   const handleCompile = async () => {
     const code = generate()
     console.log(code)
-    const result = await compileWithHost()
+    const result = await compileWithHost(code)
     console.log(result)
     if (!result.success){
       messageApi.error('Compile failed')
@@ -70,8 +71,17 @@ const SkillBuild = () => {
     setShowCode(true)
   }
 
-  const handleOk = () => {
+  const handleDownload = async () => {
+    const ret = await compileWithHost(userCode)
+    console.log(ret)
+    if (ret.success){
+      setShowCode(false)
+    } else {
+      const _err = ret.diagnostics[0].formatted;
+      const formattedText = parseColoredText(_err);
 
+      messageApi.error(<pre style={{ background: '#f6f6f6', padding: '10px' }}>{formattedText}</pre>)
+    }
   }
 
   const handleCancel = () => {
@@ -79,7 +89,7 @@ const SkillBuild = () => {
   }
 
   const handleChange = (value) => {
-    console.log(value)
+    setUserCode(value)
   }
 
   const showConfigModal = (skill) => {
@@ -212,7 +222,16 @@ const SkillBuild = () => {
           </Menu.Item>
         </Menu>
       </Sider>
-      <Modal title="Generated Code" open={showCode} onOk={handleOk} onCancel={handleCancel}>
+      <Modal
+        title="Generated Code"
+        open={showCode}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="submit" type="primary" onClick={handleDownload}>
+            Download
+          </Button>,
+        ]}
+      >
         <p>Code Editor</p>
         <CodeEditor
           code={userCode}

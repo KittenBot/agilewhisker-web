@@ -28,8 +28,9 @@ const HostChat = () => {
       setSettings(settings);
     });
     onUserText((text: string) => {
+      text = text.trim();
       console.log("input", text)
-      chatRef.current?.sendMessage(text);
+      text && chatRef.current?.sendMessage(text);
     });
     onLoadHistory((history: History) => {
       console.log("history", history)

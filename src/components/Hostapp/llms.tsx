@@ -114,7 +114,7 @@ const LLMS: React.FC = () => {
     const handleAdd = () => {
         setCurrentLLM({
             id: 'new_robot',
-            title: 'New LLM Robot',
+            title: '',
             context: []
         })
     }

@@ -8,7 +8,6 @@ import styles from './styles.module.css';
 
 
 const CodeEditor = ({code, onChange}) => {
-  console.log(code, onChange)
   return (
     <div className='editorContainer'>
       <Editor
