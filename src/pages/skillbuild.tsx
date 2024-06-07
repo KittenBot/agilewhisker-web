@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Wrapper from "@theme/Layout";
 
-import { Avatar, Card, Row, Col, Layout, Menu, Button, Pagination, Input, Modal, message } from 'antd';
+import { Avatar, Card, Row, Col, Layout, Menu, Button, Progress, Pagination, Input, Modal, message } from 'antd';
 import {
   CodeOutlined,
   PlusOutlined,
@@ -42,7 +42,7 @@ const SkillBuild = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [editingSkill, setEditingSkill] = useState(null)
   const { generate, builds, skills, load, current } = useSkillsStore()
-  const { bus, webSerialConnected, webSocketConnected, brainAvatar, spec, connectJDBus } = useJacdacStore()
+  const { downloadProgress, downloadErr, downloadDevs, webSerialConnected, webSocketConnected, brainAvatar, spec, connectJDBus } = useJacdacStore()
   const isConnected = webSerialConnected || webSocketConnected
 
   const { compileWithHost } = useDevsStore()
@@ -75,7 +75,12 @@ const SkillBuild = () => {
     const ret = await compileWithHost(userCode)
     console.log(ret)
     if (ret.success){
-      setShowCode(false)
+      const _err = await downloadDevs(ret.binary)
+      if (_err){
+        messageApi.error(_err)
+      } else {
+        messageApi.success('Download success')
+      }
     } else {
       const _err = ret.diagnostics[0].formatted;
       const formattedText = parseColoredText(_err);
@@ -233,6 +238,9 @@ const SkillBuild = () => {
         ]}
       >
         <p>Code Editor</p>
+        { downloadProgress > 0 && (
+          <Progress percent={downloadProgress} showInfo={false} />
+        )}
         <CodeEditor
           code={userCode}
           onChange={handleChange}

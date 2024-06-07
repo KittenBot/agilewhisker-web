@@ -9,7 +9,7 @@ import {
   JDService,
   DeviceSpec,
   Transport,
-
+  DeviceScriptManagerCmd,OutPipe,
   DEVICE_ANNOUNCE, DEVICE_CHANGE, CONNECTION_STATE, SRV_DEVICE_SCRIPT_MANAGER,SRV_ROLE_MANAGER,
   SRV_SETTINGS, Packet
 } from 'jacdac-ts'
@@ -25,9 +25,12 @@ export const useJacdacStore = create<{
   brainAvatar: string
   deviceAvatar: string[];
   devsService: JDService;
+  downloadProgress: number;
+  downloadErr: string;
 
   connectJDBus: (usbConnect?:boolean) => Promise<void>;
   refresh: () => Promise<void>;
+  downloadDevs: (bytecode: any) => Promise<string>;
 
 }>((set, get) => ({
   bus: null,
@@ -38,6 +41,8 @@ export const useJacdacStore = create<{
   devsService: null,
   brainAvatar: null,
   deviceAvatar: [],
+  downloadProgress: -1,
+  downloadErr: '',
 
   refresh: async () => {
     const bus = get().bus
@@ -102,6 +107,23 @@ export const useJacdacStore = create<{
     
     set(state => ({ bus }));
     
+  },
+
+  downloadDevs: async (bytecode: any) => {
+    const devsService = get().devsService
+    if (!devsService) return 'No device script manager service found'
+    try {
+      await OutPipe.sendBytes(devsService, DeviceScriptManagerCmd.DeployBytecode, bytecode, p => {
+        set(state => ({ downloadProgress: p*100 }))
+      })
+    } catch (error) {
+      set(state => ({ downloadErr: error.toString() }))
+      return error.toString()
+    } finally {
+      set(state => ({ downloadProgress: -1 }))
+    }
+    return ''
   }
+
 
 }))
