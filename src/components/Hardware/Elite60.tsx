@@ -1,12 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './Elite60.css';
 
-const keys = [
-    ['ESC', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '/', '⭕'],
+
+export interface KeyboardProps {
+    shortcut?: Record<string, string>;
+    keys?: string[][];
+}
+
+const defaultLayout = [
+    ['ESC', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '', '⭕'],
     ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', '\\'],
     ['CapsLock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', '\'', 'Enter'],
-    ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', 'FN2', '↑', 'Del'],
-    ['Ctrl', 'Win', 'Alt', 'Space', 'Alt', 'Fn', '←', '↓', '→']
+    ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', '', '↑', 'Del'],
+    ['Ctrl', '⌘', 'Alt', 'Space', 'Alt', '', '←', '↓', '→']
 ];
 
 const specialKeyCodeMap = {
@@ -18,15 +24,21 @@ const specialKeyCodeMap = {
     'Space': 'Space',
     'ShiftLeft': 'Shift',
     'ControlLeft': 'Ctrl',
+    'MetaLeft': '⌘',
 };
 
-const keyMap = keys.flat().reduce((acc, key) => {
-    acc[key.toLowerCase()] = key;
-    return acc;
-}, {});
 
-const Elite60 = () => {
+const Elite60 = (props: KeyboardProps) => {
+    const [layout, setLayout] = useState(props.keys || defaultLayout);
     const [activeKey, setActiveKey] = useState(null);
+    const [dragOverKey, setDragOverKey] = useState(null);
+
+    const keyMap = useMemo(() => {
+        return layout.flat().reduce((acc, key) => {
+            acc[key.toLowerCase()] = key;
+            return acc;
+        }, {});
+    }, [layout]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -56,18 +68,47 @@ const Elite60 = () => {
             window.removeEventListener('keyup', handleKeyUp);
         };
     }, []);
+
+    const handleDragOver = (event, key) => {
+        // TODO: only allow drop on certain keys
+        event.preventDefault();
+        setDragOverKey(key);
+    }
+
+    const handleDragLeave = () => {
+        setDragOverKey(null);
+    }
+
+    const handleDrop = (event, key) => {
+        event.preventDefault();
+        setDragOverKey(null);
+    }
+
     return (
         <div className="keyboard">
-            {keys.map((row, rowIndex) => (
+            {layout.map((row, rowIndex) => (
                 <div key={rowIndex} className="keyboard-row">
-                    {row.map((key, keyIndex) => (
-                        <div
-                            key={keyIndex}
-                            className={`key ${key.toLowerCase()} ${activeKey === key ? 'active' : ''}`}
-                        >
-                            {key}
-                        </div>
-                    ))}
+                    {row.map((key, keyIndex) => {
+                        let className =`key ${key.toLowerCase()}`
+                        if (activeKey === key) {
+                            className += ' active';
+                        }
+                        if (dragOverKey === key) {
+                            className += ' drag-over';
+                        }
+
+                        return (
+                            <div
+                                key={keyIndex}
+                                className={className}
+                                onDragOver={(event) => handleDragOver(event, key)}
+                                onDragLeave={handleDragLeave}
+                                onDrop={() => handleDrop(event, key)}
+                                onClick={() => console.log('Clicked on', key)}
+                            >
+                                {key}
+                            </div>)
+                        })}
                 </div>
             ))}
         </div>

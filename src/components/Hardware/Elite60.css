@@ -26,6 +26,18 @@
   background-color: #a0d1ff;
 }
 
+.key.shortcut {
+  /* bold */
+  font-weight: 700;
+  color: #333;
+  border-color: #333;
+  border-width: 2px;
+  cursor: pointer;
+}
+
+.key.drag-over {
+  background-color: #ffcccb;
+}
 
 .key.esc {
   flex: 1;
