@@ -1,0 +1,79 @@
+.numpad {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 210px;
+    margin: auto;
+}
+
+.numpad-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.oled {
+    flex: 2;
+    background-color: #051650;
+    color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.encoder {
+    flex: 1;
+    background-color: #444;
+    color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.numpad-body {
+    display: flex;
+}
+
+.main-keys {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.numpad-row {
+    display: flex;
+    gap: 5px;
+}
+
+.key {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 40px;
+    width: 40px;
+    transition: background-color 0.3s;
+}
+
+.key-tall {
+    height: 85px;
+    /* 40px * 2 + 5px (gap) = 85px */
+}
+
+.side-keys {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: 5px;
+}
