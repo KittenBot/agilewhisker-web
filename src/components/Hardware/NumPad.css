@@ -54,7 +54,7 @@
     gap: 5px;
 }
 
-.key {
+.keynum {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -66,11 +66,11 @@
     transition: background-color 0.3s;
 }
 
-.key.active {
+.keynum.active {
     background-color: #a0d1ff;
 }
 
-.key.shortcut {
+.keynum.shortcut {
     /* bold */
     font-weight: 700;
     color: #333;
@@ -79,17 +79,17 @@
     cursor: pointer;
 }
 
-.key.drag-over {
+.keynum.drag-over {
     background-color: #ffcccb;
 }
 
 
-.key-tall {
+.keynum-tall {
     height: 85px;
     /* 40px * 2 + 5px (gap) = 85px */
 }
 
-.key-wide {
+.keynum-wide {
     width: 85px;
 }
 

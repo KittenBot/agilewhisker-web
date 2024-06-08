@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Wrapper from "@theme/Layout";
 
-import { Avatar, Card, Row, Col, Layout, Menu, Button, Progress, Pagination, Input, Modal, message } from 'antd';
+import { Avatar, Card, Row, Col, Layout, Menu, Button, Progress, Pagination, Input, Modal, message, FloatButton, Divider, List } from 'antd';
 import {
   CodeOutlined,
   PlusOutlined,
@@ -19,6 +19,9 @@ import { useDevsStore } from '../store/devsStore';
 import CodeEditor from '../components/CodeEditor';
 import { useJacdacStore } from '../store/jacdacStore';
 import { parseColoredText } from '../lib/codeparse';
+
+import Elite60 from '../components/Hardware/Elite60'
+import NumberPad from '../components/Hardware/NumPad';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -106,6 +109,10 @@ const SkillBuild = () => {
     setEditingSkill(null)
   }
 
+  const handleAddSkill = () => {
+    console.log('add skill')
+  }
+
   return (
     // <Wrapper title="Skill Builder">
     <Layout className={styles.layout}>
@@ -144,51 +151,24 @@ const SkillBuild = () => {
       </Sider>
       <Content className={styles.content}>
         <div className={styles.topBar}>
-          <Input
-            className={styles.searchInput}
-            placeholder="Search"
-            prefix={<SearchOutlined />}
+          <Button
+            type='primary'
+            shape='circle'
+            icon={<PlusOutlined />}
+            className={styles.topBarButton}
+            onClick={handleAddSkill}
           />
           <div>
           <Button icon={<CodeOutlined />} className={styles.topBarButton} onClick={handleShowCode} />
           <Button icon={<PlaySquareOutlined />} className={styles.topBarButton} onClick={handleCompile}/>
           </div>
         </div>
-        <Row gutter={[4, 4]}>
-
-          {skills.map((skill) => (
-            <Col key={skill.id} span={6}>
-              <Card
-                className={styles.skillCard}
-                hoverable
-                title={<div>
-                  <Avatar src="https://microsoft.github.io/jacdac-docs/images/devices/kittenbot/keycapbuttonv10.preview.jpg" />
-                  {skill.id}
-                </div>}
-                extra={<Button
-                  icon={<SettingOutlined />}
-                  size="small"
-                  className={styles.configButton}
-                  onClick={() => showConfigModal(skill)}
-                />}
-                onDragOver={(e) => {
-                  e.preventDefault()
-                  console.log('drag over')
-                }}
-                onDrop={(e) => {
-                  e.preventDefault()
-                  console.log('drop')
-                }}
-              >
-                <Card.Meta
-                  description={skill.description}
-                />
-              </Card>
-            </Col>
-          ))}
-        </Row>
-        <Pagination className={styles.pagination} defaultCurrent={1} total={20} />
-        <div className={styles.instruction}>Skill Options here</div>
+        {spec?.id === 'kittenbot-agilewhiskernumerickeypadv10' && <NumberPad />}
+        {spec?.id === 'kittenbot-agilewhiskerkeyboardelite60v10' && <Elite60 />}
+        <Divider>Modules</Divider>
+        <List>
+          
+        </List>
       </Content>
       <Sider className={styles.rightSider}>
         <Menu

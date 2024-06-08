@@ -10,11 +10,12 @@ import {
 
 } from '../components/Builder/skill'
 
-interface SkillConf {
+export interface SkillConf {
     id: string
     type: string
     param: any
     description: string
+    icon?: string
 }
 
 const initialBuilds = (): string[] => {

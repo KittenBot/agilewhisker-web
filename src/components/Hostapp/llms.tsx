@@ -169,14 +169,6 @@ const LLMS: React.FC = () => {
                 dataSource={llms}
                 renderItem={(llm: LLMConfig) => (
                     <List.Item key={llm.id}>
-                        {/* <List.Item.Meta
-                            title={<a onClick={
-                                async () => {
-                                    const _conf = await get_llm(llm)
-                                    setCurrentLLM(_conf)
-                                }
-                            }>{llm}</a>}
-                        /> */}
                         <LLMCard config={llm} onSelect={handleCardClick}/>
                     </List.Item>
                 )}

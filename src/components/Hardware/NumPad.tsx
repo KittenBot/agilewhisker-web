@@ -82,7 +82,7 @@ const NumpadLayout = (props: KeyboardProps) => {
                     {mainKeys.map((row, rowIndex) => (
                         <div key={rowIndex} className="numpad-row">
                             {row.map((key, keyIndex) => (
-                                <div key={keyIndex} className={`key ${key} ${key === '0' ? 'key-wide' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''}`}
+                                <div key={keyIndex} className={`keynum ${key === '0' ? 'keynum-wide' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''}`}
                                     onDragOver={(event) => handleDragOver(event, key)}
                                     onDragLeave={handleDragLeave}
                                     onDrop={() => handleDrop(event, key)}
@@ -97,7 +97,7 @@ const NumpadLayout = (props: KeyboardProps) => {
                 <div className="side-keys">
                     {sideKeys.map((key, keyIndex) => (
                         <div
-                            key={keyIndex} className={`key ${(key === 'Enter' || key === '+')? 'key-tall' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''}`}
+                            key={keyIndex} className={`keynum ${(key === 'Enter' || key === '+')? 'keynum-tall' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''}`}
                             onDragOver={(event) => handleDragOver(event, key)}
                             onDragLeave={handleDragLeave}
                             onDrop={() => handleDrop(event, key)}
