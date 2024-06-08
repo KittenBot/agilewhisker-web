@@ -7,7 +7,7 @@ interface ElectronAPI {
     save_settings: (settings: any) => Promise<any>,
     get_settings: () => Promise<any>,
     onUserText: (callback: (text: string) => void) => void,
-    list_llm: () => Promise<string[]>,
+    list_llm: () => Promise<any>,
     get_llm: (name: string) => Promise<any>,
     save_llm: (props: any) => Promise<any>,
     save_history: (props: any) => Promise<any>,

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, List, FloatButton, Modal } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Form, Input, List, FloatButton, Modal, Card, Row } from 'antd';
 import {
     AppstoreAddOutlined
 } from '@ant-design/icons';
@@ -98,17 +98,45 @@ const LLMConfig = (props: LLMConfigProps) => {
 
 }
 
+const LLMCard = ({config, onSelect}: {
+    config: LLMConfig,
+    onSelect: (cfg: LLMConfig) => void
+}) => {
+    return (
+        <Card
+            title={config.title}
+            bordered={false}
+            hoverable
+            extra={<a onClick={() => onSelect(config)}>Edit</a>}
+        >
+            <Row justify="space-between" align='middle'>
+                <p>{config.system.length > 24 ? config.system.slice(0, 24) + '...' : config.system}</p>
+
+
+            </Row>
+
+        </Card>
+    )
+}
+
 
 const LLMS: React.FC = () => {
-    const { list_llm, get_llm, save_llm } = window.electronAPI;
-    const [llms, setLlms] = useState<string[]>([]);
+    const [llms, setLlms] = useState<LLMConfig[]>([]);
     const [currentLLM, setCurrentLLM] = useState<LLMConfig | null>(null);
 
+    const refreshLLM = useMemo(() => {
+        const { list_llm } = window.electronAPI;
+        return () => {
+            list_llm().then((ret) => {
+                console.log("llms", ret);
+                const llms = ret.llms as LLMConfig[]
+                const history = ret.history as Record<string, string[]>
+                setLlms(llms);
+            });
+        }
+    }, []);
     useEffect(() => {
-        list_llm().then((llms: string[]) => {
-            console.log("llms", llms);
-            setLlms(llms);
-        });
+        refreshLLM();
     }, []);
 
     const handleAdd = () => {
@@ -121,32 +149,35 @@ const LLMS: React.FC = () => {
 
     const handleSaveLLM = (values: any) => {
         if (values) {
+            const { save_llm } = window.electronAPI;
             save_llm({id: values.id, llm: values}).then(() => {
-                list_llm().then((llms: string[]) => {
-                    console.log("llms", llms);
-                    setLlms(llms);
-                });
+                refreshLLM();
             });
         }
         setCurrentLLM(null);
+    }
+
+    const handleCardClick = (config: LLMConfig) => {
+        setCurrentLLM(config)
     }
 
     return (
         <div>
             <h1>LLMS</h1>
             <List
-                itemLayout='horizontal'
+                grid={{ gutter: 8, column: 2 }}
                 dataSource={llms}
-                renderItem={(llm: string) => (
-                    <List.Item key={llm}>
-                        <List.Item.Meta
+                renderItem={(llm: LLMConfig) => (
+                    <List.Item key={llm.id}>
+                        {/* <List.Item.Meta
                             title={<a onClick={
                                 async () => {
                                     const _conf = await get_llm(llm)
                                     setCurrentLLM(_conf)
                                 }
                             }>{llm}</a>}
-                        />
+                        /> */}
+                        <LLMCard config={llm} onSelect={handleCardClick}/>
                     </List.Item>
                 )}
             />
