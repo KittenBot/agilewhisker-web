@@ -22,6 +22,11 @@
   flex: 1;
 }
 
+.key.active {
+  background-color: #a0d1ff;
+}
+
+
 .key.esc {
   flex: 1;
 }
