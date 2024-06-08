@@ -32,6 +32,8 @@ const Settings: React.FC = () => {
   };
 
   return (
+    <div>
+    <h1>Settings</h1>
     <Form form={form} layout="vertical" onFinish={onFinish}>
       <Form.Item name="mqttbroker" label="Mqtt-Broker" rules={[{ required: true, message: 'The mqtt borker' }]}>
         <Input />
@@ -54,6 +56,7 @@ const Settings: React.FC = () => {
         </Button>
       </Form.Item>
     </Form>
+    </div>
   );
 };
 

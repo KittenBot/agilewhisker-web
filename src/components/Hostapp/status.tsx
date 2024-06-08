@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Row, Col, Card, Badge, Avatar, Divider } from 'antd';
+import { FloatButton, Row, Col, Card, Badge, Avatar, Divider } from 'antd';
+import { 
+    RedoOutlined
+} from '@ant-design/icons';
 
 import {
     deviceCatalogImage,
@@ -15,12 +18,28 @@ export interface HostAppStatusProps {
     }[]
 }
 
-const HostAppStatus = (props: HostAppStatusProps) => {
-    const { transports, devices } = props;
+const HostAppStatus = () => {
     const [specs, setSpecs] = useState<any[]>([])
+    const [status, setStatus] = useState<HostAppStatusProps>({
+        devices: [],
+        transports: []
+    })
+
+    const handleRefresh = useMemo(() => () => {
+        const { get_status } = window.electronAPI
+        get_status().then((status: any) => {
+            console.log("status", status)
+            setStatus(status)
+        })
+    }, [])
+
+    useEffect(()=>{
+        handleRefresh()
+    },[])
+
     useEffect(() => {
         const _spec = []
-        for (const dev of devices) {
+        for (const dev of status.devices) {
             if (!dev.productIdentifier)
                 continue
             const spec = deviceCatalog.specificationFromProductIdentifier(dev.productIdentifier)
@@ -32,11 +51,13 @@ const HostAppStatus = (props: HostAppStatusProps) => {
             })
         }
         setSpecs(_spec)
-    }, [devices])
+    }, [status])
+
     
+
     return (<div>
         <h1>Status</h1>
-        {transports.map((transport, idx) => (
+        {status.transports.map((transport, idx) => (
             <Badge key={idx} color='cyan' text={transport}/>
         ))}
         <Divider />
@@ -59,6 +80,12 @@ const HostAppStatus = (props: HostAppStatusProps) => {
         
 
         </Row>
+        <FloatButton
+            icon={<RedoOutlined />}
+            shape="circle"
+            style={{ right: 24 }}
+            onClick={handleRefresh}
+        />
     </div>)
 }
 

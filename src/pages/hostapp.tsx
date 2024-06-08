@@ -28,29 +28,6 @@ function ServiceCard(props: { name: string, status: boolean, icon: string, toggl
     </Card>)
 }
 
-function AgentStatus(){
-    const [status, setStatus] = useState<any>({
-        devices: [],
-        transports: []
-    })
-    useEffect(()=>{
-        const { get_status } = window.electronAPI
-        get_status().then((status: any) => {
-            console.log("status", status)
-            setStatus(status)
-        })
-    },[])
-    return (
-        <div>
-            <Status 
-                transports={status.transports}
-                devices={status.devices}
-            />
-        </div>
-    )
-
-}
-
 export default function HostApp() {
 
     const [services, setServices] = useState([])
@@ -94,7 +71,7 @@ export default function HostApp() {
                 </Menu>
             </Sider>
             <Layout style={{padding:'20px'}}>
-                {tabs === '1' && <AgentStatus/>}
+                {tabs === '1' && <Status/>}
                 {tabs === '2' && <List
                     grid={{ gutter: 16, column: 3 }}
                     dataSource={services}
