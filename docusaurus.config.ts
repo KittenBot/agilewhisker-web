@@ -2,6 +2,7 @@
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import renderSkill from './src/remark/render-skill'; 
+import pluginSkill from './plugin-generate-skills'
 
 const config: Config = {
   title: 'AgileWhisker',
@@ -148,6 +149,11 @@ const config: Config = {
     //   darkTheme: prismThemes.dracula,
     // },
   } satisfies Preset.ThemeConfig,
+  plugins: [
+    [pluginSkill, {
+
+    }],
+  ]
 };
 
 export default config;
