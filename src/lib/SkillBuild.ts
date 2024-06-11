@@ -18,6 +18,18 @@ export interface SkillConfig {
   jsSrc?: string // the js source code to skill, filled by the build plugin
 }
 
+export interface Skill {
+  id: string
+  params: Record<string, any>
+}
+
+export interface Build {
+  id: string
+  name: string
+  hardware: string
+  modules?: string[]
+  skills?: Skill[]
+}
 
 
 const SkillBuild = async (text: string) => {

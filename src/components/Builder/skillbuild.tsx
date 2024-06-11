@@ -47,7 +47,7 @@ const SkillBuild = (props: {
   const [showCode, setShowCode] = useState(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [editingSkill, setEditingSkill] = useState(null)
-  const { generate, builds, skills, loadSkills, current } = useSkillsStore()
+  const { generate, build, builds, skills, load, loadSkills } = useSkillsStore()
   const { downloadProgress, downloadErr, downloadDevs, webSerialConnected, webSocketConnected, brainAvatar, spec, connectJDBus } = useJacdacStore()
   const isConnected = webSerialConnected || webSocketConnected
 
@@ -125,23 +125,20 @@ const SkillBuild = (props: {
     console.log('add skill', skill, key)
   }
 
+
   return (
     // <Wrapper title="Skill Builder">
     <Layout className={styles.layout}>
       {contextHolder}
       <Sider className={styles.sider}>
         <Menu mode="vertical" className={styles.menu}>
-          {builds.map((build) => (
+          {builds.map((_id) => (
             <Menu.Item 
-              key={build}
-              className={build === current ? styles.activeMenuItem : ''}
-              onClick={() => load(build)}
-            >{build}</Menu.Item>
+              key={_id}
+              className={build?.id === _id ? styles.activeMenuItem : ''}
+              onClick={() => load(_id)}
+            >{_id}</Menu.Item>
           ))}
-          <Menu.Item key="new" className={styles.newMenuItem}>
-            <PlusOutlined />
-            New Build
-          </Menu.Item>
         </Menu>
         <div className={styles.deviceSection}>
           <Menu mode="vertical" className={styles.deviceMenu}>
@@ -174,7 +171,7 @@ const SkillBuild = (props: {
           <Button icon={<PlaySquareOutlined />} className={styles.topBarButton} onClick={handleCompile}/>
           </div>
         </div>
-        {spec?.id === 'kittenbot-agilewhiskernumerickeypadv10' && <NumberPad 
+        {spec?.id === 'kittenbot-agilewhiskernumerickeypadv10' || true && <NumberPad 
           onDrop={handleAddSkill}
         />}
         {spec?.id === 'kittenbot-agilewhiskerkeyboardelite60v10' && <Elite60
