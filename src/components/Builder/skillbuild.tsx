@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Wrapper from "@theme/Layout";
 
-import { Avatar, Card, Row, Col, Layout, Menu, Button, Progress, Pagination, Input, Modal, message, FloatButton, Divider, List } from 'antd';
+import { Avatar, Card, Row, Col, Layout, Menu, Button, Progress, Pagination, Input, Modal, message, Tooltip, Divider, List } from 'antd';
 import {
   CodeOutlined,
   PlusOutlined,
@@ -22,6 +22,7 @@ import { parseColoredText } from '../../lib/codeparse';
 
 import Elite60 from '../Hardware/Elite60'
 import NumberPad from '../Hardware/NumPad';
+import { SkillConfig } from '@/lib/SkillBuild';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -39,22 +40,23 @@ const SkillConfigModal = (props: {
   )
 }
 
-const SkillBuild = (props: any) => {
-  console.log("SkillBuild", props)
+const SkillBuild = (props: {
+  skills: SkillConfig[]
+}) => {
   const [userCode, setUserCode] = useState('')
   const [showCode, setShowCode] = useState(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [editingSkill, setEditingSkill] = useState(null)
-  const { generate, builds, skills, load, current } = useSkillsStore()
+  const { generate, builds, skills, loadSkills, current } = useSkillsStore()
   const { downloadProgress, downloadErr, downloadDevs, webSerialConnected, webSocketConnected, brainAvatar, spec, connectJDBus } = useJacdacStore()
   const isConnected = webSerialConnected || webSocketConnected
 
-  const { compileWithHost } = useDevsStore()
   useEffect(() => {
-    if (builds.length > 0) {
-      load(builds[0])
-    }
-  }, [builds])
+    loadSkills(props.skills)
+    console.log("skills", skills);
+  }, [props.skills])
+
+  const { compileWithHost } = useDevsStore()
 
   const handleCompile = async () => {
     const code = generate()
@@ -110,8 +112,17 @@ const SkillBuild = (props: any) => {
     setEditingSkill(null)
   }
 
-  const handleAddSkill = () => {
-    console.log('add skill')
+  const handleAddSkill = (id, key, accept) => {
+    const skill = skills.find((s) => s.id === id)
+    if (!skill) {
+      message.error('Skill not found')
+      return
+    }
+    if (accept && skill.target && accept !== skill.target) {
+      message.error('Skill not accepted')
+      return
+    }
+    console.log('add skill', skill, key)
   }
 
   return (
@@ -157,15 +168,18 @@ const SkillBuild = (props: any) => {
             shape='circle'
             icon={<PlusOutlined />}
             className={styles.topBarButton}
-            onClick={handleAddSkill}
           />
           <div>
           <Button icon={<CodeOutlined />} className={styles.topBarButton} onClick={handleShowCode} />
           <Button icon={<PlaySquareOutlined />} className={styles.topBarButton} onClick={handleCompile}/>
           </div>
         </div>
-        {spec?.id === 'kittenbot-agilewhiskernumerickeypadv10' && <NumberPad />}
-        {spec?.id === 'kittenbot-agilewhiskerkeyboardelite60v10' && <Elite60 />}
+        {spec?.id === 'kittenbot-agilewhiskernumerickeypadv10' && <NumberPad 
+          onDrop={handleAddSkill}
+        />}
+        {spec?.id === 'kittenbot-agilewhiskerkeyboardelite60v10' && <Elite60
+          onDrop={handleAddSkill}
+        />}
         <Divider>Modules</Divider>
         <List>
           
@@ -176,36 +190,18 @@ const SkillBuild = (props: any) => {
           className={styles.menu}
           mode="inline"
         >
-          <SubMenu key="sub1" icon={<AppstoreOutlined />} title="PC event">
-            <Menu.Item key="5-1" draggable>Skill1</Menu.Item>
-            <Menu.Item key="5-2">Skill2</Menu.Item>
-          </SubMenu>
-          <Menu.Item key="6" icon={<AppstoreOutlined />}>
-            Tool Box
-          </Menu.Item>
-          <Menu.Item key="7" icon={<AppstoreOutlined />}>
-            Music Player
-          </Menu.Item>
-          <Menu.Item key="8" icon={<AppstoreOutlined />}>
-            Demo
-          </Menu.Item>
-          <SubMenu key="youtube" icon={<YoutubeOutlined />} title="YouTube">
-            <Menu.Item key="youtube1" icon={<VideoCameraOutlined />}>
-              视频1
+          {skills.map((skill) => (
+            <Menu.Item key={skill.id} draggable 
+              onDragStart={(e) => {
+                e.dataTransfer.setData('id', skill.id)
+              }}
+            >
+              <Tooltip title={skill.description}>
+              {skill.thumbnail ? <Avatar src={skill.thumbnail} size='small'/> : null}
+              {skill.name}
+              </Tooltip>
             </Menu.Item>
-            <Menu.Item key="youtube2" icon={<VideoCameraOutlined />}>
-              视频2
-            </Menu.Item>
-          </SubMenu>
-          <Menu.Item key="13" icon={<AppstoreOutlined />}>
-            System Monitor
-          </Menu.Item>
-          <Menu.Item key="14" icon={<AppstoreOutlined />}>
-            Date & Time
-          </Menu.Item>
-          <Menu.Item key="15" icon={<AppstoreOutlined />}>
-            Weather
-          </Menu.Item>
+          ))}
         </Menu>
       </Sider>
       <Modal

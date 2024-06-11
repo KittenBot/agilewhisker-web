@@ -53,10 +53,16 @@ export default async function skillGenerate(context, options) {
           fs.copyFileSync(path.join(skillsDirectory, entry.name), path.join(__dirname, '..', 'static', 'js', entry.name))
           const _txt = fs.readFileSync(path.join(skillsDirectory, entry.name), 'utf-8');
           const {config, markdown} = buildSkillPage(_txt)
+          if (config.thumbnail){
+            if (!config.thumbnail.startsWith('http') && fs.existsSync(path.join(skillsDirectory, config.thumbnail))) {
+              // copy the thumbnail to static/assets
+              fs.copyFileSync(path.join(skillsDirectory, config.thumbnail), path.join(__dirname, '..', 'static', 'assets', config.thumbnail))
+              config.thumbnail = `/assets/${config.thumbnail}`
+            }
+          }
           config.jsSrc = `/js/${entry.name}`
-          const name = entry.name.replace('.js', '.md');
           return {
-            name,
+            name: entry.name,
             config,
             markdown
           };
@@ -67,7 +73,7 @@ export default async function skillGenerate(context, options) {
     async contentLoaded({ content, actions }) {
       console.log('contentLoaded', content)
       const { createData, addRoute } = actions;
-      const skills: SkillConfig[] = []
+      const _skills: SkillConfig[] = []
 
       // skills_page for /skills/xxx docs page
       if (!fs.existsSync(path.join(__dirname, '..', 'skills_page'))) {
@@ -75,10 +81,13 @@ export default async function skillGenerate(context, options) {
       }
 
       for (const skill of content) {
-        const _path = path.join(__dirname, '..', 'skills_page', skill.name)
+        const _mdName = skill.name.replace('.js', '.md')
+        _skills.push(Object.assign({}, skill.config, { path: `/skills/${_mdName}` }))
+        const _path = path.join(__dirname, '..', 'skills_page', _mdName)
         const _mdContent = skill.markdown
         // too much trouble to create a md render, just save to skills_page and let page plugin render it
         if (fs.existsSync(_path)) {
+          console.log('file exists', _path)
           // compare content and update if needed
           const _oldContent = fs.readFileSync(_path, 'utf-8')
           if (_oldContent === _mdContent) {
@@ -89,8 +98,8 @@ export default async function skillGenerate(context, options) {
           fs.writeFileSync(_path, _mdContent)
         }
       }
-
-      const skillsJsonPath = await createData('skills.json', JSON.stringify(skills, null, 2));
+      console.log('skills', _skills)
+      const skillsJsonPath = await createData('skills.json', JSON.stringify(_skills, null, 2));
 
       addRoute({
         path: '/builder',

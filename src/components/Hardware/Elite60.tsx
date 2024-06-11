@@ -5,6 +5,7 @@ import './Elite60.css';
 export interface KeyboardProps {
     shortcut?: Record<string, string>;
     keys?: string[][];
+    onDrop: (id: string, key: string, accept: string) => void;
 }
 
 const defaultLayout = [
@@ -79,9 +80,10 @@ const Elite60 = (props: KeyboardProps) => {
         setDragOverKey(null);
     }
 
-    const handleDrop = (event, key) => {
+    const handleDropKeybutton = (event, key) => {
         event.preventDefault();
         setDragOverKey(null);
+        props.onDrop(event.dataTransfer.getData('id'), key, 'keybutton');
     }
 
     return (
@@ -103,7 +105,7 @@ const Elite60 = (props: KeyboardProps) => {
                                 className={className}
                                 onDragOver={(event) => handleDragOver(event, key)}
                                 onDragLeave={handleDragLeave}
-                                onDrop={() => handleDrop(event, key)}
+                                onDrop={() => handleDropKeybutton(event, key)}
                                 onClick={() => console.log('Clicked on', key)}
                             >
                                 {key}

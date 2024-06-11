@@ -9,14 +9,7 @@ import {
     SkillAiService
 
 } from '../components/Builder/skill'
-
-export interface SkillConf {
-    id: string
-    type: string
-    param: any
-    description: string
-    icon?: string
-}
+import { SkillConfig } from '@/lib/SkillBuild'
 
 const initialBuilds = (): string[] => {
     let _builds = []
@@ -39,33 +32,33 @@ const initialBuilds = (): string[] => {
     return _builds
 }
 
-const buildSkill = (skill: SkillConf): Skill => {
-    let param = skill.param
-    if (!skill.description) {
-        skill.description = ''
-    }
-    if (typeof param === 'object' && param.type) {
-        param = buildSkill(skill.param) 
-    }
-    if (skill.type === 'SkillButton') {
-        return new SkillButton(skill.id, param)
-    } else if (skill.type === 'SkillOpenUrl') {
-        return new SkillOpenUrl(skill.id, param)
-    } else if (skill.type === 'SkillStartApp') {
-        return new SkillStartApp(skill.id, param)
-    } else if (skill.type === 'SkillSendText') {
-        return new SkillSendText(skill.id, param)
-    } else if (skill.type === 'SkillAiService') {
-        return new SkillAiService(skill.id, param)
-    }
-
-    throw new Error('Unknown skill type')
+const buildSkill = (skill: SkillConfig) => {
+    // let param = skill.param
+    // if (!skill.description) {
+    //     skill.description = ''
+    // }
+    // if (typeof param === 'object' && param.type) {
+    //     param = buildSkill(skill.param) 
+    // }
+    // if (skill.type === 'SkillButton') {
+    //     return new SkillButton(skill.id, param)
+    // } else if (skill.type === 'SkillOpenUrl') {
+    //     return new SkillOpenUrl(skill.id, param)
+    // } else if (skill.type === 'SkillStartApp') {
+    //     return new SkillStartApp(skill.id, param)
+    // } else if (skill.type === 'SkillSendText') {
+    //     return new SkillSendText(skill.id, param)
+    // } else if (skill.type === 'SkillAiService') {
+    //     return new SkillAiService(skill.id, param)
+    // }
+    return ''
 }
 
 export const useSkillsStore = create<{
     current: string // current skill build
     builds: string[]
-    skills: SkillConf[]
+    skills: SkillConfig[]
+    loadSkills: (skills: SkillConfig[]) => void
     generate: () => string // generate code for current build
     save: (key: string) => void
     load: (key: string) => void
@@ -74,6 +67,10 @@ export const useSkillsStore = create<{
     current: '',
     builds: initialBuilds(),
     skills: [],
+    loadSkills: (skills: SkillConfig[]) => {
+        set({ skills })
+        // TODO: load user indexdb saved skills ??
+    },
     save: (key: string) => {
         console.log('save current skill to loc with key', key)
     },
@@ -85,7 +82,7 @@ export const useSkillsStore = create<{
             const _builds = get().builds.filter((build) => build !== key)
             localStorage.setItem('skillbuilds', JSON.stringify(_builds))
         }
-        const _builds: SkillConf[] = JSON.parse(_buildsStr)
+        const _builds: SkillConfig[] = JSON.parse(_buildsStr)
         if (Skill.builder?.skills)
             Skill.builder.skills = []
         for (const _build of _builds) {

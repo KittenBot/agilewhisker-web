@@ -65,9 +65,10 @@ const NumpadLayout = (props: KeyboardProps) => {
         setDragOverKey(null);
     }
 
-    const handleDrop = (event, key) => {
-        event.preventDefault();
+    const handleDropKeybutton = (event, key) => {
         setDragOverKey(null);
+        const target = event.dataTransfer.getData('id');
+        props.onDrop(target, key, 'keybutton');
     }
 
     return (
@@ -85,7 +86,7 @@ const NumpadLayout = (props: KeyboardProps) => {
                                 <div key={keyIndex} className={`keynum ${key === '0' ? 'keynum-wide' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''}`}
                                     onDragOver={(event) => handleDragOver(event, key)}
                                     onDragLeave={handleDragLeave}
-                                    onDrop={() => handleDrop(event, key)}
+                                    onDrop={(event) => handleDropKeybutton(event, key)}
                                     onClick={() => console.log('Clicked on', key)}
                                 >
                                     {key}
@@ -100,7 +101,7 @@ const NumpadLayout = (props: KeyboardProps) => {
                             key={keyIndex} className={`keynum ${(key === 'Enter' || key === '+')? 'keynum-tall' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''}`}
                             onDragOver={(event) => handleDragOver(event, key)}
                             onDragLeave={handleDragLeave}
-                            onDrop={() => handleDrop(event, key)}
+                            onDrop={(event) => handleDropKeybutton(event, key)}
                             onClick={() => console.log('Clicked on', key)}
                         >
                             {key}

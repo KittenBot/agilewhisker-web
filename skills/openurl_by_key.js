@@ -16,6 +16,7 @@ awagent({
   category: 'PC Event',
   name: 'OpenUrl',
   description: 'This skill listens for a key press and opens a URL',
+  thumbnail: 'urlopen.png',
   params: {
     'KEY': {
       type: 'string',
@@ -27,6 +28,8 @@ awagent({
       description: 'The URL to open',
       default: 'https://w.kittenbot.cc'
     }
-  }
+  },
+  devs: template,
+  target: 'keybutton'
   
 })

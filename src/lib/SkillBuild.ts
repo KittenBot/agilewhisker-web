@@ -14,6 +14,7 @@ export interface SkillConfig {
   description: string
   thumbnail?: string
   params?: Record<string, SkillParam>
+  devs?: string // the device script to run
   jsSrc?: string // the js source code to skill, filled by the build plugin
 }
 
