@@ -1,8 +1,8 @@
-import { Skill, SkillButton, SkillOpenUrl } from '../components/Builder/skill'
+import fs from 'fs-extra'
+import SkillBuild from '../lib/SkillBuild'
 
-test('SkillButton', () => {
-  const _openurl = new SkillOpenUrl('openurl', 'https://example.com')
-  const _btn = new SkillButton('a', _openurl)
-  const code = Skill.builder.buildAll()
-  console.log(code)
+test('SkillButton', async () => {
+  const _txt = fs.readFileSync('src/test/testskill.js', 'utf-8')
+  const _skill = await SkillBuild(_txt)
+  console.log(_skill)
 })

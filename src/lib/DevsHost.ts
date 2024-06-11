@@ -5,6 +5,31 @@ import {
 
 import extrea_services from './services.json'
 
+
+const keyboarUtils = `
+import * as ds from "@devicescript/core"
+
+declare module "@devicescript/core" {
+  interface KeyboardClient {
+    button(value: number): ds.ClientRegister<boolean>
+  }
+}
+
+ds.KeyboardClient.prototype.button = function(value: number) {
+  const key = \`button\${value}\`
+  let r = (this as any)[key] as ds.ClientRegister<boolean>
+  if (!r) {
+    ;(this as any)[key] = r = ds.clientRegister(false)    
+    this.down.subscribe(async (k) => {
+      if (k === value) {
+        r.emit(true)
+      }
+    })
+  }
+  return r;
+}
+`
+
 // Device script implementation for kitten extension
 export class DevsHost implements Host {
     private files: {};
@@ -20,6 +45,7 @@ export class DevsHost implements Host {
       };
       this.cfg.addServices = extrea_services
       this.cfg.services = [...this.cfg.services, ...extrea_services]
+      this.files["src/keyboarUtils.ts"] = keyboarUtils
     }
   
     write(filename: string, contents: string | Uint8Array): void {
