@@ -3,6 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import renderSkill from './src/remark/render-skill'; 
 import pluginSkill from './plugin-generate-skills'
+import pluginWebpack from './plugin-custom-webpack'
 
 const config: Config = {
   title: 'AgileWhisker',
@@ -25,10 +26,6 @@ const config: Config = {
 
   staticDirectories: [
     'static',
-  ],
-
-  plugins: [
-    require.resolve('./src/plugins/custom-webpack')
   ],
 
   // Even if you don't use internationalization, you can use this field to set
@@ -154,6 +151,7 @@ const config: Config = {
     // }
   } satisfies Preset.ThemeConfig,
   plugins: [
+    pluginWebpack,
     ['@docusaurus/plugin-content-pages',
       {
         id: 'skills',

@@ -1,4 +1,5 @@
-module.exports = function(context, options) {
+// custom webpack config, mostly for antd pro-chat dependencies
+export default async function webpackFix(context, options) {
     return {
       name: 'custom-webpack',
       configureWebpack(config, isServer, utils) {
