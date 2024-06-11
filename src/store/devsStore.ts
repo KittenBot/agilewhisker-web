@@ -3,7 +3,6 @@ import { create } from "zustand";
 const loadCompiler = async () => {
   if (typeof window !== "undefined") {
     const module = await import("@kittenbot/devs_compiler");
-    console.log("module", module.compileWithHost);
     return module.compileWithHost;
   }
 };

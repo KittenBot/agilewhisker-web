@@ -1,4 +1,23 @@
 
+export interface SkillParam {
+  type: string
+  description: string
+  default?: any
+}
+
+export interface SkillConfig {
+  id: string
+  category: string // the category this skill may renderin
+  index?: number // index render order in the category
+  target?: string // the target may accept this skill
+  name: string
+  description: string
+  thumbnail?: string
+  params?: Record<string, SkillParam>
+  jsSrc?: string // the js source code to skill, filled by the build plugin
+}
+
+
 
 const SkillBuild = async (text: string) => {
   const config = {}

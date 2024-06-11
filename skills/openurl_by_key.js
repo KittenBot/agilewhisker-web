@@ -13,7 +13,8 @@ _key#KEY#.subscribe(() => {
 
 awagent({
   id: 'key_press_openurl',
-  name: 'Key Press Open URL',
+  category: 'PC Event',
+  name: 'OpenUrl',
   description: 'This skill listens for a key press and opens a URL',
   params: {
     'KEY': {

@@ -14,14 +14,14 @@ import {
   VideoCameraOutlined
 } from '@ant-design/icons';
 import styles from './skillbuild.module.css';
-import { useSkillsStore } from '../store/skillsStore';
-import { useDevsStore } from '../store/devsStore';
-import CodeEditor from '../components/CodeEditor';
-import { useJacdacStore } from '../store/jacdacStore';
-import { parseColoredText } from '../lib/codeparse';
+import { useSkillsStore } from '../../store/skillsStore';
+import { useDevsStore } from '../../store/devsStore';
+import CodeEditor from '../CodeEditor';
+import { useJacdacStore } from '../../store/jacdacStore';
+import { parseColoredText } from '../../lib/codeparse';
 
-import Elite60 from '../components/Hardware/Elite60'
-import NumberPad from '../components/Hardware/NumPad';
+import Elite60 from '../Hardware/Elite60'
+import NumberPad from '../Hardware/NumPad';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -39,7 +39,8 @@ const SkillConfigModal = (props: {
   )
 }
 
-const SkillBuild = () => {
+const SkillBuild = (props: any) => {
+  console.log("SkillBuild", props)
   const [userCode, setUserCode] = useState('')
   const [showCode, setShowCode] = useState(false)
   const [messageApi, contextHolder] = message.useMessage();
