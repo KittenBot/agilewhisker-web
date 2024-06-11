@@ -150,6 +150,14 @@ const config: Config = {
     // },
   } satisfies Preset.ThemeConfig,
   plugins: [
+    ['@docusaurus/plugin-content-pages',
+      {
+        id: 'skills',
+        path: 'skills_page',
+        routeBasePath: 'skills',
+        include: ['**/*.{md,mdx}'],
+      }
+    ],
     [pluginSkill, {
 
     }],
