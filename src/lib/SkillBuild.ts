@@ -3,6 +3,7 @@ export interface SkillParam {
   type: string
   description: string
   default?: any
+  editable?: boolean // user can't edit this parameter
 }
 
 export interface SkillConfig {
@@ -20,7 +21,7 @@ export interface SkillConfig {
 
 export interface SkillEvent {
   id: string // the id of the skill
-  params?: Record<string, any> // the parameters of the skill, calculated by the builder??
+  params?: Record<string, string> // the parameters of the skill, calculated by the builder??
   key: string // the unique key to the component
   thumbnail?: string // set by skill loader
 }

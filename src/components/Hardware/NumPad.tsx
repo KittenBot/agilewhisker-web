@@ -34,7 +34,6 @@ const NumpadLayout = (props: KeyboardProps) => {
             } else if (code.startsWith('Numpad')) {
                 setActiveKey(code.replace('Numpad', ''));
             }
-            console.log(code);
         };
 
         const handleKeyUp = (event) => {

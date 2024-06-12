@@ -23,22 +23,11 @@ import { parseColoredText } from '../../lib/codeparse';
 import Elite60 from '../Hardware/Elite60'
 import NumberPad from '../Hardware/NumPad';
 import { SkillEvent, SkillConfig } from '@/lib/SkillBuild';
+import { SkillConfigModal } from './skillconfig';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
-const SkillConfigModal = (props: {
-  skill: any,
-  handleChange: (skill) => void,
-}) => {
-  const { skill, handleChange } = props
-
-  return (
-    <Modal title="Skill Configuration" open={!!skill} onOk={() => handleChange(skill)} onCancel={() => handleChange(null)}>
-      <p>Configuration for</p>
-    </Modal>
-  )
-}
 
 const SkillBuild = (props: {
   skills: SkillConfig[]
@@ -46,7 +35,7 @@ const SkillBuild = (props: {
   const [userCode, setUserCode] = useState('')
   const [showCode, setShowCode] = useState(false)
   const [messageApi, contextHolder] = message.useMessage();
-  const [editingSkill, setEditingSkill] = useState(null)
+  const [editingEvt, setEditingEvt] = useState<SkillEvent>(null)
   const { addEvent, generate, build, builds, skills, load, loadSkills } = useSkillsStore()
   const { downloadProgress, downloadErr, downloadDevs, webSerialConnected, webSocketConnected, brainAvatar, spec, connectJDBus } = useJacdacStore()
   const isConnected = webSerialConnected || webSocketConnected
@@ -103,13 +92,9 @@ const SkillBuild = (props: {
     setUserCode(value)
   }
 
-  const showConfigModal = (skill) => {
-    setEditingSkill(skill)
-  }
-
-  const handleSkillChanged = (skill) => {
-    console.log(skill)
-    setEditingSkill(null)
+  const handleSkillChanged = (evt) => {
+    console.log("skill evt", evt)
+    setEditingEvt(null)
   }
 
   const handleAddSkill = (id, key, accept) => {
@@ -127,6 +112,12 @@ const SkillBuild = (props: {
       key,
       params: {}
     }
+    // fill in default params
+    if (skill.params){
+      for (const key in skill.params){
+        _evt.params[key] = skill.params[key].default
+      }
+    }
     if (skill.params?.KEY){
       // calc key map to devs HID key?
       _evt.params.KEY = key
@@ -139,10 +130,13 @@ const SkillBuild = (props: {
 
   const handleKeyClick = (key) => {
     // find skillevt with key
+    console.log("key click", key)
     const evt = build.events.find((e) => e.key === key)
-    if (!evt) return
-    console.log(evt)
-    // showConfigModal(evt)
+    if (!evt){
+      console.log("no event found", key)
+      return
+    }
+    setEditingEvt(evt)
   }
 
 
@@ -244,10 +238,10 @@ const SkillBuild = (props: {
           onChange={handleChange}
         />
       </Modal>
-      <SkillConfigModal
-        skill={editingSkill}
+      {editingEvt && <SkillConfigModal
+        evt={editingEvt}
         handleChange={handleSkillChanged}
-      />
+      />}
     </Layout>
     // </Wrapper>
   );

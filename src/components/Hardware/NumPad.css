@@ -87,6 +87,10 @@
     background-color: coral;
 }
 
+.keynum img {
+    max-width: 32px;
+}
+
 .keynum-tall {
     height: 85px;
     /* 40px * 2 + 5px (gap) = 85px */
