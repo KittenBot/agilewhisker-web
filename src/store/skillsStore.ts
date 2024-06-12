@@ -46,16 +46,15 @@ const initialBuilds = (): string[] => {
     return builds
 }
 
-
 export const useSkillsStore = create<{
     build: Build
     builds: string[]
     skills: SkillConfig[]
     loadSkills: (skills: SkillConfig[]) => void
     generate: () => string // generate code for current build
-    save: (key: string) => void
     load: (key: string) => void
     addEvent: (skill: SkillEvent) => void
+    saveEvent: (skill: SkillEvent) => void
     // delete: (key: string) => void
 }>((set, get) => ({
     build: {id: '', name: '', hardware: '', events: []},
@@ -68,17 +67,6 @@ export const useSkillsStore = create<{
         
         set({ skills, builds: _builds, build: _build })
         // TODO: load user indexdb saved skills ??
-    },
-    save: (key: string) => {
-        console.log('save current skill to loc with key', key)
-        const _build = get().build
-        localStorage.setItem(key, JSON.stringify(_build))
-        const builds = get().builds
-        // find if the key exists
-        if (!builds.includes(key)) {
-            builds.push(key)
-            localStorage.setItem('skillbuilds', JSON.stringify(builds))
-        }
     },
     load: (key: string) => {
         if (key === get().build?.id) return
@@ -105,7 +93,23 @@ export const useSkillsStore = create<{
             _build.events = _build.events.filter((e) => e.id !== skill.id && e.key !== skill.key)
         }
         _build.events.push(skill)
-        console.log('add event', _build)
+        localStorage.setItem(_build.id, JSON.stringify(_build))
+        set({ build: _build })
+    },
+    saveEvent: (skill: SkillEvent) => {
+        const _build = get().build
+        if (!_build) {
+            console.error('No build found')
+            return
+        }
+        // update the build event
+        for (let i = 0; i < _build.events.length; i++) {
+            if (_build.events[i].id === skill.id && _build.events[i].key === skill.key) {
+                _build.events[i] = skill
+                break
+            }
+        }
+        localStorage.setItem(_build.id, JSON.stringify(_build))
         set({ build: _build })
     }
 }))

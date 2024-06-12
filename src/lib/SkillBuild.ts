@@ -3,7 +3,7 @@ export interface SkillParam {
   type: string
   description: string
   default?: any
-  editable?: boolean // user can't edit this parameter
+  constant?: boolean // user can't edit this parameter
 }
 
 export interface SkillConfig {

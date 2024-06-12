@@ -6,7 +6,7 @@ import { useSkillsStore } from '../../store/skillsStore';
 
 export const SkillConfigModal = (props: {
   evt: SkillEvent,
-  handleChange: (skill) => void,
+  handleChange: (params: SkillEvent) => void,
 }) => {
   const [form] = Form.useForm();
   const { evt, handleChange } = props
@@ -14,7 +14,16 @@ export const SkillConfigModal = (props: {
   const skill = skills.find(s => s.id == evt.id)
   
   const handleFinish = (values: any) => {
-    console.log("finish",values)
+    const { params } = values
+    // rebuild params
+    const newParams: SkillEvent = Object.assign({}, evt)
+    Object.entries(skill.params).forEach(([key, param]) => {
+      if (!param.constant){
+        newParams.params[key] = params[key]
+      }
+    })
+    
+    handleChange(newParams)
   };
 
   const onClose = () => {
@@ -47,9 +56,9 @@ export const SkillConfigModal = (props: {
             label={param.description || key}
             name={['params', key]}
             initialValue={param.default}
-            rules={[{ required: !param.editable, message: 'This field is required' }]}
+            rules={[{ required: !param.constant, message: 'This field is required' }]}
           >
-            {(param.editable === false || key == 'KEY' )? (
+            {(param.constant || key == 'KEY' )? (
               <Input disabled={true} />
             ) : (
               <Input />

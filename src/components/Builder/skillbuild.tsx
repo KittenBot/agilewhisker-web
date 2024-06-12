@@ -36,7 +36,7 @@ const SkillBuild = (props: {
   const [showCode, setShowCode] = useState(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [editingEvt, setEditingEvt] = useState<SkillEvent>(null)
-  const { addEvent, generate, build, builds, skills, load, loadSkills } = useSkillsStore()
+  const { addEvent, saveEvent, generate, build, builds, skills, load, loadSkills } = useSkillsStore()
   const { downloadProgress, downloadErr, downloadDevs, webSerialConnected, webSocketConnected, brainAvatar, spec, connectJDBus } = useJacdacStore()
   const isConnected = webSerialConnected || webSocketConnected
 
@@ -92,9 +92,11 @@ const SkillBuild = (props: {
     setUserCode(value)
   }
 
-  const handleSkillChanged = (evt) => {
-    console.log("skill evt", evt)
+  const handleSkillChanged = (evt: SkillEvent) => {
     setEditingEvt(null)
+    if (evt){
+      saveEvent(evt)
+    }
   }
 
   const handleAddSkill = (id, key, accept) => {
@@ -139,6 +141,7 @@ const SkillBuild = (props: {
     setEditingEvt(evt)
   }
 
+  console.log("build", build)
 
   return (
     // <Wrapper title="Skill Builder">
