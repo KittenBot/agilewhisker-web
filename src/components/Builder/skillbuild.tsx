@@ -191,7 +191,7 @@ const SkillBuild = (props: {
           <Button icon={<PlaySquareOutlined />} className={styles.topBarButton} onClick={handleCompile}/>
           </div>
         </div>
-        {spec?.id === 'kittenbot-agilewhiskernumerickeypadv10' || true && <NumberPad 
+        {spec?.id === 'kittenbot-agilewhiskernumerickeypadv10' && <NumberPad 
           onDrop={handleAddSkill}
           onClick={handleKeyClick}
           build={build}

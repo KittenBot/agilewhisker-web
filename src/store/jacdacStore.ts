@@ -111,7 +111,7 @@ export const useJacdacStore = create<{
 
   downloadDevs: async (bytecode: any) => {
     const devsService = get().devsService
-    if (!devsService) return 'No device script manager service found'
+    if (!devsService) return 'No device script manager service found, please connect to hardware'
     try {
       await OutPipe.sendBytes(devsService, DeviceScriptManagerCmd.DeployBytecode, bytecode, p => {
         set(state => ({ downloadProgress: p*100 }))

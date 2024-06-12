@@ -1,6 +1,7 @@
 
 const template = `
 import * as ds from "@devicescript/core"
+import './keyboarUtils'
 const kb = new ds.KeyboardClient()
 const cd = await new ds.PCEvent()
 
