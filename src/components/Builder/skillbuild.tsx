@@ -131,7 +131,18 @@ const SkillBuild = (props: {
       // calc key map to devs HID key?
       _evt.params.KEY = key
     }
+    if (skill.thumbnail){
+      _evt.thumbnail = skill.thumbnail
+    }
     addEvent(_evt)
+  }
+
+  const handleKeyClick = (key) => {
+    // find skillevt with key
+    const evt = build.events.find((e) => e.key === key)
+    if (!evt) return
+    console.log(evt)
+    // showConfigModal(evt)
   }
 
 
@@ -182,10 +193,12 @@ const SkillBuild = (props: {
         </div>
         {spec?.id === 'kittenbot-agilewhiskernumerickeypadv10' || true && <NumberPad 
           onDrop={handleAddSkill}
+          onClick={handleKeyClick}
           build={build}
         />}
         {spec?.id === 'kittenbot-agilewhiskerkeyboardelite60v10' && <Elite60
           onDrop={handleAddSkill}
+          onClick={handleKeyClick}
           build={build}
         />}
         <Divider>Modules</Divider>

@@ -8,6 +8,7 @@ export interface KeyboardProps {
     keys?: string[][];
     build: Build
     onDrop: (id: string, key: string, accept: string) => void;
+    onClick: (key: string) => void;
 }
 
 const defaultLayout = [

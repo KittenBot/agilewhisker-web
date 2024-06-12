@@ -83,13 +83,13 @@ const NumpadLayout = (props: KeyboardProps) => {
                     {mainKeys.map((row, rowIndex) => (
                         <div key={rowIndex} className="numpad-row">
                             {row.map((key, keyIndex) => (
-                                <div key={keyIndex} className={`keynum ${key === '0' ? 'keynum-wide' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''}`}
+                                <div key={keyIndex} className={`keynum ${key === '0' ? 'keynum-wide' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''} ${props.build.events.find((e) => e.key === key) ? 'filled' : ''}`}
                                     onDragOver={(event) => handleDragOver(event, key)}
                                     onDragLeave={handleDragLeave}
                                     onDrop={(event) => handleDropKeybutton(event, key)}
-                                    onClick={() => console.log('Clicked on', key)}
+                                    onClick={() => props.onClick(key)}
                                 >
-                                    {key}
+                                    {props.build.events.find((e) => e.key === key) ? <img src={props.build.events.find((e) => e.key === key).thumbnail} alt={key} /> : key}
                                 </div>
                             ))}
                         </div>
@@ -98,13 +98,13 @@ const NumpadLayout = (props: KeyboardProps) => {
                 <div className="side-keys">
                     {sideKeys.map((key, keyIndex) => (
                         <div
-                            key={keyIndex} className={`keynum ${(key === 'Enter' || key === '+')? 'keynum-tall' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''}`}
+                            key={keyIndex} className={`keynum ${(key === 'Enter' || key === '+')? 'keynum-tall' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''} ${props.build.events.find((e) => e.key === key) ? 'filled' : ''}`}
                             onDragOver={(event) => handleDragOver(event, key)}
                             onDragLeave={handleDragLeave}
                             onDrop={(event) => handleDropKeybutton(event, key)}
-                            onClick={() => console.log('Clicked on', key)}
-                        >
-                            {key}
+                            onClick={() => props.onClick(key)}
+                            >
+                            {props.build.events.find((e) => e.key === key) ? <img src={props.build.events.find((e) => e.key === key).thumbnail} alt={key} /> : key}
                         </div>
                     ))}
                 </div>

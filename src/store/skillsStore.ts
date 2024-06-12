@@ -58,7 +58,7 @@ export const useSkillsStore = create<{
     addEvent: (skill: SkillEvent) => void
     // delete: (key: string) => void
 }>((set, get) => ({
-    build: null,
+    build: {id: '', name: '', hardware: '', events: []},
     builds: [],
     skills: [],
     loadSkills: (skills: SkillConfig[]) => {

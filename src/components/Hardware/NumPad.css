@@ -83,6 +83,9 @@
     background-color: #ffcccb;
 }
 
+.keynum.filled {
+    background-color: coral;
+}
 
 .keynum-tall {
     height: 85px;
