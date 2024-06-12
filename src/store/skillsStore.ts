@@ -3,8 +3,9 @@ import {
     SkillConfig,
     SkillParam,
     SkillEvent, 
-    Build
-} from '@/lib/SkillBuild'
+    Build,
+    generateDeviceScript
+} from '../lib/SkillBuild'
 
 const loadOrCreateBuild = (key: string): Build => {
     let _build: Build = null
@@ -79,8 +80,9 @@ export const useSkillsStore = create<{
         set({ build: _build })
     },
     generate: () => {
-        // return Skill.builder.buildAll()
-        return 'str'
+        const { build, skills } = get()
+        const code = generateDeviceScript(build, skills)
+        return code
     },
     addEvent: (skill: SkillEvent) => {
         const _build = get().build

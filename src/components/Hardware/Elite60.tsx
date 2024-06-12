@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Build } from '@/lib/SkillBuild';
+import { Build, SkillEvtParam } from '@/lib/SkillBuild';
 import './Elite60.css';
 
 
@@ -7,7 +7,7 @@ export interface KeyboardProps {
     shortcut?: Record<string, string>;
     keys?: string[][];
     build: Build
-    onDrop: (id: string, key: string, accept: string) => void;
+    onDrop: (id: string, key: string | SkillEvtParam, accept: string) => void;
     onClick: (key: string) => void;
 }
 
@@ -30,7 +30,6 @@ const specialKeyCodeMap = {
     'ControlLeft': 'Ctrl',
     'MetaLeft': '⌘',
 };
-
 
 const Elite60 = (props: KeyboardProps) => {
     const [layout, setLayout] = useState(props.keys || defaultLayout);

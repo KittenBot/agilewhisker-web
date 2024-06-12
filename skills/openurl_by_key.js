@@ -4,8 +4,8 @@ import * as ds from "@devicescript/core"
 const kb = new ds.KeyboardClient()
 const cd = await new ds.PCEvent()
 
-const _key#KEY# = kb.button(HidKeyboardSelector.#KEY#)
-_key#KEY#.subscribe(() => {
+const _key#KEY# = kb.button(ds.HidKeyboardSelector.#KEY#)
+_key#KEY#.subscribe(async () => {
   await cd.openUrl("#URL#")
 })
 

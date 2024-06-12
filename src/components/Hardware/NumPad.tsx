@@ -22,6 +22,28 @@ const NumpadKeyMap = {
     'NumpadDecimal': '.',
 }
 
+// actually HID key codes in devicescript-spec
+const hidKeyMap = {
+    '1': 'Keypad1',
+    '2': 'Keypad2',
+    '3': 'Keypad3',
+    '4': 'Keypad4',
+    '5': 'Keypad5',
+    '6': 'Keypad6',
+    '7': 'Keypad7',
+    '8': 'Keypad8',
+    '9': 'Keypad9',
+    '0': 'Keypad0',
+    'Enter': 'KeypadReturn',
+    'Num': 'KeypadNumLock',
+    '/': 'KeypadDivide',
+    '*': 'KeypadMultiply',
+    '-': 'KeypadSubtrace',
+    '+': 'KeypadAdd',
+    '.': 'KeypadDecimalPoint',
+}
+
+
 const NumpadLayout = (props: KeyboardProps) => {
     const [activeKey, setActiveKey] = useState(null);
     const [dragOverKey, setDragOverKey] = useState(null);
@@ -67,6 +89,12 @@ const NumpadLayout = (props: KeyboardProps) => {
     const handleDropKeybutton = (event, key) => {
         setDragOverKey(null);
         const target = event.dataTransfer.getData('id');
+        if (hidKeyMap[key]) {
+            key = {
+                text: key,
+                value: hidKeyMap[key]
+            }
+        }
         props.onDrop(target, key, 'keybutton');
     }
 

@@ -109,10 +109,15 @@ const SkillBuild = (props: {
       message.error('Skill not accepted')
       return
     }
+    let _key = key
+    if (typeof key !== 'string'){
+      // SkillEvtParam
+      _key = key.text
+    }
     const _evt: SkillEvent = {
       id,
-      key,
-      params: {}
+      key: _key,
+      params: {},
     }
     // fill in default params
     if (skill.params){
@@ -140,8 +145,6 @@ const SkillBuild = (props: {
     }
     setEditingEvt(evt)
   }
-
-  console.log("build", build)
 
   return (
     // <Wrapper title="Skill Builder">

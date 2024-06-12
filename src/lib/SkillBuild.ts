@@ -19,9 +19,14 @@ export interface SkillConfig {
   jsSrc?: string // the js source code to skill, filled by the build plugin
 }
 
+export interface SkillEvtParam {
+  text: string
+  value: string
+}
+  
 export interface SkillEvent {
   id: string // the id of the skill
-  params?: Record<string, string> // the parameters of the skill, calculated by the builder??
+  params?: Record<string, string | SkillEvtParam> // the parameters of the skill, calculated by the builder??
   key: string // the unique key to the component
   thumbnail?: string // set by skill loader
 }
@@ -32,6 +37,63 @@ export interface Build {
   hardware: string
   modules?: string[]
   events: SkillEvent[]
+}
+
+export function generateDeviceScript(build: Build, skills: SkillConfig[]): string {
+  let code = ''
+  const _imports = []
+  const _instances = {}
+  
+  console.log("build: ", build, skills)
+
+  for (const evt of build.events) {
+    const skill = skills.find(s => s.id === evt.id)
+    if (!skill) {
+      console.error('Skill not found', evt)
+      continue
+    }
+    let _code = skill.devs
+    // params replace
+    for (const key in evt.params) {
+      let value = evt.params[key]
+      if (typeof value === 'object') {
+        value = value.value
+      }
+      _code = _code.replace(new RegExp(`#${key}#`, 'g'), value)
+    }
+    
+    const _lines = _code.split('\n')
+    for (const line of _lines) {
+      if (line.startsWith('import')) {
+        if (!_imports.includes(line)) _imports.push(line)
+      } else if (line.startsWith('const')) {
+        const _id = line.split(' ')[1]
+        _instances[_id] = line
+      } else if(line) {
+        code += line + '\n'
+      }
+    }
+  }
+
+  // instances process
+  const _instancesDs = []
+  const _instancesCode = []
+  for (const id in _instances) {
+    const line = _instances[id]
+    if (line.includes('new')) {
+      _instancesDs.push(line)
+    } else {
+      _instancesCode.push(line)
+    }
+  }
+  // join code in inverse order
+  code = _instancesCode.join('\n') + '\n' + code
+  code = _instancesDs.join('\n') + '\n' + code
+
+  // imports process
+  code = _imports.join('\n') + '\n' + code
+  
+  return code
 }
 
 

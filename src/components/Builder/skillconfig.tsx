@@ -50,7 +50,7 @@ export const SkillConfigModal = (props: {
         initialValues={{ params: evt.params }}
         onFinish={handleFinish}
       >
-        {Object.entries(skill.params || {}).map(([key, param]) => (
+        {Object.entries(skill.params || {}).filter(([key, param]) => !param.constant && key !== 'KEY').map(([key, param]) => (
           <Form.Item
             key={key}
             label={param.description || key}
@@ -58,11 +58,7 @@ export const SkillConfigModal = (props: {
             initialValue={param.default}
             rules={[{ required: !param.constant, message: 'This field is required' }]}
           >
-            {(param.constant || key == 'KEY' )? (
-              <Input disabled={true} />
-            ) : (
-              <Input />
-            )}
+            <Input />
           </Form.Item>
         ))}
       </Form>
