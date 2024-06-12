@@ -18,9 +18,11 @@ export interface SkillConfig {
   jsSrc?: string // the js source code to skill, filled by the build plugin
 }
 
-export interface Skill {
-  id: string
-  params: Record<string, any>
+export interface SkillEvent {
+  id: string // the id of the skill
+  params?: Record<string, any> // the parameters of the skill, calculated by the builder??
+  key: string // the unique key to the component
+  thumbnail?: string // set by skill loader
 }
 
 export interface Build {
@@ -28,7 +30,7 @@ export interface Build {
   name: string
   hardware: string
   modules?: string[]
-  skills?: Skill[]
+  events: SkillEvent[]
 }
 
 

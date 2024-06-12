@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Build } from '@/lib/SkillBuild';
 import './Elite60.css';
 
 
 export interface KeyboardProps {
     shortcut?: Record<string, string>;
     keys?: string[][];
+    build: Build
     onDrop: (id: string, key: string, accept: string) => void;
 }
 

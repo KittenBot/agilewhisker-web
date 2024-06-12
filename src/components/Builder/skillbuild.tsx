@@ -22,7 +22,7 @@ import { parseColoredText } from '../../lib/codeparse';
 
 import Elite60 from '../Hardware/Elite60'
 import NumberPad from '../Hardware/NumPad';
-import { SkillConfig } from '@/lib/SkillBuild';
+import { SkillEvent, SkillConfig } from '@/lib/SkillBuild';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -47,7 +47,7 @@ const SkillBuild = (props: {
   const [showCode, setShowCode] = useState(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [editingSkill, setEditingSkill] = useState(null)
-  const { generate, build, builds, skills, load, loadSkills } = useSkillsStore()
+  const { addEvent, generate, build, builds, skills, load, loadSkills } = useSkillsStore()
   const { downloadProgress, downloadErr, downloadDevs, webSerialConnected, webSocketConnected, brainAvatar, spec, connectJDBus } = useJacdacStore()
   const isConnected = webSerialConnected || webSocketConnected
 
@@ -122,7 +122,16 @@ const SkillBuild = (props: {
       message.error('Skill not accepted')
       return
     }
-    console.log('add skill', skill, key)
+    const _evt: SkillEvent = {
+      id,
+      key,
+      params: {}
+    }
+    if (skill.params?.KEY){
+      // calc key map to devs HID key?
+      _evt.params.KEY = key
+    }
+    addEvent(_evt)
   }
 
 
@@ -173,9 +182,11 @@ const SkillBuild = (props: {
         </div>
         {spec?.id === 'kittenbot-agilewhiskernumerickeypadv10' || true && <NumberPad 
           onDrop={handleAddSkill}
+          build={build}
         />}
         {spec?.id === 'kittenbot-agilewhiskerkeyboardelite60v10' && <Elite60
           onDrop={handleAddSkill}
+          build={build}
         />}
         <Divider>Modules</Divider>
         <List>

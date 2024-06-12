@@ -2,9 +2,30 @@ import { create } from 'zustand'
 import {
     SkillConfig,
     SkillParam,
-    Skill, 
+    SkillEvent, 
     Build
 } from '@/lib/SkillBuild'
+
+const loadOrCreateBuild = (key: string): Build => {
+    let _build: Build = null
+    const _buildStr = localStorage.getItem(key)
+    if (!_buildStr) {
+        // init a initial build
+        _build = {
+            id: key,
+            name: key,
+            hardware: '',
+            events: []
+        }
+    } else {
+        _build = JSON.parse(_buildStr)
+        // compatibility check
+        if (!_build.events) {
+            _build.events = []
+        }
+    }
+    return _build
+}
 
 const initialBuilds = (): string[] => {
     let builds: string[] = []
@@ -16,11 +37,7 @@ const initialBuilds = (): string[] => {
     if (!_buildsStr) {
         builds = ["My Build"]
         // init a initial build
-        const _temp_build: Build = {
-            id: 'My Build',
-            name: 'My Build',
-            hardware: '',
-        }
+        const _temp_build = loadOrCreateBuild('My Build')
         localStorage.setItem('My Build', JSON.stringify(_temp_build))
         localStorage.setItem('skillbuilds', JSON.stringify(builds))
     } else {
@@ -38,13 +55,18 @@ export const useSkillsStore = create<{
     generate: () => string // generate code for current build
     save: (key: string) => void
     load: (key: string) => void
+    addEvent: (skill: SkillEvent) => void
     // delete: (key: string) => void
 }>((set, get) => ({
     build: null,
-    builds: initialBuilds(),
+    builds: [],
     skills: [],
     loadSkills: (skills: SkillConfig[]) => {
-        set({ skills })
+        const _builds = initialBuilds()
+        // load first build
+        const _build = loadOrCreateBuild(_builds[0])
+        
+        set({ skills, builds: _builds, build: _build })
         // TODO: load user indexdb saved skills ??
     },
     save: (key: string) => {
@@ -71,5 +93,19 @@ export const useSkillsStore = create<{
     generate: () => {
         // return Skill.builder.buildAll()
         return 'str'
+    },
+    addEvent: (skill: SkillEvent) => {
+        const _build = get().build
+        if (!_build) {
+            console.error('No build found')
+            return
+        }
+        // find if the event exists, both id and key are same
+        if (_build.events.find((e) => e.id === skill.id && e.key === skill.key)) {
+            _build.events = _build.events.filter((e) => e.id !== skill.id && e.key !== skill.key)
+        }
+        _build.events.push(skill)
+        console.log('add event', _build)
+        set({ build: _build })
     }
 }))
