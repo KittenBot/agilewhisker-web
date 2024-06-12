@@ -45,9 +45,8 @@ const HostChat = () => {
   }, []);
 
   const saveHistory = useMemo(() => {
-    const { save_history } = window.electronAPI;
     return (messages: Message[]) => {
-      console.log("saveHistory", messages)
+      const { save_history } = window.electronAPI;
       save_history({ id: hash, history: messages });
     }
   }, [hash]);
