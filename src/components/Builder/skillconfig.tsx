@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Button, Checkbox } from 'antd';
+import { Modal, Form, Input, Button, Checkbox, Switch } from 'antd';
 import { SkillEvent } from '@/lib/SkillBuild';
 import { useSkillsStore } from '../../store/skillsStore';
 
@@ -18,11 +18,11 @@ export const SkillConfigModal = (props: {
     // rebuild params
     const newParams: SkillEvent = Object.assign({}, evt)
     Object.entries(skill.params).forEach(([key, param]) => {
-      if (!param.constant){
+      if (!param.constant && params[key] !== undefined){
         newParams.params[key] = params[key]
       }
     })
-    
+    console.log(newParams)
     handleChange(newParams)
   };
 
@@ -50,17 +50,20 @@ export const SkillConfigModal = (props: {
         initialValues={{ params: evt.params }}
         onFinish={handleFinish}
       >
-        {Object.entries(skill.params || {}).filter(([key, param]) => !param.constant && key !== 'KEY').map(([key, param]) => (
-          <Form.Item
+        {Object.entries(skill.params || {}).filter(([key, param]) => !param.constant && key !== 'KEY').map(([key, param]) => {
+          console.log(key, param)
+          return (<Form.Item
             key={key}
             label={param.description || key}
             name={['params', key]}
             initialValue={param.default}
             rules={[{ required: !param.constant, message: 'This field is required' }]}
+            valuePropName={param.type === 'boolean' ? 'checked' : 'value'}
           >
-            <Input />
-          </Form.Item>
-        ))}
+            {param.type === 'boolean' && <Switch />}
+            {param.type === 'string' && <Input />}
+          </Form.Item>)
+        })}
       </Form>
     </Modal>
   )

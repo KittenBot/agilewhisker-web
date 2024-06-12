@@ -1,6 +1,6 @@
 
 export interface SkillParam {
-  type: string
+  type: 'string' | 'number' | 'boolean'
   description: string
   default?: any
   constant?: boolean // user can't edit this parameter

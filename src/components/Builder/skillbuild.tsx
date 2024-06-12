@@ -218,7 +218,7 @@ const SkillBuild = (props: {
               }}
             >
               <Tooltip title={skill.description}>
-              {skill.thumbnail ? <Avatar src={skill.thumbnail} size='small'/> : null}
+              {skill.thumbnail ? <Avatar src={skill.thumbnail} size='small' shape='square'/> : null}
               {skill.name}
               </Tooltip>
             </Menu.Item>
