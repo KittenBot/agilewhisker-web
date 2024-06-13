@@ -5,7 +5,8 @@ import {
     SkillCategory,
     SkillEvent, 
     Build,
-    generateDeviceScript
+    generateDeviceScript,
+    getSkillById
 } from '../lib/SkillBuild'
 
 const loadOrCreateBuild = (key: string): Build => {
@@ -57,11 +58,15 @@ export const useSkillsStore = create<{
     load: (key: string) => void
     addEvent: (skill: SkillEvent) => void
     saveEvent: (skill: SkillEvent) => void
+    getSkill: (id: string) => SkillConfig
     // delete: (key: string) => void
 }>((set, get) => ({
     build: {id: '', name: '', hardware: '', events: []},
     builds: [],
     skills: {},
+    getSkill: (id: string) => {
+        return getSkillById(id, get().skills)
+    },
     loadSkills: (skills: Record<string, SkillCategory>) => {
         const _builds = initialBuilds()
         // load first build

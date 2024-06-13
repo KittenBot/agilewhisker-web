@@ -44,7 +44,16 @@ export interface Build {
   events: SkillEvent[]
 }
 
-export function generateDeviceScript(build: Build, skills: SkillConfig[]): string {
+export function getSkillById (id: string, skills: Record<string, SkillCategory>) {
+  for (const category in skills) {
+      if (skills[category].skills[id]) {
+          return skills[category].skills[id]
+      }
+  }
+  return null
+}
+
+export function generateDeviceScript(build: Build, skills: Record<string, SkillCategory>): string {
   let code = ''
   const _imports = []
   const _instances = {}
@@ -52,7 +61,7 @@ export function generateDeviceScript(build: Build, skills: SkillConfig[]): strin
   console.log("build: ", build, skills)
 
   for (const evt of build.events) {
-    const skill = skills.find(s => s.id === evt.id)
+    const skill = getSkillById(evt.id, skills)
     if (!skill) {
       console.error('Skill not found', evt)
       continue

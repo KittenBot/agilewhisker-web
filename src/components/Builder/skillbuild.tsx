@@ -36,7 +36,7 @@ const SkillBuild = (props: {
   const [showCode, setShowCode] = useState(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [editingEvt, setEditingEvt] = useState<SkillEvent>(null)
-  const { addEvent, saveEvent, generate, build, builds, skills, load, loadSkills } = useSkillsStore()
+  const { addEvent, getSkill, saveEvent, generate, build, builds, skills, load, loadSkills } = useSkillsStore()
   const { downloadProgress, downloadErr, downloadDevs, webSerialConnected, webSocketConnected, brainAvatar, spec, connectJDBus } = useJacdacStore()
   const isConnected = webSerialConnected || webSocketConnected
 
@@ -100,7 +100,7 @@ const SkillBuild = (props: {
   }
 
   const handleAddSkill = (id, key, accept) => {
-    const skill = skills.find((s) => s.id === id)
+    const skill = getSkill(id)
     if (!skill) {
       message.error('Skill not found')
       return

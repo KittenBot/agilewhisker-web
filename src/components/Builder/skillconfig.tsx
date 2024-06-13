@@ -10,8 +10,8 @@ export const SkillConfigModal = (props: {
 }) => {
   const [form] = Form.useForm();
   const { evt, handleChange } = props
-  const { skills } = useSkillsStore()
-  const skill = skills.find(s => s.id == evt.id)
+  const { skills, getSkill } = useSkillsStore()
+  const skill = getSkill(evt.id)
   
   const handleFinish = (values: any) => {
     const { params } = values
