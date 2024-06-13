@@ -9,6 +9,7 @@ import extrea_services from './services.json'
 const keyboarUtils = `
 import * as ds from "@devicescript/core";
 import { throttleTime } from "@devicescript/observables";
+import { SSD1306Driver } from "@devicescript/drivers";
 
 const kb = new ds.KeyboardClient()
 const settings = new ds.Settings()
@@ -32,10 +33,21 @@ kb.down.pipe(throttleTime(500)).subscribe(async (key) => {
     }
 });
 
+async function startOLED(){
+  const oled = new SSD1306Driver({
+    width: 128,
+    height: 64,
+    devAddr: 0x3c as any,
+  })
+  await oled.start()
+  return oled
+}
+
 export {
   kb,
   regKey,
-  hidEnable
+  hidEnable,
+  startOLED
 }
 
 `
