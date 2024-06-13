@@ -7,27 +7,29 @@ import extrea_services from './services.json'
 
 
 const keyboarUtils = `
-import * as ds from "@devicescript/core"
+import * as ds from "@devicescript/core";
+import { throttleTime } from "@devicescript/observables";
 
-declare module "@devicescript/core" {
-  interface KeyboardClient {
-    button(value: number): ds.ClientRegister<boolean>
-  }
+const kb = new ds.KeyboardClient()
+
+const _keyCallbacks: { [key: number]: () => Promise<void> } = {};
+const regKey = function(keyCode: number, callback: () => Promise<void>): void {
+    _keyCallbacks[keyCode] = callback;
 }
 
-ds.KeyboardClient.prototype.button = function(value: number) {
-  const key = \`button\${value}\`
-  let r = (this as any)[key] as ds.ClientRegister<boolean>
-  if (!r) {
-    ;(this as any)[key] = r = ds.clientRegister(false)    
-    this.down.subscribe(async (k) => {
-      if (k === value) {
-        r.emit(true)
-      }
-    })
-  }
-  return r;
+kb.down.pipe(throttleTime(500)).subscribe(async (key) => {
+    if (_keyCallbacks[key]) {
+        await _keyCallbacks[key]();
+    } else {
+        console.log(\`Unhandled\`, key);
+    }
+});
+
+export {
+  kb,
+  regKey,
 }
+
 `
 
 // Device script implementation for kitten extension

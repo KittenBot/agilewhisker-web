@@ -1,14 +1,13 @@
 
 const template = `
 import * as ds from "@devicescript/core"
-import './keyboarUtils'
-const kb = new ds.KeyboardClient()
+import {regKey} from './keyboarUtils'
+
 const cd = await new ds.PCEvent()
 
-const _key#KEY# = kb.button(ds.HidKeyboardSelector.#KEY#)
-_key#KEY#.subscribe(async () => {
-  await cd.openUrl("#URL#")
-})
+regKey(ds.HidKeyboardSelector.#KEY#, async () => {
+    await cd.openUrl("#URL#")
+});
 
 `
 
