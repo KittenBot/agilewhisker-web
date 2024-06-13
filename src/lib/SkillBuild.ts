@@ -19,6 +19,11 @@ export interface SkillConfig {
   jsSrc?: string // the js source code to skill, filled by the build plugin
 }
 
+export interface SkillCategory {
+  name: string
+  skills: Record<string, SkillConfig>
+}
+
 export interface SkillEvtParam {
   text: string
   value: string
