@@ -7,9 +7,10 @@ import { useSkillsStore } from '../../store/skillsStore';
 export const SkillConfigModal = (props: {
   evt: SkillEvent,
   handleChange: (params: SkillEvent) => void,
+  handleDelete: (params: SkillEvent) => void
 }) => {
   const [form] = Form.useForm();
-  const { evt, handleChange } = props
+  const { evt, handleChange, handleDelete } = props
   const { skills, getSkill } = useSkillsStore()
   const skill = getSkill(evt.id)
   
@@ -30,11 +31,18 @@ export const SkillConfigModal = (props: {
     handleChange(null)
   }
 
+  const onDelete = () => {
+    handleDelete(evt)
+  }
+
   return (
     <Modal title="Skill Configuration"
       open={!!evt}
       onCancel={onClose}
       footer={[
+        <Button key="delete" onClick={onDelete} danger>
+          Delete
+        </Button>,
         <Button key="cancel" onClick={onClose}>
           Cancel
         </Button>,

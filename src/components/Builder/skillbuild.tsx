@@ -36,7 +36,7 @@ const SkillBuild = (props: {
   const [showCode, setShowCode] = useState(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [editingEvt, setEditingEvt] = useState<SkillEvent>(null)
-  const { addEvent, getSkill, saveEvent, generate, build, builds, skills, load, loadSkills } = useSkillsStore()
+  const { addEvent, getSkill, saveEvent, deleteEvent, generate, build, builds, skills, load, loadSkills } = useSkillsStore()
   const { downloadProgress, downloadErr, downloadDevs, webSerialConnected, webSocketConnected, brainAvatar, spec, connectJDBus } = useJacdacStore()
   const isConnected = webSerialConnected || webSocketConnected
 
@@ -97,6 +97,11 @@ const SkillBuild = (props: {
     if (evt){
       saveEvent(evt)
     }
+  }
+
+  const handleSkillDelete = (evt: SkillEvent) => {
+    setEditingEvt(null)
+    deleteEvent(evt)
   }
 
   const handleAddSkill = (id, key, accept) => {
@@ -255,6 +260,7 @@ const SkillBuild = (props: {
       {editingEvt && <SkillConfigModal
         evt={editingEvt}
         handleChange={handleSkillChanged}
+        handleDelete={handleSkillDelete}
       />}
     </Layout>
     // </Wrapper>

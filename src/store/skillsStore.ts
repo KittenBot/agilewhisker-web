@@ -58,6 +58,7 @@ export const useSkillsStore = create<{
     load: (key: string) => void
     addEvent: (skill: SkillEvent) => void
     saveEvent: (skill: SkillEvent) => void
+    deleteEvent: (skill: SkillEvent) => void
     getSkill: (id: string) => SkillConfig
     // delete: (key: string) => void
 }>((set, get) => ({
@@ -117,6 +118,16 @@ export const useSkillsStore = create<{
                 break
             }
         }
+        localStorage.setItem(_build.id, JSON.stringify(_build))
+        set({ build: _build })
+    },
+    deleteEvent: (skill: SkillEvent) => {
+        const _build = get().build
+        if (!_build) {
+            console.error('No build found')
+            return
+        }
+        _build.events = _build.events.filter((e) => e.id !== skill.id && e.key !== skill.key)
         localStorage.setItem(_build.id, JSON.stringify(_build))
         set({ build: _build })
     }
