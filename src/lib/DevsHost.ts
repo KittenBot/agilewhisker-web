@@ -11,10 +11,17 @@ import * as ds from "@devicescript/core";
 import { throttleTime } from "@devicescript/observables";
 
 const kb = new ds.KeyboardClient()
+const settings = new ds.Settings()
 
 const _keyCallbacks: { [key: number]: () => Promise<void> } = {};
 const regKey = function(keyCode: number, callback: () => Promise<void>): void {
     _keyCallbacks[keyCode] = callback;
+}
+
+const hidEnable = async (en: number) => {
+  const b = Buffer.alloc(1)
+  b[0] = en
+  await settings.set("hidscan", b)
 }
 
 kb.down.pipe(throttleTime(500)).subscribe(async (key) => {
@@ -28,6 +35,7 @@ kb.down.pipe(throttleTime(500)).subscribe(async (key) => {
 export {
   kb,
   regKey,
+  hidEnable
 }
 
 `
