@@ -18,9 +18,9 @@ const regKey = function(keyCode: number, callback: () => Promise<void>): void {
     _keyCallbacks[keyCode] = callback;
 }
 
-const hidEnable = async (en: number) => {
+const hidEnable = async (en: boolean) => {
   const b = Buffer.alloc(1)
-  b[0] = en
+  b[0] = en ? 1 : 0
   await settings.set("hidscan", b)
 }
 
