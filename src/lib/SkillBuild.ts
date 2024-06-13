@@ -17,10 +17,12 @@ export interface SkillConfig {
   params?: Record<string, SkillParam>
   devs?: string // the device script to run
   jsSrc?: string // the js source code to skill, filled by the build plugin
+  categoryThumbnail?: string // the thumbnail of the category, maybe should be in the category config
 }
 
 export interface SkillCategory {
   name: string
+  thumbnail?: string
   skills: Record<string, SkillConfig>
 }
 

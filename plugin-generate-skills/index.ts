@@ -37,6 +37,16 @@ export default async function skillGenerate(context, options) {
               config.thumbnail = `/assets/${config.thumbnail}`
             }
           }
+          if (config.categoryThumbnail){
+            if (!config.categoryThumbnail.startsWith('http') && fs.existsSync(path.join(skillsDirectory, config.categoryThumbnail))) {
+              // copy the thumbnail to static/assets
+              fs.copyFileSync(path.join(skillsDirectory, config.categoryThumbnail), path.join(__dirname, '..', 'static', 'assets', config.categoryThumbnail))
+              if (!config.thumbnail){
+                config.thumbnail = `/assets/${config.categoryThumbnail}`
+              }
+              _skills[config.category].thumbnail = `/assets/${config.categoryThumbnail}`
+            }
+          }
           config.jsSrc = `/js/${filename}`
           _skills[config.category].skills[config.id] = config
         }

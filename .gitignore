@@ -34,3 +34,4 @@ yarn-error.log*
 skills_page/
 # static skills code
 static/js/
+static/assets/

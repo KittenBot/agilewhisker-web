@@ -212,7 +212,11 @@ const SkillBuild = (props: {
           mode="inline"
         >
           {Object.entries(skills).map(([id, category]) => (
-            <SubMenu key={id} title={category.name}>
+            <SubMenu
+              key={id}
+              title={category.name}
+              icon={category.thumbnail ? <Avatar src={category.thumbnail} size='small' shape='square'/> : null}
+            >
               {Object.entries(category.skills).map(([id, skill]) => (
                 <Menu.Item key={id} draggable 
                   onDragStart={(e) => {
