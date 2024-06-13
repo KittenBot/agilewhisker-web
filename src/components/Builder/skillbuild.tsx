@@ -22,7 +22,7 @@ import { parseColoredText } from '../../lib/codeparse';
 
 import Elite60 from '../Hardware/Elite60'
 import NumberPad from '../Hardware/NumPad';
-import { SkillEvent, SkillConfig } from '@/lib/SkillBuild';
+import { SkillEvent, SkillCategory } from '@/lib/SkillBuild';
 import { SkillConfigModal } from './skillconfig';
 
 const { Sider, Content } = Layout;
@@ -30,7 +30,7 @@ const { SubMenu } = Menu;
 
 
 const SkillBuild = (props: {
-  skills: SkillConfig[]
+  skills: Record<string, SkillCategory>
 }) => {
   const [userCode, setUserCode] = useState('')
   const [showCode, setShowCode] = useState(false)
@@ -211,17 +211,21 @@ const SkillBuild = (props: {
           className={styles.menu}
           mode="inline"
         >
-          {skills.map((skill) => (
-            <Menu.Item key={skill.id} draggable 
-              onDragStart={(e) => {
-                e.dataTransfer.setData('id', skill.id)
-              }}
-            >
-              <Tooltip title={skill.description}>
-              {skill.thumbnail ? <Avatar src={skill.thumbnail} size='small' shape='square'/> : null}
-              {skill.name}
-              </Tooltip>
-            </Menu.Item>
+          {Object.entries(skills).map(([id, category]) => (
+            <SubMenu key={id} title={category.name}>
+              {Object.entries(category.skills).map(([id, skill]) => (
+                <Menu.Item key={id} draggable 
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData('id', id)
+                  }}
+                  icon={skill.thumbnail ? <Avatar src={skill.thumbnail} size='small' shape='square'/> : null}
+                >
+                  <Tooltip title={skill.description}>
+                  {skill.name}
+                  </Tooltip>
+                </Menu.Item>
+              ))}
+            </SubMenu>
           ))}
         </Menu>
       </Sider>

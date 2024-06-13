@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import {
     SkillConfig,
     SkillParam,
+    SkillCategory,
     SkillEvent, 
     Build,
     generateDeviceScript
@@ -50,8 +51,8 @@ const initialBuilds = (): string[] => {
 export const useSkillsStore = create<{
     build: Build
     builds: string[]
-    skills: SkillConfig[]
-    loadSkills: (skills: SkillConfig[]) => void
+    skills: Record<string, SkillCategory>
+    loadSkills: (skills: Record<string, SkillCategory>) => void
     generate: () => string // generate code for current build
     load: (key: string) => void
     addEvent: (skill: SkillEvent) => void
@@ -60,8 +61,8 @@ export const useSkillsStore = create<{
 }>((set, get) => ({
     build: {id: '', name: '', hardware: '', events: []},
     builds: [],
-    skills: [],
-    loadSkills: (skills: SkillConfig[]) => {
+    skills: {},
+    loadSkills: (skills: Record<string, SkillCategory>) => {
         const _builds = initialBuilds()
         // load first build
         const _build = loadOrCreateBuild(_builds[0])
