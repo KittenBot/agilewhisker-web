@@ -140,6 +140,7 @@ const NumpadLayout = (props: KeyboardProps) => {
     }
 
     return (
+        <div>
         <div className="numpad">
             <div className="numpad-header">
                 <KeyboardKey
@@ -217,6 +218,45 @@ const NumpadLayout = (props: KeyboardProps) => {
                     ))}
                 </div>
             </div>
+        </div>
+        <div className='misc'>
+        <KeyboardKey
+            className='skill'
+            name='Misc1'
+            role='misc'
+            evt={props.build.events.find((e) => e.key === 'Misc1')}
+            isActive={activeKey === 'Misc1'}
+            isDragOver={dragOverKey === 'Misc1'}
+            handleDragOver={handleDragOver}
+            handleDragLeave={handleDragLeave}
+            handleDrop={handleDropKeybutton}
+            handleClick={() => props.onClick('Misc1')}
+        />
+        <KeyboardKey
+            className='skill'
+            name='Misc2'
+            role='misc'
+            evt={props.build.events.find((e) => e.key === 'Misc2')}
+            isActive={activeKey === 'Misc2'}
+            isDragOver={dragOverKey === 'Misc2'}
+            handleDragOver={handleDragOver}
+            handleDragLeave={handleDragLeave}
+            handleDrop={handleDropKeybutton}
+            handleClick={() => props.onClick('Misc2')}
+        />
+        <KeyboardKey
+            className='skill'
+            name='Animation'
+            role='animation'
+            evt={props.build.events.find((e) => e.key === 'Animation')}
+            isActive={activeKey === 'Animation'}
+            isDragOver={dragOverKey === 'Animation'}
+            handleDragOver={handleDragOver}
+            handleDragLeave={handleDragLeave}
+            handleDrop={handleDropKeybutton}
+            handleClick={() => props.onClick('Animation')}
+        />
+        </div>
         </div>
     );
 };
