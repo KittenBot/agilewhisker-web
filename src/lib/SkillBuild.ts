@@ -56,8 +56,14 @@ export function getSkillById (id: string, skills: Record<string, SkillCategory>)
   return null
 }
 
-export function generateDeviceScript(build: Build, skills: Record<string, SkillCategory>): string {
+export interface DeviceScriptGenResult {
+  code: string
+  libs: Record<string, string>
+}
+
+export function generateDeviceScript(build: Build, skills: Record<string, SkillCategory>): DeviceScriptGenResult {
   let code = ''
+  const libs = {}
   const _imports = []
   const _instances = {}
   
@@ -90,6 +96,11 @@ export function generateDeviceScript(build: Build, skills: Record<string, SkillC
         code += line + '\n'
       }
     }
+    if (skill.libs) {
+      for (const lib in skill.libs) {
+        libs[lib] = skill.libs[lib]
+      }
+    }
   }
 
   // instances process
@@ -110,7 +121,10 @@ export function generateDeviceScript(build: Build, skills: Record<string, SkillC
   // imports process
   code = _imports.join('\n') + '\n' + code
   
-  return code
+  return {
+    code,
+    libs
+  }
 }
 
 

@@ -1,8 +1,12 @@
 
 const animationLib = `
+import * as ds from "@devicescript/core"
+import { startLed } from "@devicescript/drivers"
+
 let curr = 0
 let _ledBuff
-const pattern_snake = (len: number, t: number) => {
+const pattern_snake = (pixels: any, t: number) => {
+    let len = pixels.length
     for (let i=0;i<len;++i) {
         let x = (i + (t >> 1)) % 64;
         if (x < 10){
@@ -18,7 +22,8 @@ const pattern_snake = (len: number, t: number) => {
     }
 }
 
-const pattern_sparkle = (len: number, t: number) => {
+const pattern_sparkle = (pixels: any, t: number) => {
+    let len = pixels.length
     if (t % 8)
         return
     for (let i=0;i<len;++i) {
@@ -27,7 +32,8 @@ const pattern_sparkle = (len: number, t: number) => {
     }
 }
 
-const pattern_random = (len: number, t: number) => {
+const pattern_random = (pixels: any, t: number) => {
+    let len = pixels.length
     if (t % 8)
         return
     for (let i=0;i<len;++i) {
@@ -35,7 +41,8 @@ const pattern_random = (len: number, t: number) => {
         curr = (curr + 1) % pixels.length
     }
 }
-const pattern_greys = (len: number, t: number) => {
+const pattern_greys = (pixels: any, t: number) => {
+    let len = pixels.length
     const max = 100
     t %= max
     for (let i=0;i<len;++i) {
@@ -54,7 +61,7 @@ async function initLED() {
         hwConfig: { type: ds.LedStripLightType.WS2812B_GRB, pin: ds.gpio(7) },
     })
     await led.showAll(0)
-
+    return led
 }
 
 export {
@@ -74,7 +81,7 @@ let _ledLloop = 0
 
 while (1) {
     _ledLloop += 1
-    $PATTERN(pixels.length, _ledLloop)
+    $PATTERN(pixels, _ledLloop)
     await led.show()
     await ds.sleep(10)
 }
@@ -97,7 +104,7 @@ Object.entries(codeTemplates).forEach(([pattern, fun]) => {
         devs: template.replace(/\$PATTERN/g, fun),
         target: 'animation',
         libs: {
-            'keyboardAnim.ts': animationLib
+            'src/keyboardAnim.ts': animationLib
         }
     })
 })

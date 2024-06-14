@@ -10,23 +10,28 @@ const loadCompiler = async () => {
 export const useDevsStore = create<{
   code: string;
   params: Record<string, string>;
+  extraLibs: Record<string, string>
   setCode: (code: string) => void;
   setParams: (params: Record<string, string>) => void;
   compileWithHost: (code?: string) => Promise<any>;
+  setExtraLibs: (libs: Record<string, string>) => void;
   compiler: any;
 }>((set, get) => {
   const devsState = {
     code: "// Write your code here",
     params: {},
+    extraLibs: {},
     setCode: (code: string) => set({ code }),
     setParams: (params) => set({ params }),
     compileWithHost: null,
     compiler: null,
+    setExtraLibs: (libs) => set({ extraLibs: libs }),
   };
 
   loadCompiler().then((compiler) => {
     const compileWithHost = async (userCode) => {
-      const { code, params } = get();
+      const { code, params, extraLibs } = get();
+      console.log("compileWithHost", code, params, extraLibs);
       if (!compiler) {
         console.error("Compiler not loaded");
         return;
@@ -37,7 +42,6 @@ export const useDevsStore = create<{
         const value = params[key];
         _code = code.replace(new RegExp(`\\$${key}`, "g"), value);
       }
-      console.log("download", _code);
       const host = new DevsHost({
         hwInfo: {
           // progName: "DeviceScript-workspace devs/hello",
@@ -45,6 +49,7 @@ export const useDevsStore = create<{
         },
         files: {
           "src/main.ts": _code,
+          ...extraLibs
         },
       });
       const result = compiler("src/main.ts", host);

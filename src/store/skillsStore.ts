@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useDevsStore } from './devsStore'
 import {
     SkillConfig,
     SkillParam,
@@ -65,6 +66,7 @@ export const useSkillsStore = create<{
     build: {id: '', name: '', hardware: '', events: []},
     builds: [],
     skills: {},
+    extraLibs: {},
     getSkill: (id: string) => {
         return getSkillById(id, get().skills)
     },
@@ -88,7 +90,10 @@ export const useSkillsStore = create<{
     },
     generate: () => {
         const { build, skills } = get()
-        const code = generateDeviceScript(build, skills)
+        const {code, libs} = generateDeviceScript(build, skills)
+        const { setExtraLibs } = useDevsStore.getState()
+        setExtraLibs(libs)
+
         return code
     },
     addEvent: (skill: SkillEvent) => {
