@@ -16,7 +16,7 @@ import {
 import styles from './skillbuild.module.css';
 import { useSkillsStore } from '../../store/skillsStore';
 import { useDevsStore } from '../../store/devsStore';
-import CodeEditor from '../CodeEditor';
+import CodeEditor from '../codeEditor';
 import { useJacdacStore } from '../../store/jacdacStore';
 import { parseColoredText } from '../../lib/codeparse';
 

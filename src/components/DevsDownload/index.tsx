@@ -7,7 +7,7 @@ import { Skill } from "@/remark/render-skill";
 import { DeviceScriptManagerCmd, OutPipe } from 'jacdac-ts';
 
 import { useJacdacStore } from "../../store/jacdacStore";
-import CodeEditor from "../CodeEditor";
+import CodeEditor from "../codeEditor";
 import { useDevsStore } from "../../store/devsStore";
 
 import styles from './devs.module.css'

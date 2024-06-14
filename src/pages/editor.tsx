@@ -1,7 +1,7 @@
 // A code snippet editor for devicescript
 import React, { useEffect, useState } from 'react';
 import Wrapper from "@theme/Layout";
-import CodeEditor from "../components/CodeEditor";
+import CodeEditor from "../components/codeEditor";
 import { useDevsStore } from '../store/devsStore';
 import {JDConnection} from '../components/DevsDownload';
 import { Button } from 'antd';
