@@ -18,6 +18,7 @@ export interface SkillConfig {
   devs?: string // the device script to run
   jsSrc?: string // the js source code to skill, filled by the build plugin
   categoryThumbnail?: string // the thumbnail of the category, maybe should be in the category config
+  libs?: Record<string, string> // the libraries to import in the device script
 }
 
 export interface SkillCategory {

@@ -18,4 +18,5 @@ awagent({
         }
     },
     devs: template,
+    target: 'misc'
 })

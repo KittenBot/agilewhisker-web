@@ -39,7 +39,7 @@ async function startOLED(){
     height: 64,
     devAddr: 0x3c as any,
   })
-  await oled.start()
+  await oled.init()
   return oled
 }
 
@@ -47,7 +47,7 @@ export {
   kb,
   regKey,
   hidEnable,
-  startOLED
+  startOLED,
 }
 
 `
