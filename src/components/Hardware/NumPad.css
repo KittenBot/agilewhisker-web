@@ -27,6 +27,15 @@
     border-radius: 5px;
 }
 
+.oled.active {
+    background-color: #0a2c9e;
+}
+
+.oled.filled {
+    color: aqua;
+    cursor: pointer;
+}
+
 .encoder {
     flex: 1;
     background-color: #444;
@@ -85,6 +94,7 @@
 
 .keynum.filled {
     background-color: coral;
+    cursor: pointer;
 }
 
 .keynum img {

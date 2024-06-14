@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import './NumPad.css';
 
 import { KeyboardProps } from './Elite60';
+import { SkillEvent } from '@/lib/SkillBuild';
 
 const mainKeys = [
     ['Num', '/', '*'],
@@ -43,7 +44,47 @@ const hidKeyMap = {
     '.': 'KeypadDecimalPoint',
 }
 
+export interface KeyboardKeyProps {
+    name: string;
+    className?: string;
+    role?: string;
+    isActive?: boolean;
+    isDragOver?: boolean;
+    evt?: SkillEvent;
+    handleDragOver: (event, key: string) => void;
+    handleDragLeave: () => void;
+    handleDrop: (event, key: string, role?: string) => void;
+    handleClick: () => void;
+    children?: React.ReactNode;
+}
 
+const KeyboardKey = ({
+    name,
+    evt,
+    className,
+    role,
+    isActive,
+    isDragOver,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    handleClick,
+    children
+}: KeyboardKeyProps) => {
+    return (
+        <div
+            className={`${className} ${isActive ? 'active' : ''} ${isDragOver ? 'drag-over' : ''} ${!!evt ? 'filled' : ''}`}
+            onDragOver={(event) => handleDragOver(event, role)}
+            onDragLeave={handleDragLeave}
+            onDrop={(event) => handleDrop(event,  name, role)}
+            onClick={handleClick}
+        >
+            {children ? children : evt &&
+                evt.thumbnail ? <img src={evt.thumbnail} alt={name} /> : name
+            }
+        </div>
+    );
+};
 const NumpadLayout = (props: KeyboardProps) => {
     const [activeKey, setActiveKey] = useState(null);
     const [dragOverKey, setDragOverKey] = useState(null);
@@ -86,7 +127,7 @@ const NumpadLayout = (props: KeyboardProps) => {
         setDragOverKey(null);
     }
 
-    const handleDropKeybutton = (event, key) => {
+    const handleDropKeybutton = (event, key, role='keybutton') => {
         setDragOverKey(null);
         const target = event.dataTransfer.getData('id');
         if (hidKeyMap[key]) {
@@ -95,44 +136,84 @@ const NumpadLayout = (props: KeyboardProps) => {
                 value: hidKeyMap[key]
             }
         }
-        props.onDrop(target, key, 'keybutton');
+        props.onDrop(target, key, role);
     }
 
     return (
         <div className="numpad">
             <div className="numpad-header">
-                <div className="oled">OLED</div>
-                <div className="encoder">☺</div>
-                <div className="encoder">☻</div>
+                <KeyboardKey
+                    className='oled'
+                    name='OLED'
+                    role='oled'
+                    evt={props.build.events.find((e) => e.key === 'OLED')}
+                    isActive={activeKey === 'OLED'}
+                    isDragOver={dragOverKey === 'OLED'}
+                    handleDragOver={handleDragOver}
+                    handleDragLeave={handleDragLeave}
+                    handleDrop={handleDropKeybutton}
+                    handleClick={() => props.onClick('OLED')}
+                >OLED</KeyboardKey>
+                <KeyboardKey
+                    className='encoder'
+                    name='ENCODER'
+                    role='encoder'
+                    evt={props.build.events.find((e) => e.key === 'ENCODER')}
+                    isActive={activeKey === 'ENCODER'}
+                    isDragOver={dragOverKey === 'ENCODER'}
+                    handleDragOver={handleDragOver}
+                    handleDragLeave={handleDragLeave}
+                    handleDrop={handleDropKeybutton}
+                    handleClick={() => props.onClick('ENCODER')}
+                >☺</KeyboardKey>
+                <KeyboardKey
+                    className='encoder'
+                    name='ENCODER2'
+                    role='encoder'
+                    evt={props.build.events.find((e) => e.key === 'ENCODER2')}
+                    isActive={activeKey === 'ENCODER2'}
+                    isDragOver={dragOverKey === 'ENCODER2'}
+                    handleDragOver={handleDragOver}
+                    handleDragLeave={handleDragLeave}
+                    handleDrop={handleDropKeybutton}
+                    handleClick={() => props.onClick('ENCODER2')}
+                >☻</KeyboardKey>
             </div>
             <div className="numpad-body">
                 <div className="main-keys">
                     {mainKeys.map((row, rowIndex) => (
                         <div key={rowIndex} className="numpad-row">
                             {row.map((key, keyIndex) => (
-                                <div key={keyIndex} className={`keynum ${key === '0' ? 'keynum-wide' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''} ${props.build.events.find((e) => e.key === key) ? 'filled' : ''}`}
-                                    onDragOver={(event) => handleDragOver(event, key)}
-                                    onDragLeave={handleDragLeave}
-                                    onDrop={(event) => handleDropKeybutton(event, key)}
-                                    onClick={() => props.onClick(key)}
-                                >
-                                    {props.build.events.find((e) => e.key === key) ? <img src={props.build.events.find((e) => e.key === key).thumbnail} alt={key} /> : key}
-                                </div>
+                                <KeyboardKey 
+                                    key={keyIndex}
+                                    className={`keynum ${key === '0' ? 'keynum-wide' : ''} `}
+                                    name={key}
+                                    evt={props.build.events.find((e) => e.key === key)}
+                                    isActive={key === activeKey}
+                                    isDragOver={key === dragOverKey}
+                                    handleDragOver={handleDragOver}
+                                    handleDragLeave={handleDragLeave}
+                                    handleDrop={handleDropKeybutton}
+                                    handleClick={() => props.onClick(key)}
+                                />
                             ))}
                         </div>
                     ))}
                 </div>
                 <div className="side-keys">
                     {sideKeys.map((key, keyIndex) => (
-                        <div
-                            key={keyIndex} className={`keynum ${(key === 'Enter' || key === '+')? 'keynum-tall' : ''} ${key === activeKey ? 'active' : ''} ${key === dragOverKey ? 'drag-over' : ''} ${props.build.events.find((e) => e.key === key) ? 'filled' : ''}`}
-                            onDragOver={(event) => handleDragOver(event, key)}
-                            onDragLeave={handleDragLeave}
-                            onDrop={(event) => handleDropKeybutton(event, key)}
-                            onClick={() => props.onClick(key)}
-                            >
-                            {props.build.events.find((e) => e.key === key) ? <img src={props.build.events.find((e) => e.key === key).thumbnail} alt={key} /> : key}
-                        </div>
+                        <KeyboardKey
+                            className={`keynum ${(key === 'Enter' || key === '+')? 'keynum-tall' : ''}`}
+                            name={key}
+                            role={key}
+                            evt={props.build.events.find((e) => e.key === key)}
+                            isActive={key === activeKey}
+                            isDragOver={key === dragOverKey}
+                            handleDragOver={handleDragOver}
+                            handleDragLeave={handleDragLeave}
+                            handleDrop={handleDropKeybutton}
+                            handleClick={() => props.onClick(key)}
+                        />
                     ))}
                 </div>
             </div>

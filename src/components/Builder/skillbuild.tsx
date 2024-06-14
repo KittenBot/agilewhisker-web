@@ -111,7 +111,7 @@ const SkillBuild = (props: {
       return
     }
     if (accept && skill.target && accept !== skill.target) {
-      message.error('Skill not accepted, need ' + skill.target)
+      message.error(`Skill won't work on ${accept}, need ${skill.target}`)
       return
     }
     let _key = key
