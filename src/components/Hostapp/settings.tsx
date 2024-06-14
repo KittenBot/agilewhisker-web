@@ -32,14 +32,13 @@ const Settings: React.FC = () => {
   };
 
   return (
+    <div>
+    <h1>Settings</h1>
     <Form form={form} layout="vertical" onFinish={onFinish}>
       <Form.Item name="mqttbroker" label="Mqtt-Broker" rules={[{ required: true, message: 'The mqtt borker' }]}>
         <Input />
       </Form.Item>
       <Form.Item name="mqtttopic" label="Mqtt-Topic" rules={[{ required: true, message: 'The mqtt topic' }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item name="serverUrl" label="Server URL" rules={[{ required: true, message: 'Please input the server URL!' }]}>
         <Input />
       </Form.Item>
       <Form.Item name="openaiKey" label="OpenAI Key" rules={[{ required: true, message: 'The openai key' }]}>
@@ -57,6 +56,7 @@ const Settings: React.FC = () => {
         </Button>
       </Form.Item>
     </Form>
+    </div>
   );
 };
 

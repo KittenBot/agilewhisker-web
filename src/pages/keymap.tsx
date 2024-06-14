@@ -2,7 +2,7 @@ import Layout from "@theme/Layout";
 
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
-import { DisconnectState } from "../components/DevsDownload";
+import { DisconnectState, JDConnection } from "../components/DevsDownload";
 import {
   jdpack, Packet, jdunpack,
   JDDevice,
@@ -34,7 +34,7 @@ export default function Keymap() {
   const [keyboard, setKeyboard] = useState('elite60');
   const [keymap, setKeymap] = useState(testKeymap)
   
-  const {spec, connected, device} = useJacdacStore()
+  const {spec, device} = useJacdacStore()
 
   async function readKeymap(device: JDDevice) {
     const settingService = device.services({serviceClass: SRV_SETTINGS})[0]
@@ -71,7 +71,7 @@ export default function Keymap() {
       <Layout title="Keymap" description="Keymap Config">
         <div>
           <h1>Keymap</h1>
-          {connected ? null : <DisconnectState />}
+          <JDConnection />
           {keyboard === 'elite60' ? <Elite60 keymap={keymap} update={handleUpdate}/> : null}
           {keyboard === 'numpad' ? <NumberPad /> : null}
           

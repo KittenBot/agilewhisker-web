@@ -1,0 +1,143 @@
+.numpad {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 210px;
+    margin: auto;
+}
+
+.numpad-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.oled {
+    flex: 2;
+    background-color: #051650;
+    color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.oled.active {
+    background-color: #0a2c9e;
+}
+
+.oled.filled {
+    color: aqua;
+    cursor: pointer;
+}
+
+.encoder {
+    flex: 1;
+    background-color: #444;
+    color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.numpad-body {
+    display: flex;
+}
+
+.main-keys {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.numpad-row {
+    display: flex;
+    gap: 5px;
+}
+
+.misc {
+    display: flex;
+    justify-content: center;
+    flex-direction:row;
+    padding: 5px;
+    gap: 8px;
+}
+
+.misc .skill {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 40px;
+    width: 80px;
+    transition: background-color 0.3s;
+}
+
+.skill.filled {
+    background-color: #a0d1ff;
+    cursor: pointer;
+}
+
+.keynum {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 40px;
+    width: 40px;
+    transition: background-color 0.3s;
+}
+
+.keynum.active {
+    background-color: #a0d1ff;
+}
+
+.keynum.shortcut {
+    /* bold */
+    font-weight: 700;
+    color: #333;
+    border-color: #333;
+    border-width: 2px;
+    cursor: pointer;
+}
+
+.keynum.drag-over {
+    background-color: #ffcccb;
+}
+
+.keynum.filled {
+    background-color: coral;
+    cursor: pointer;
+}
+
+.keynum img {
+    max-width: 32px;
+}
+
+.keynum-tall {
+    height: 85px;
+    /* 40px * 2 + 5px (gap) = 85px */
+}
+
+.keynum-wide {
+    width: 85px;
+}
+
+.side-keys {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: 5px;
+}

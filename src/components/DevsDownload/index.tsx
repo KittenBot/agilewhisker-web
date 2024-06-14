@@ -7,51 +7,55 @@ import { Skill } from "@/remark/render-skill";
 import { DeviceScriptManagerCmd, OutPipe } from 'jacdac-ts';
 
 import { useJacdacStore } from "../../store/jacdacStore";
-import CodeEditor from "../codeEditor";
+import CodeEditor from "../CodeEditor";
+import { useDevsStore } from "../../store/devsStore";
 
+import styles from './devs.module.css'
+
+// only use this in remark skill render
 const DevsDownloadCard = ({config}) => {
+  const {
+    code, params, setCode, setParams
+  } = useDevsStore()
 
-  const {connected} = useJacdacStore()
-  const [code,setCode] = useState(JSON.parse(config).code)
-  const handleChange = (value) => {
-    setCode(value)
-    skill.code = value
-  }
-
-  const skill: Skill = useMemo(() => {
-    if (config)
-      return JSON.parse(config);
+  useEffect(() => {
+    try {
+      const conf = JSON.parse(config)
+      if (conf.code)
+        setCode(conf.code)
+      if (conf.params){
+        setParams(conf.params)
+      } else {
+        setParams({})
+      }
+    } catch (error) {
+      console.warn("Failed to parse config", error, config)
+    }
   }, [config]);
 
+
+  const handleChange = (value) => {
+  }
+
+  console.log("code", code, params)
   return (
     <>
       <Card hoverable style={{ width: '50vw', margin: 10 ,border: 'none'}} bodyStyle={{padding: 0, overflow: 'hidden',backgroundColor: 'var(--ifm-background-color)',border: '1px solid var(--ifm-color-emphasis-300)',borderRadius: '8px'}}>
-        { connected ? <ConnectedState skill={skill}/>
-        : <DisconnectState />
-        }
+        <JDConnection />
       </Card>
-      <CodeEditor defaultCode={code} onChange={handleChange} />
+      <CodeEditor code={code} onChange={c => setCode(c)} />
     </>
   );
 };
 
-const ConnectedState = ({skill}: {skill: Skill}) => {
-  const { brainAvatar, devsService, deviceAvatar, spec, bus} = useJacdacStore()
+export const JDConnection = () => {
+  const { compileWithHost, code, params, setParams } = useDevsStore()
+
+  const { webSerialConnected, webSocketConnected, brainAvatar, devsService, deviceAvatar, spec, bus} = useJacdacStore()
+  const isConnected = webSerialConnected || webSocketConnected
 
   const [ downloadErr, setDownloadErr ] = useState('')
   const [ downloadProgress, setDownloadProgress ] = useState(0)
-
-  const [compileWithHost, setCompileWithHost] = useState(null);
-
-  const [params, setParams] = useState(skill.params || {})
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      import("@kittenbot/devs_compiler").then(module => {
-        setCompileWithHost(() => module.compileWithHost);
-      });
-    }
-  }, []);
 
 
   const handleDownload = async () => {
@@ -59,28 +63,8 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
       console.error("Compiler not loaded");
       return;
     }
-    
-    const { DevsHost } = await import('./DevsHost'); // 路径需要根据你的项目结构调整
 
-    let code = skill.code
-
-    for (const key in params) {
-      const value = params[key]
-      code = code.replace(new RegExp(`\\$${key}`, 'g'), value)
-    }
-    
-    console.log("download", code);
-
-    const host = new DevsHost({
-      hwInfo: {
-        // progName: "DeviceScript-workspace devs/hello",
-        // progVersion: "6.0.0",
-      },
-      files: {
-        "src/main.ts": code,
-      },
-    });
-    const result = compileWithHost("src/main.ts", host);
+    const result = await compileWithHost();
     console.log(result);
     if (result.success){
       let bytecode = result.binary
@@ -102,8 +86,9 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
     }
   };
 
+  if (!isConnected) return <DisconnectState />
 
-  return (<div style={{flex: 1, flexDirection: 'column',backgroundColor: 'var(--ifm-background-color)'}}>
+return (<div style={{backgroundColor: 'var(--ifm-background-color)'}}>
     <Flex justify="space-between" style={{padding:'0 16px 16px',color: 'var(--ifm-color-content)'}}>
       <div style={{ width: '100%', display: 'flex'}}>
         {deviceAvatar.map((img:any, i) => (
@@ -125,7 +110,7 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
     </Flex>
     <Flex vertical align="flex-end" justify="space-between" style={{ padding: 12, width: '100%' }}>
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexDirection: 'row',width:'100%',color: 'var(--ifm-color-content)',marginLeft:'10px'}} >
-        Connected !
+        Connected to {webSerialConnected ? 'USB' : 'WebSocket'}
         <div>
           <Button
             type="primary"
@@ -133,22 +118,22 @@ const ConnectedState = ({skill}: {skill: Skill}) => {
             style={{marginRight:'10px'}}
             onClick={()=> bus.disconnect()}
           >
-            disconnect
+            Disconnect
           </Button>
           <Button
             type="primary"
-            onClick={handleDownload}
+            onClick={() => handleDownload()}
           >
-            🔥 Download Demo
+            🔥 Download
           </Button>
         </div>
       </div>
     </Flex>
-    { skill.params && (
+    { Object.keys(params).length > 0 ?
       <ParamsInput params={params} onChange={(key, value) => {
         setParams({...params, [key]: value})
-      }} />
-    )}
+      }} /> : null
+    }
     { downloadErr && (
       <Alert message={downloadErr} type="error" closable afterClose={() => setDownloadErr('')} />
     )}
@@ -175,19 +160,22 @@ export const DisconnectState = ({ usbConnect }: { usbConnect?: boolean }) => {
 const ParamsInput = ({params, onChange}: {params: Record<string, string>, onChange: any }) => {
 
   return <div style={{padding: 12}}>
-    <Divider>Parameters</Divider>
     <Form
       fields={Object.keys(params).map(key => ({name: key, value: params[key]}))}
       labelCol={{ span: 4 }}
       layout="horizontal"
-      style={{maxWidth: 600}}
+      style={{maxWidth: 600, color: 'var(--ifm-color-content)'}}
       onFieldsChange={(changedFields, allFields) => {
         onChange(changedFields[0].name[0], changedFields[0].value)
       }}
     >
       {Object.keys(params).map((key, i) => {
-        const param = params[key]
-        return <Form.Item key={i} name={key} label={key} >
+        return <Form.Item 
+          key={i}
+          name={key}
+          label={<span className={styles.formItemLabel}>{key}</span>}
+          className={styles.formItem}
+        >
           <Input />
         </Form.Item>
       })}

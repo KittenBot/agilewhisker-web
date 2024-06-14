@@ -4,20 +4,10 @@ import { Card, Col, Row, List, Button, Menu, Layout, Switch } from 'antd'
 
 import styles from './hostapp.module.css';
 import Settings from '../components/Hostapp/settings';
+import LLMS from '../components/Hostapp/llms';
+import Status from '../components/Hostapp/status';
 
 const { Header, Sider, Content } = Layout;
-
-declare global {
-    interface Window { 
-        electronAPI: {
-            start_service: (name: string) => Promise<any>,
-            stop_service: (name: string) => Promise<any>,
-            get_services: () => Promise<any>,
-            save_settings: (settings: any) => Promise<any>,
-            get_settings: () => Promise<any>
-        }
-    }
-}
 
 function ServiceCard(props: { name: string, status: boolean, icon: string, toggle: any,disabled?: boolean}) {
 
@@ -74,12 +64,15 @@ export default function HostApp() {
                     defaultOpenKeys={['sub1']}
                     onClick={(e) => setTabs(e.key)}
                 >
-                    <Menu.Item key="1">Services</Menu.Item>
-                    <Menu.Item key="2">Settings</Menu.Item>
+                    <Menu.Item key="1">Status</Menu.Item>
+                    <Menu.Item key="2">Services</Menu.Item>
+                    <Menu.Item key="3">Settings</Menu.Item>
+                    <Menu.Item key="4">LLM</Menu.Item>
                 </Menu>
             </Sider>
             <Layout style={{padding:'20px'}}>
-                {tabs === '1' && <List
+                {tabs === '1' && <Status/>}
+                {tabs === '2' && <List
                     grid={{ gutter: 16, column: 3 }}
                     dataSource={services}
                     renderItem={item => (
@@ -88,7 +81,8 @@ export default function HostApp() {
                         </List.Item>
                     )}
                 />}
-                {tabs === '2' && <Settings />}
+                {tabs === '3' && <Settings />}
+                {tabs === '4' && <LLMS />}
 
             </Layout>
         </Layout>

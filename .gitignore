@@ -29,3 +29,9 @@ yarn-error.log*
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# generated skills page
+skills_page/
+# static skills code
+static/js/
+static/assets/

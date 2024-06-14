@@ -1,0 +1,72 @@
+.keyboard {
+  display: grid;
+  gap: 5px;
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 5px;
+}
+
+.key {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  height: 40px;
+  flex: 1;
+}
+
+.key.active {
+  background-color: #a0d1ff;
+}
+
+.key.shortcut {
+  /* bold */
+  font-weight: 700;
+  color: #333;
+  border-color: #333;
+  border-width: 2px;
+  cursor: pointer;
+}
+
+.key.drag-over {
+  background-color: #ffcccb;
+}
+
+.key.esc {
+  flex: 1;
+}
+
+.key.backspace {
+  flex: 2;
+}
+
+.key.tab {
+  flex: 1.5;
+}
+
+.key.capslock {
+  flex: 1.75;
+}
+
+.key.enter {
+  flex: 2.25;
+}
+
+.key.shift {
+  flex: 2.25;
+}
+
+.key.ctrl {
+  flex: 1.5;
+}
+
+.key.space {
+  flex: 7.5;
+}

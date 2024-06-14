@@ -1,122 +1,133 @@
-import React, { useEffect, useState } from "react";
-import { Input, Button, List, Typography } from "antd";
-import ReactMarkdown from "react-markdown";
-
-const { TextArea } = Input;
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { debounce } from 'lodash';
+import { ChatMessage, ProChat, ProChatInstance } from '@ant-design/pro-chat';
 
 type Message = {
   content: string;
   role: string;
 }
 
-const HostChat = () => {
-  const [context, setContext] = useState<Message[]>([]);
-  const [settings, setSettings] = useState<any>({});
-  const [inputValue, setInputValue] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { get_settings } = window.electronAPI;
+interface History {
+  id: string;
+  system: string;
+  history: ChatMessage[];
+}
 
+
+const HostChat = () => {
+  const chatRef = useRef<ProChatInstance>();
+  const [hash, setHash] = useState<string>('0/0');
+  const [promt, setPromt] = useState<string>('');
+  const [context, setContext] = useState<ChatMessage[]>([]);
+  const [settings, setSettings] = useState<any>({});
+
+  
   useEffect(() => {
+    const { get_settings, onUserText, onLoadHistory } = window.electronAPI;
     get_settings().then((settings: any) => {
-      console.log("settings", settings);
       setSettings(settings);
     });
+    onUserText((text: string) => {
+      text = text.trim();
+      console.log("input", text)
+      text && chatRef.current?.sendMessage(text);
+    });
+    onLoadHistory((history: History) => {
+      console.log("history", history)
+      setContext(history.history);
+      setHash(history.id);
+      setPromt(history.system || 'You are a helpful assistant.');
+    });
+    const param = new URLSearchParams(window.location.search);
+    const id = param.get('id') // llmid/historyid
+    setHash(id);
+    console.log("id", id)
   }, []);
 
-  const sendMessage = async () => {
-    if (inputValue.trim()) {
-      setInputValue('');
-      setIsLoading(true);
-
-      const systemPrompt = 'The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.';
-
-      const messages: Message[] = [
-        ...context,
-        { content: inputValue, role: 'user' }
-      ]
-
-      try {
-        // openai api like call
-        const url = settings.openaiUrl || 'http://127.0.0.1:11434/v1/chat/completions'
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + settings.openaiKey
-          },
-          body: JSON.stringify({ 
-            model: settings.openaiModel || 'llama2',
-            messages: [
-              { role: 'system', content: systemPrompt },
-              ...messages
-            ],
-            stream: true
-          })
-        });
-
-        if (!res.ok) {
-          throw new Error('Failed to send message');
-        }
-
-        setContext([
-          ...context,
-          { content: inputValue, role: 'user' }
-        ]);
-
-        const reader = res.body?.getReader();
-        const decoder = new TextDecoder();
-        let cacheRes = ''
-        let done = false;
-
-        while (!done) {
-          const { value, done: _done } = await reader.read();
-          done = _done;
-          cacheRes += decoder.decode(value, { stream: true });
-          let botMsg = '';
-          const lines = cacheRes.split('\n').filter((line) => line.trim());
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const message = JSON.parse(line.substring(6));
-              console.log(message);
-              if (message.choices && message.choices[0].delta?.content) {
-                const _txt: string = message.choices[0].delta.content;
-                botMsg += _txt;
-                const updatedMessages = [...messages, { content: botMsg, role: 'assistant' }];
-                setContext(updatedMessages);
-              }
-            }
-          }
-
-        }
-      } catch (error) {
-        
-      }
-
+  const saveHistory = useMemo(() => {
+    return (messages: Message[]) => {
+      const { save_history } = window.electronAPI;
+      save_history({ id: hash, history: messages });
     }
-  };
+  }, [hash]);
+
+  const debouncedSaveHistory = debounce(saveHistory, 1000);
+
 
   return (
-    <div style={{ padding: 16, background: 'white' }}>
-      <List
-        bordered
-        dataSource={context}
-        renderItem={(item) => (
-          <List.Item style={{ color: item.role === 'user' ? 'blue' : 'green', fontWeight: item.role === 'user' ? 'bold' : 'normal' }}>
-            <ReactMarkdown>{item.content}</ReactMarkdown>
-          </List.Item>
-        )}
-        style={{ marginBottom: 16, maxHeight: 400, overflowY: 'auto' }}
-      />
-      <TextArea
-        rows={4}
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onPressEnter={sendMessage}
-        placeholder="Type your message here..."
-      />
-      <Button type="primary" onClick={sendMessage} style={{ marginTop: 8 }}>
-        Send
-      </Button>
+    <div style={{ padding: 16, background: 'white', height: '100vh' }}>
+      {promt ? <ProChat
+        chatRef={chatRef}
+        initialChats={context}
+        helloMessage={
+          '欢迎使用 ProChat ，我是你的专属机器人，这是我们的 Github：[ProChat](https://github.com/ant-design/pro-chat)'
+        }
+        onChatsChange={(messages) => {
+          console.log('onChatsChange', messages);
+          debouncedSaveHistory(messages);
+        }}
+        request={async (inputValue) => {
+          console.log('request', inputValue);
+          const url = settings.openaiUrl || 'http://127.0.0.1:11434/v1/chat/completions'
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + settings.openaiKey
+            },
+            body: JSON.stringify({ 
+              model: settings.openaiModel || 'llama2',
+              messages: [
+                {
+                  role: 'system',
+                  content: promt
+                },
+                ...inputValue
+              ],
+              stream: true
+            })
+          }); 
+          if (!res.ok) {
+            throw new Error('Failed to send message');
+          }
+
+          const reader = res.body?.getReader();
+          const decoder = new TextDecoder();
+          const encoder = new TextEncoder();
+          let done = false;
+
+          const readableStream = new ReadableStream({
+            async start(controller) {
+              while (!done) {
+                const { value, done: _done } = await reader.read();
+                done = _done;
+                const _chunk = decoder.decode(value, { stream: true });
+                let botMsg = '';
+                const lines = _chunk.split('\n').filter((line) => line.trim());
+                for (const line of lines) {
+                  if (line.includes('[DONE]')) {
+                    break;
+                  } else if (line.startsWith('data: ')) {
+                    const message = JSON.parse(line.substring(6));
+                    if (message.choices && message.choices[0].delta?.content) {
+                      const _txt: string = message.choices[0].delta.content;
+                      botMsg += _txt;
+                      controller.enqueue(encoder.encode(_txt));
+                    }
+                    // if (message.choices && message.choices[0].finish_reason === 'stop') {
+                    //   done = true;
+                    //   controller.close();
+                    // }
+                  }
+                }
+
+              } // end while
+              controller.close();
+            }
+          });
+          return new Response(readableStream);
+        }}
+      /> : null}
 
     </div>
   );

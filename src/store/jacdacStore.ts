@@ -9,7 +9,7 @@ import {
   JDService,
   DeviceSpec,
   Transport,
-
+  DeviceScriptManagerCmd,OutPipe,
   DEVICE_ANNOUNCE, DEVICE_CHANGE, CONNECTION_STATE, SRV_DEVICE_SCRIPT_MANAGER,SRV_ROLE_MANAGER,
   SRV_SETTINGS, Packet
 } from 'jacdac-ts'
@@ -18,24 +18,31 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const useJacdacStore = create<{
   bus: JDBus;
-  connected: boolean;
+  webSerialConnected: boolean;
+  webSocketConnected: boolean;
   device: JDDevice;
   spec: DeviceSpec;
   brainAvatar: string
   deviceAvatar: string[];
   devsService: JDService;
+  downloadProgress: number;
+  downloadErr: string;
 
   connectJDBus: (usbConnect?:boolean) => Promise<void>;
   refresh: () => Promise<void>;
+  downloadDevs: (bytecode: any) => Promise<string>;
 
 }>((set, get) => ({
   bus: null,
-  connected: false,
+  webSerialConnected: false,
+  webSocketConnected: false,
   spec: null,
   device: null,
   devsService: null,
   brainAvatar: null,
   deviceAvatar: [],
+  downloadProgress: -1,
+  downloadErr: '',
 
   refresh: async () => {
     const bus = get().bus
@@ -86,12 +93,11 @@ export const useJacdacStore = create<{
       })
 
       bus.on(CONNECTION_STATE, (transport: Transport) => {
-        console.log("transport", transport.connectionState);
-        if (transport.connectionState === "connected") {
-          set(state => ({ connected: true }));
-        } else if (transport.connectionState === 'disconnected'){
-          set(state => ({ connected: false }));
-        }
+        if (transport.type === "web") {
+          set(state => ({ webSocketConnected: transport.connectionState === 'connected' }));
+        } else if (transport.type === "serial") {
+          set(state => ({ webSerialConnected: transport.connectionState === 'connected' }));
+        } 
       });
       // for debug only
       (window as any).bus = bus
@@ -101,6 +107,23 @@ export const useJacdacStore = create<{
     
     set(state => ({ bus }));
     
+  },
+
+  downloadDevs: async (bytecode: any) => {
+    const devsService = get().devsService
+    if (!devsService) return 'No device script manager service found, please connect to hardware'
+    try {
+      await OutPipe.sendBytes(devsService, DeviceScriptManagerCmd.DeployBytecode, bytecode, p => {
+        set(state => ({ downloadProgress: p*100 }))
+      })
+    } catch (error) {
+      set(state => ({ downloadErr: error.toString() }))
+      return error.toString()
+    } finally {
+      set(state => ({ downloadProgress: -1 }))
+    }
+    return ''
   }
+
 
 }))
