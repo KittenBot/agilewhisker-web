@@ -97,7 +97,7 @@ export const LLMConfigModal = (props: LLMConfigProps) => {
                     name='historyLength'
                     label='History Length'
                 >
-                    <InputNumber placeholder='number of history messages to keep' />
+                    <InputNumber />
                 </Form.Item>
             </Form>
         </Modal>

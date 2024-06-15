@@ -9,7 +9,8 @@ import { LLMConfig, LLMConfigModal, LLMMsg } from "../components/Hostapp/llms";
 const HostChat = () => {
   const chatRef = useRef<ProChatInstance>();
   const [llm, setLLM] = useState<LLMConfig>();
-  const [showConfig, setShowConfig] = useState<boolean>(false);
+  const [llmEdit, setLLMEdit] = useState<LLMConfig>();
+
   const [hash, setHash] = useState<string>('0/0');
   const [promt, setPromt] = useState<string>('');
   const [context, setContext] = useState<LLMMsg[]>([]);
@@ -32,6 +33,7 @@ const HostChat = () => {
       setLLM(llm);
       setContext(llm.context);
       setPromt(llm.system || 'You are a helpful assistant.');
+      setHash(llm.id);
     });
 
     const param = new URLSearchParams(window.location.search);
@@ -50,8 +52,9 @@ const HostChat = () => {
     if (values) {
         const { save_llm } = window.electronAPI;
         save_llm({id: values.id, llm: values});
+        setLLM(values);
     }
-    setShowConfig(false);
+    setLLMEdit(null);
   }
     
 
@@ -59,10 +62,10 @@ const HostChat = () => {
 
   return (
     <div style={{ padding: 16, background: 'white', height: '100vh' }}>
-      <FloatButton className="llm-config-btn" onClick={() => setShowConfig(true)} />
+      <FloatButton className="llm-config-btn" onClick={() => setLLMEdit(llm)} />
       <LLMConfigModal 
-          llm={llm}
-          isModalVisible={showConfig}
+          llm={llmEdit}
+          isModalVisible={!!llmEdit}
           handleSave={handleSaveLLM}
       />
       {promt ? <ProChat
@@ -83,6 +86,11 @@ const HostChat = () => {
               content: item.content
             }
           })
+          if (llm.historyLength){
+            // only keep the last Nx2 messages
+            messages.splice(0, messages.length - llm.historyLength * 2);
+            
+          }
           const url = settings.openaiUrl || 'http://127.0.0.1:11434/v1/chat/completions'
           const res = await fetch(url, {
             method: 'POST',
