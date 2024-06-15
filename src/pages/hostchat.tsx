@@ -1,29 +1,23 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { debounce } from 'lodash';
+import {FloatButton} from 'antd'
 import { ChatMessage, ProChat, ProChatInstance } from '@ant-design/pro-chat';
-
-type Message = {
-  content: string;
-  role: string;
-}
-
-interface History {
-  id: string;
-  system: string;
-  history: ChatMessage[];
-}
+import './hostchat.css';
+import { LLMConfig, LLMConfigModal, LLMMsg } from "../components/Hostapp/llms";
 
 
 const HostChat = () => {
   const chatRef = useRef<ProChatInstance>();
+  const [llm, setLLM] = useState<LLMConfig>();
+  const [showConfig, setShowConfig] = useState<boolean>(false);
   const [hash, setHash] = useState<string>('0/0');
   const [promt, setPromt] = useState<string>('');
-  const [context, setContext] = useState<ChatMessage[]>([]);
+  const [context, setContext] = useState<LLMMsg[]>([]);
   const [settings, setSettings] = useState<any>({});
 
   
   useEffect(() => {
-    const { get_settings, onUserText, onLoadHistory } = window.electronAPI;
+    const { get_settings, onUserText, onLoadLLM } = window.electronAPI;
     get_settings().then((settings: any) => {
       setSettings(settings);
     });
@@ -32,33 +26,48 @@ const HostChat = () => {
       console.log("input", text)
       text && chatRef.current?.sendMessage(text);
     });
-    onLoadHistory((history: History) => {
-      console.log("history", history)
-      setContext(history.history);
-      setHash(history.id);
-      setPromt(history.system || 'You are a helpful assistant.');
+
+    onLoadLLM((llm: LLMConfig) => {
+      console.log("on llm loaded", llm)
+      setLLM(llm);
+      setContext(llm.context);
+      setPromt(llm.system || 'You are a helpful assistant.');
     });
+
     const param = new URLSearchParams(window.location.search);
     const id = param.get('id') // llmid/historyid
     setHash(id);
-    console.log("id", id)
   }, []);
 
   const saveHistory = useMemo(() => {
-    return (messages: Message[]) => {
+    return (messages: LLMMsg[]) => {
       const { save_history } = window.electronAPI;
       save_history({ id: hash, history: messages });
     }
   }, [hash]);
+  
+  const handleSaveLLM = (values: any) => {
+    if (values) {
+        const { save_llm } = window.electronAPI;
+        save_llm({id: values.id, llm: values});
+    }
+    setShowConfig(false);
+  }
+    
 
   const debouncedSaveHistory = debounce(saveHistory, 1000);
 
-
   return (
     <div style={{ padding: 16, background: 'white', height: '100vh' }}>
+      <FloatButton className="llm-config-btn" onClick={() => setShowConfig(true)} />
+      <LLMConfigModal 
+          llm={llm}
+          isModalVisible={showConfig}
+          handleSave={handleSaveLLM}
+      />
       {promt ? <ProChat
         chatRef={chatRef}
-        initialChats={context}
+        initialChats={context as any}
         helloMessage={
           '欢迎使用 ProChat ，我是你的专属机器人，这是我们的 Github：[ProChat](https://github.com/ant-design/pro-chat)'
         }
@@ -68,6 +77,12 @@ const HostChat = () => {
         }}
         request={async (inputValue) => {
           console.log('request', inputValue);
+          const messages = inputValue.map((item) => {
+            return {
+              role: item.role,
+              content: item.content
+            }
+          })
           const url = settings.openaiUrl || 'http://127.0.0.1:11434/v1/chat/completions'
           const res = await fetch(url, {
             method: 'POST',
@@ -82,7 +97,7 @@ const HostChat = () => {
                   role: 'system',
                   content: promt
                 },
-                ...inputValue
+                ...messages
               ],
               stream: true
             })

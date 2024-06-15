@@ -1,21 +1,22 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Form, Input, List, FloatButton, Modal, Card, Row } from 'antd';
+import { Form, Input, InputNumber, List, FloatButton, Modal, Card, Row } from 'antd';
 import {
     AppstoreAddOutlined
 } from '@ant-design/icons';
 
-interface LLMMsg {
+export interface LLMMsg {
     role: string;
     content: string;
 }
 
-interface LLMConfig {
+export interface LLMConfig {
     id: string; // file name
     title: string;
     description?: string;
     system?: string; // system prompt
     context: LLMMsg[];
-  }
+    historyLength?: number;
+}
   
 
 interface LLMConfigProps {
@@ -24,7 +25,7 @@ interface LLMConfigProps {
     handleSave: (values: any) => void;
 }
 
-const LLMConfig = (props: LLMConfigProps) => {
+export const LLMConfigModal = (props: LLMConfigProps) => {
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -91,6 +92,12 @@ const LLMConfig = (props: LLMConfigProps) => {
                     rules={[{ required: true, message: 'Please input the system prompt!' }]}
                 >
                     <Input.TextArea placeholder="Enter the system prompt" />
+                </Form.Item>
+                <Form.Item
+                    name='historyLength'
+                    label='History Length'
+                >
+                    <InputNumber placeholder='number of history messages to keep' />
                 </Form.Item>
             </Form>
         </Modal>
@@ -173,7 +180,7 @@ const LLMS: React.FC = () => {
                     </List.Item>
                 )}
             />
-            <LLMConfig 
+            <LLMConfigModal 
                 llm={currentLLM}
                 isModalVisible={!!currentLLM}
                 handleSave={handleSaveLLM}
