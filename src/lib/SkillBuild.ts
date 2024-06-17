@@ -1,9 +1,10 @@
 
 export interface SkillParam {
-  type: 'string' | 'number' | 'boolean'
+  type: 'string' | 'number' | 'boolean'| 'list'
   description: string
   default?: any
   constant?: boolean // user can't edit this parameter
+  values?: string | string[]
 }
 
 export interface SkillConfig {

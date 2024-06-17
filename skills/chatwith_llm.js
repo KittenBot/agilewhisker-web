@@ -24,9 +24,10 @@ awagent({
             default: 'A'
         },
         'LLM': {
-            type: 'string',
+            type: 'list',
             description: 'The LLM to chat with',
-            default: 'robot2/Robot2_1'
+            default: 'robot2/Robot2_1',
+            values: 'http://localhost:8081/llm-list'
         },
         'OCR': {
             type: 'boolean',

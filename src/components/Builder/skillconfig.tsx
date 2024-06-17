@@ -1,8 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Button, Checkbox, Switch } from 'antd';
-import { SkillEvent } from '@/lib/SkillBuild';
+import { Modal, Form, Input, Button, Checkbox, Switch, AutoComplete } from 'antd';
+import { SkillEvent, SkillParam } from '@/lib/SkillBuild';
 import { useSkillsStore } from '../../store/skillsStore';
 
+
+const SkillInputList = (props: {
+  param: SkillParam
+}) => {
+  const [options, setOptions] = useState([])
+  useEffect(() => {
+    let values = props.param.values
+    if (typeof values === 'string' && values.startsWith('http')){
+      fetch(values).then(res => res.json()).then(data => {
+        setOptions(data.map((value: string) => ({ value })))
+      })
+    } else if (Array.isArray(values)){
+      setOptions(values.map((value: string) => ({ value })))
+    }
+  }, [])
+
+  return (
+    <AutoComplete
+      options={options}
+      filterOption={(inputValue, option) =>
+        option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+      }
+    />
+  )
+}
 
 export const SkillConfigModal = (props: {
   evt: SkillEvent,
@@ -70,6 +95,7 @@ export const SkillConfigModal = (props: {
           >
             {param.type === 'boolean' && <Switch />}
             {param.type === 'string' && <Input />}
+            {param.type === 'list' && <SkillInputList param={param} />}
           </Form.Item>)
         })}
       </Form>

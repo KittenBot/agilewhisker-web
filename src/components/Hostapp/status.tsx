@@ -43,6 +43,8 @@ const HostAppStatus = () => {
             if (!dev.productIdentifier)
                 continue
             const spec = deviceCatalog.specificationFromProductIdentifier(dev.productIdentifier)
+            if (!spec)
+                continue
             _spec.push({
                 id: dev.shortId,
                 name: spec.name,
