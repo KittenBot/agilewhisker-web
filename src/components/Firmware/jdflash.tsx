@@ -21,7 +21,8 @@ const JDFlashCard = (props: JDFlashCardProps) => {
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const {bus, connected} = useJacdacStore()
+  const {bus, webSerialConnected, webSocketConnected} = useJacdacStore()
+  const isConnected = webSerialConnected || webSocketConnected
   const [firmwareBlob, setBlob] = useState<FirmwareBlob>(null);
 
   useEffect(() => {
@@ -71,7 +72,7 @@ const JDFlashCard = (props: JDFlashCardProps) => {
     
   }
 
-  if (!connected) return(
+  if (!isConnected) return(
     <DisconnectState usbConnect={true} />
   );
 

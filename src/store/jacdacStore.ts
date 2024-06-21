@@ -95,7 +95,7 @@ export const useJacdacStore = create<{
       bus.on(CONNECTION_STATE, (transport: Transport) => {
         if (transport.type === "web") {
           set(state => ({ webSocketConnected: transport.connectionState === 'connected' }));
-        } else if (transport.type === "serial") {
+        } else if (transport.type === "serial" || transport.type === 'usb') {
           set(state => ({ webSerialConnected: transport.connectionState === 'connected' }));
         } 
       });
